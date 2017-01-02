@@ -1,0 +1,73 @@
+/* 
+	### 공통코드 테이블 3개 
+	[1] 대분류코드 - COMM_CODE_GRP (GRP=GROUP)
+	[2] 중분류코드 - COMM_CODE_DIV (DIV=DIVISION)
+	[3] 소분류코드 - COMM_CODE
+*/
+
+-- 대분류
+CREATE TABLE COMM_CODE_GRP
+(
+	GRP_CODE		CHAR(3)		NOT NULL, /* 그룹코드(대분류코드) */
+	GRP_CODE_NM		VARCHAR(60)	NULL	, /* 그룹코드명 */
+	GRP_CODE_DC		VARCHAR(200)	NULL	, /* 그룹코드설명 */
+	USE_AT			CHAR(1)		NULL	, /* 사용여부 */
+	FRST_REGIST_TIME	DATETIME	NULL	, /* 처음등록일시 */
+	FRST_REGISTER_ID	VARCHAR(20)	NULL	, /* 처음등록자 */
+	LAST_UPDT_TIME		DATETIME	NULL	, /* 마지막등록일시 */
+	LAST_UPDUSR_ID		VARCHAR(20)	NULL	, /* 마지막등록자 */
+	PRIMARY KEY (GRP_CODE)
+);
+
+CREATE UNIQUE INDEX COMM_CODE_GRP_PK ON COMM_CODE_GRP
+(
+	GRP_CODE
+)
+;
+
+
+
+-- 중분류 
+CREATE TABLE COMM_CODE_DIV
+(
+	DIV_CODE		VARCHAR(6)	NOT NULL, /* 분류코드(중분류코드) */
+	DIV_CODE_NM		VARCHAR(60)	NULL	, /* 분류코드명 */
+	DIV_CODE_DC		VARCHAR(200)	NULL	, /* 분류코드설명 */
+	USE_AT			CHAR(1)		NULL	, /* 사용여부 */
+	GRP_CODE		CHAR(3)		NULL	, /* 그룹코드(대분류코드) */    
+	FRST_REGIST_TIME	DATETIME	NULL	, /* 처음등록일시 */
+	FRST_REGISTER_ID	VARCHAR(20)	NULL	, /* 처음등록자 */
+	LAST_UPDT_TIME		DATETIME	NULL	, /* 마지막등록일시 */
+	LAST_UPDUSR_ID		VARCHAR(20)	NULL	, /* 마지막등록자 */
+	PRIMARY KEY (DIV_CODE)
+);
+
+CREATE UNIQUE INDEX COMM_CODE_DIV_PK ON COMM_CODE_DIV
+(
+	DIV_CODE
+);
+
+
+
+-- 소분류
+CREATE TABLE COMM_CODE
+(
+	DIV_CODE		VARCHAR(6)	NOT NULL, /* 분류코드(중분류코드) */
+	CODE			VARCHAR(15)	NOT NULL, /* 코드(소분류코드) */
+	CODE_NM			VARCHAR(60)	NULL	, /* 코드명 */
+	CODE_DC			VARCHAR(200)	NULL	, /* 코드설명 */
+	USE_AT			CHAR(1)		NULL	, /* 사용여부 */
+	FRST_REGIST_TIME	DATETIME	NULL	, /* 처음등록일시 */
+	FRST_REGISTER_ID	VARCHAR(20)	NULL	, /* 처음등록자 */
+	LAST_UPDT_TIME		DATETIME	NULL	, /* 마지막등록일시 */
+	LAST_UPDUSR_ID		VARCHAR(20)	NULL	, /* 마지막등록자 */
+	PRIMARY KEY (DIV_CODE,CODE)
+)
+;
+
+CREATE UNIQUE INDEX COMM_CODE_PK ON COMM_CODE
+(
+	DIV_CODE,
+	CODE
+)
+;
