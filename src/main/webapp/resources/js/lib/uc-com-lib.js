@@ -581,7 +581,8 @@ function ComLibTimer( sec , callback , loop ){
 		sec : sec,
 		cnt : 0,
 		secCnt : parseInt( sec , 10 ),
-		loop : loop
+		loop : loop,
+		callback:callback
 	}
 	t.status = false;
 	t._hour=0;
@@ -617,6 +618,7 @@ ComLibTimer.prototype._stop = function (isClear){
 ComLibTimer.prototype.start = function (){
 	var t = this;
 	if(t.status)return t;
+	var callback = t.option.callback;
 	var interval = setInterval(function(){
 		t.option.secCnt--;
 		t.option.cnt++;
@@ -647,6 +649,9 @@ ComLibTimer.prototype.start = function (){
 			}else{
 				t.status = true;
 			}
+		}else{
+			clearInterval(interval);
+			throw "callback 함수를 찾을 수 없습니다.";
 		}
 	}, 1000 );
 	t.interval = interval;
