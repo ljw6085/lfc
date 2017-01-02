@@ -3,6 +3,7 @@
 	[1] 대분류코드 - COMM_CODE_GRP (GRP=GROUP)
 	[2] 중분류코드 - COMM_CODE_DIV (DIV=DIVISION)
 	[3] 소분류코드 - COMM_CODE
+	
 */
 
 -- 대분류
