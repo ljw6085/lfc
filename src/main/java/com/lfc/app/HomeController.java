@@ -41,6 +41,7 @@ public class HomeController {
 		
 		return UrlMapping.HOME_JSP;
 	}
+	
 	@RequestMapping(value = "/test.json", method = RequestMethod.GET)
 	public Model testjson(Locale locale, Model model) {
 		logger.info("json~~~!~! {}.", locale);
