@@ -42,6 +42,16 @@ public class HomeController {
 		return UrlMapping.HOME_JSP;
 	}
 	
+	@RequestMapping(value = UrlMapping.INDEX_URL , method = RequestMethod.GET)
+	public String index(Locale locale, Model model) {
+		return UrlMapping.INDEX_JSP;
+	}
+	
+	@RequestMapping(value = UrlMapping.CODE_LIST_URL , method = RequestMethod.GET)
+	public String codeList(Locale locale, Model model) {
+		return UrlMapping.CODE_LIST_JSP;
+	}
+	
 	@RequestMapping(value = "/test.json", method = RequestMethod.GET)
 	public Model testjson(Locale locale, Model model) {
 		logger.info("json~~~!~! {}.", locale);
@@ -77,6 +87,14 @@ public class HomeController {
 	@RequestMapping(value = "/tableTest5.do", method = RequestMethod.GET)
 	public String testhtml5(Locale locale, Model model, HttpServletResponse response) {
 		return "mapTest5";
+	}
+	@RequestMapping(value = "/tableTest6.do", method = RequestMethod.GET)
+	public String testhtml6(Locale locale, Model model, HttpServletResponse response) {
+		return "mapTest6";
+	}
+	@RequestMapping(value = "/tableTest7.do", method = RequestMethod.GET)
+	public String testhtml7(Locale locale, Model model, HttpServletResponse response) {
+		return "mapTest7";
 	}
 	
 }

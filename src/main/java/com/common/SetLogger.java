@@ -2,6 +2,9 @@ package com.common;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.common.utils.LfcUtils;
 
 /**
  * log4j Logger 를 세팅해주는 공통 클래스
@@ -10,7 +13,13 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class SetLogger {
+	@Autowired
+	/** 공통 util */
+	public LfcUtils utils;
+	
+	/** logger */
 	public final Logger logger;
+	
 	public SetLogger() {
 		logger = LoggerFactory.getLogger(this.getClass());
 	}

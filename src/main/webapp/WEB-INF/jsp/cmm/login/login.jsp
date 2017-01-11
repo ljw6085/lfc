@@ -8,17 +8,26 @@
 <title>Insert title here</title>
 	<%@ include file="../resources.jsp" %>
 	<script>
-		formLib.setValidation('frm')
 		$(document).ready(function(){
-				
-		});
+			page_login();
+		})
+		function page_login(){
+			var backTogo = $m.createButton({
+				icon : "ui-icon-arrow-l",
+				'data-rel':'back'
+			});
+			
+			$("#backToGo")
+				.append(backTogo);
+		}
 	</script>
 </head>
 <body>
 <form name='frm'>
-<div data-role="page" id="page1">
+<div data-role="page" id="page_login">
 	<div data-role="header" data-position="fixed">
-	  <h1>LOGIN</h1>
+		<div id='backToGo'></div>
+		<h1>LOGIN</h1>
 	</div>
 	<div data-role="main" class="ui-content">
 		<div style='text-align: right;'>
@@ -33,7 +42,7 @@
 		</div>
 		<div class="ui-grid-a" 	style='padding-left:10px;padding-right:10px;'>
 			<div class="ui-block-a">
-				<a href="/lfc/tableTest.do" class="ui-btn ui-mini ui-corner-all ui-shadow ui-icon-check ui-btn-icon-left">로그인</a>
+				<a href="/lfc/tableTest7.do" class="ui-btn ui-mini ui-corner-all ui-shadow ui-icon-check ui-btn-icon-left">로그인</a>
 			</div>
 			<div class="ui-block-b">
 				<a href="#page2" class="ui-btn ui-mini ui-corner-all ui-shadow ui-icon-user ui-btn-icon-left">회원가입</a>
@@ -58,5 +67,6 @@
 	</div>
 </div>
 </form>
+<%@ include file="../inc/menu.jsp" %>
 </body>
 </html>

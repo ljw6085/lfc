@@ -6,6 +6,7 @@
 <configuration>
     <typeAliases>
 		<typeAlias alias="hashMap" type="java.util.HashMap"/>
+		<typeAlias alias="camelCaseMap" type="com.common.utils.CamelCaseMap"/>
 		<typeAlias alias="linkedHashMap" type="java.util.LinkedHashMap"/>
 		<typeAlias alias="arrayList" type="java.util.ArrayList"/>
     </typeAliases>
