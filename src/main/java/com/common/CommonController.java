@@ -8,5 +8,4 @@ package com.common;
  *
  */
 public class CommonController extends SetLogger {
-
 }

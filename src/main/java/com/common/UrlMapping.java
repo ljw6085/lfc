@@ -22,4 +22,28 @@ public class UrlMapping {
 	public static final String LOGIN_URL="/cmm/login/login.do";
 	/** jsp  : */
 	public static final String LOGIN_JSP="/cmm/login/login";
+	
+	
+	/** url  : */
+	public static final String INDEX_URL="/index.do";
+	/** jsp  : */
+	public static final String INDEX_JSP="/index";
+
+	/** url  : */
+	public static final String CODE_LIST_URL="/mgr/codeList.do";
+	/** jsp  : */
+	public static final String CODE_LIST_JSP="/mgr/code/codeList";
+	
+	
+	
+	/**
+	 * url : /prk/insertPrkData.do<br>
+	 * desc : 주차장데이터 입력
+	 */
+	public static final String PARKING_INSERT_URL="/prk/insertPrkData.do";
+	/**
+	 * url : /prk/selectPrkData.do<br>
+	 * desc : 주차장데이터 로드
+	 */
+	public static final String PARKING_SELECT_URL="/prk/selectPrkData.do";
 }
