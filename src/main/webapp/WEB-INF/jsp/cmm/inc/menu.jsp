@@ -28,6 +28,7 @@
 	$( function() {
 		// 메뉴 데이터 DB에서 가져왔다고 가정
 		var temp_menu_data = [
+			{ parent:null, id:"M0000", url:"/index.do", menuNm:"MAIN" },
 			{ parent:null, id:"M0001", url:"", menuNm:"정보조회" },
 			{ parent:null, id:"M0002", url:"", menuNm:"정보관리" },
 			{ parent:null, id:"M0003", url:"", menuNm:"게시판"},
@@ -41,7 +42,7 @@
 			{ parent:"M0004", id:"M0041", url:"", menuNm:"사용자관리"},
 			{ parent:"M0004", id:"M0042", url:"", menuNm:"메뉴관리"},
 			{ parent:"M0004", id:"M0043", url:"", menuNm:"코드관리"},
-			{ parent:"M0043", id:"M0431", url:"", menuNm:"공통코드관리"},
+			{ parent:"M0043", id:"M0431", url:"/mgr/codeList.do", menuNm:"공통코드관리"},
 			{ parent:"M0043", id:"M0432", url:"", menuNm:"차량코드관리"}
 		];
 		// 메뉴를 생성한다. 추후에는 ajax로 데이터 로드 후, 콜백함수에서 아래 함수 호출. - common.js

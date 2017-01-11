@@ -90,9 +90,12 @@ var MENU = {
 		}
 		// 메뉴별 생성 - 메뉴속성을 만든다.
 		,_createItem : function( o, item ){
-			item.append( "<a>"+o.menuNm+"</a>");
+			var $a = $("<a></a>")
+							.text( o.menuNm )
+							.attr('data-id',o.id);
 			item.attr("data-id",o.id);
-			if( o.url ) item.data('url',o.url);
+			item.append( $a );
+			if( o.url ) $a.attr('data-url',o.url);
 		}
 		// 하위메뉴 트리 생성
 		,_createChild : function( p , $ul ){
@@ -168,8 +171,8 @@ var MENU = {
 					.toggleClass('ui-icon-minus',  !$target.hasClass('ui-icon-minus') )
 					.toggleClass('ui-icon-plus',  !$target.hasClass('ui-icon-plus') );
 			}
-			
-			//기타 클릭이벤트 - url 이동 등
-			//location.href='/lfc/cmm/login/login.do';
+			//기타 클릭이벤트 - url 이동 등  - 테스트중 - get/post/ajax 추가해야함
+			if( $target.attr("data-url"))
+				location.href='/lfc' + $target.attr("data-url");
 		}
 }
