@@ -30,9 +30,9 @@ public class UrlMapping {
 	public static final String INDEX_JSP="/index";
 
 	/** url  : */
-	public static final String CODE_LIST_URL="/mgr/codeList.do";
+	public static final String CODE_LIST_URL="/mgr/cdm/codeList.do";
 	/** jsp  : */
-	public static final String CODE_LIST_JSP="/mgr/code/codeList";
+	public static final String CODE_LIST_JSP="/mgr/cdm/codeList";
 	
 	
 	

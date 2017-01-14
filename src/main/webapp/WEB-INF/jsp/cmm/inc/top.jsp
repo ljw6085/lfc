@@ -13,7 +13,6 @@
 		$(document).ready(function(){
 			// 메뉴버튼을 생성한다. - common.js
 			MENU.createMenuButton( 'menuButton' );
-			$(".header").attr("data-role","header");
 		});
 	</script>
 	<style>
@@ -29,6 +28,6 @@
 <div class='header'>
 	<!-- 메뉴버튼 ID -->
 	<div id='menuButton'></div>
-	<h1 style='text-align: center;'>"페이지타이틀"</h1>
+	<h1 style='text-align: center;'>[LOGO]</h1>
 </div>
 <%@ include file="/WEB-INF/jsp/cmm/inc/menu.jsp" %>

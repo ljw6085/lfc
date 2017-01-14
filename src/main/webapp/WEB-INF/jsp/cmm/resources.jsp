@@ -16,4 +16,5 @@ $(document).ready(function(){
 });
 </script>
 <link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/jquery.mobile-1.4.5.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/common.css">
 <script src="<%=request.getContextPath() %>/resources/js/jquery.mobile-1.4.5.js"></script>

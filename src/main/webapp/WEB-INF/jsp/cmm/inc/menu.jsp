@@ -42,7 +42,7 @@
 			{ parent:"M0004", id:"M0041", url:"", menuNm:"사용자관리"},
 			{ parent:"M0004", id:"M0042", url:"", menuNm:"메뉴관리"},
 			{ parent:"M0004", id:"M0043", url:"", menuNm:"코드관리"},
-			{ parent:"M0043", id:"M0431", url:"/mgr/codeList.do", menuNm:"공통코드관리"},
+			{ parent:"M0043", id:"M0431", url:"/mgr/cdm/codeList.do", menuNm:"공통코드관리"},
 			{ parent:"M0043", id:"M0432", url:"", menuNm:"차량코드관리"}
 		];
 		// 메뉴를 생성한다. 추후에는 ajax로 데이터 로드 후, 콜백함수에서 아래 함수 호출. - common.js

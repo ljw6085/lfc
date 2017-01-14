@@ -14,32 +14,78 @@
  */
 var Common = {
 		/**
-		 * jquery ajax이용 - 기본 json
+		 * 파라미터로 넘어온 값의 type을 반환한다.
 		 */
-		ajax : function( url , data , callback, async , dataType){
+		type : function( o ){
+			//출처 : http://youmightnotneedjquery.com/
+			return Object.prototype.toString.call( o ).replace(/^\[object (.+)\]$/, '$1').toLowerCase();
+		},
+		/**
+		 * Form 객체를 찾아서 반환한다. 실패시 NULL 반환
+		 * @param frm - form 객체 또는 ID 또는 NAME 값
+		 */
+		getForm : function( frm ){
+			var _frm;
+			switch ( this.type( frm ) ) {
+				case 'string':
+					if( document.getElementsByName( frm ).length > 0 ){
+						_frm = document.getElementsByName( frm )[0];
+					}else if ( document.getElementById( frm ) ){
+						_frm = document.getElementById( frm );
+					}else{
+						return null;
+					}
+					
+					break;
+				case 'htmlcollection':
+					if( frm.tagName == 'FORM' ) _frm = frm;
+					break;
+					
+				case 'object':
+					if ( frm.jquery && frm.is('form') ) _frm = frm;
+					else return null;
+					break;
+	
+				default:
+					return null;
+					break;
+			}
+			return $(_frm);
+		},
+		/**
+		 * jquery ajax이용 - json용
+		 * @param url - ajax 호출 URL
+		 * @param data - 파라미터로넘길Data 또는 form(객체 or id or name)
+		 * @param callback - 콜백함수
+		 * @param async - 비동기/동기
+		 */
+		ajaxJson : function( url , data , callback, async ){
 			
 			var option = {
 					url		 	: url
-					,dataType	: dataType
+					,contentType :'application/json; charset=UTF-8'
+					,dataType	: 'json'
 					,method		: 'post'
-					,success:function(res){
-						callback(res);
-					}
+					,success : callback
 					,error: function(a,b,c){
 						console.log( a, b, c );
 					}
 			}
-			
-			if ( typeof dataType 	== 'undefined' ) option.contentType =  "application/json; charset=UTF-8"
-			if ( typeof async 		== 'undefined' ) option.async =  true
-			if ( typeof dataType 	== 'undefined' ) option.dataType = 'json' 
-			if ( typeof data != 'undefined' && data != null && data !== false ){
-				
-				// 추후에 FORM도 받아서 전송하도록 만들자
-				
-				option.data = JSON.stringify( data );
+			if ( async 		=== false ) option.async =  false
+			if ( data ){
+				var dt = {};
+				if( ( frm = this.getForm( data )) ){
+					// 추후에 FORM도 받아서 전송하도록 만들자
+					var param = frm.serializeArray();
+					for ( var i =0 ,len=param.length;i<len;i++ ) {
+						var o = param[i];
+						dt[o.name]=o.value;
+					}
+				}else{
+					dt = data;
+				}
+				option.data = JSON.stringify( dt );
 			}
-			
 			$.ajax( option );
 		}
 };
@@ -50,13 +96,21 @@ var Common = {
 var $m = {
 		/** 버튼을 생성한다. 추후에 option을 더 추가시켜서 사용. */
 		createButton : function(option){
-			var $button = $("<a></a>");
 			
-			var icon = ( typeof option.icon == 'undefined' )? "": option.icon;
-			var href = ( typeof option.url == 'undefined' )? "#": option.url;
+			var btnDefaultClassBox = [
+				'ui-btn'
+				,'ui-shadow'
+				,'ui-corner-all'
+				,'ui-btn-icon-notext'
+				,'ui-btn-inline'
+			];
+			
+			var $button = $("<a></a>")
+				,icon = ( typeof option.icon == 'undefined' )? "": option.icon
+				,href = ( typeof option.url == 'undefined' )? "#": option.url;
 			
 			var _opt = {
-					"class": "ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-inline" +" ui-icon-"+icon ,
+					"class": btnDefaultClassBox.join(' ') +" ui-icon-"+icon ,
 					"href": href
 			}
 			$.extend(_opt, option);

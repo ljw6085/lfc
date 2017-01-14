@@ -47,11 +47,6 @@ public class HomeController {
 		return UrlMapping.INDEX_JSP;
 	}
 	
-	@RequestMapping(value = UrlMapping.CODE_LIST_URL , method = RequestMethod.GET)
-	public String codeList(Locale locale, Model model) {
-		return UrlMapping.CODE_LIST_JSP;
-	}
-	
 	@RequestMapping(value = "/test.json", method = RequestMethod.GET)
 	public Model testjson(Locale locale, Model model) {
 		logger.info("json~~~!~! {}.", locale);

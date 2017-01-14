@@ -1,3 +1,4 @@
 eclipse.preferences.version=1
+encoding//src/main/webapp/WEB-INF/jsp/cmm/inc/bottom.jsp=UTF-8
 encoding//src/main/webapp/WEB-INF/jsp/cmm/resources.jsp=UTF-8
-encoding//src/main/webapp/WEB-INF/jsp/mgr/code/codeList.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/jsp/mgr/cdm/codeList.jsp=UTF-8
