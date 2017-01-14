@@ -12,8 +12,8 @@
 			page_login();
 		})
 		function page_login(){
-			var backTogo = $m.createButton({
-				icon : "ui-icon-arrow-l",
+			var backTogo = $m.createIconButton({
+				icon : "arrow-l",
 				'data-rel':'back'
 			});
 			

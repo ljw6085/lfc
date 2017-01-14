@@ -23,7 +23,11 @@
 	}
 </style>	
 <!-- 메뉴 판넬 -->
-<div id="menuPanel"></div>
+<div id="menuPanel">
+	<div style='height:3em;'>
+		<div>TEST AREA</div>
+	</div>
+</div>
 <script>
 	$( function() {
 		// 메뉴 데이터 DB에서 가져왔다고 가정

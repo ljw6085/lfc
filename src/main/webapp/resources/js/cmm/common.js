@@ -95,7 +95,7 @@ var Common = {
  */
 var $m = {
 		/** 버튼을 생성한다. 추후에 option을 더 추가시켜서 사용. */
-		createButton : function(option){
+		createIconButton : function( option, click){
 			
 			var btnDefaultClassBox = [
 				'ui-btn'
@@ -113,11 +113,14 @@ var $m = {
 					"class": btnDefaultClassBox.join(' ') +" ui-icon-"+icon ,
 					"href": href
 			}
+			
+			
+			
 			$.extend(_opt, option);
 			$button.attr(_opt);
-			if( typeof option.text  == 'undefined'){
-				$button.text( option.text );
-			}
+			if( typeof option.text  == 'undefined') $button.text( option.text );
+			if( typeof click == 'function' ) $button.bind('click',click);
+			
 			return $button;
 		}
 }
@@ -132,13 +135,12 @@ var MENU = {
 		,createMenuButton : function( menuBtnId ){
 			var _panId = this.ID_BOX.menuPanelId;
 			//버튼생성
-			var $menuBtn = $m.createButton({
+			var $menuBtn = $m.createIconButton({
 				icon : "bars"
-			});	
-			//이벤트바인드
-			$menuBtn.bind('click',function(){
+			},function(){
 				$( "#" + _panId ).panel("open");
-			});
+			});	
+			
 			//버튼append
 			$( '#' + menuBtnId ).append( $menuBtn );
 		}
