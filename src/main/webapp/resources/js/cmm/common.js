@@ -9,6 +9,9 @@
  *  @since 2017.01.08
  *  @version 1.0
  */
+$(function(){
+	$.mobile.page.prototype.initSelector = "div.main_content";	
+});
 /**
  * 공통 namespace
  */
@@ -104,7 +107,7 @@ var $m = {
 				,'ui-btn-icon-notext'
 				,'ui-btn-inline'
 			];
-			
+			if ( option.header ) btnDefaultClassBox.push( 'ui-btn-'+option.header);
 			var $button = $("<a></a>")
 				,icon = ( typeof option.icon == 'undefined' )? "": option.icon
 				,href = ( typeof option.url == 'undefined' )? "#": option.url;
@@ -123,8 +126,160 @@ var $m = {
 			
 			return $button;
 		}
-}
+		/**
+		 * button을 세팅한다. option을 넘겨 원하는 버튼을 생성할 수 있다.
+		 * @param target : 버튼이 생성될 a, button 객체
+		 * @param option : 버튼생성옵션
+		 * { icon:'delete'
+			 ,iconPosition:'left'
+			 ,mini:true
+			 ,inline:true
+			 ,notext:true
+			 ,corner:true
+			 ,shadow:true }
+		 */
+		,setButton:function( target, option ){
+			var $t = $(target);
+			if( $t.is('a') || $t.is('button') ){
+				$t.each(function(){
+					var _t = $(this);
+					var classes = ['ui-btn'];
+					for( var attr in option ){
+						var value = option[attr];
+						switch (attr) {
+						case 'mini':
+							if(value === true) classes.push( 'ui-mini' );
+							break;
+						case 'inline':
+							if(value === true) classes.push( 'ui-btn-inline' );
+							break;
+						case 'icon':
+							classes.push( 'ui-icon-'+value );
+							break;
+						case 'iconPosition':
+							classes.push( 'ui-btn-icon-'+value );
+							break;
+						case 'notext':
+							if(value === true) classes.push( 'ui-btn-icon-notext');
+							break;
+						case 'header':
+							classes.push( 'ui-btn-'+value);
+							break;
+						}
+					}
+					if( option ){
+						if( option.corner !== false ) classes.push('ui-corner-all');
+						if( option.shadow !== false ) classes.push('ui-shadow');
+						if( !option.iconPosition &&  !option.notext) classes.push( 'ui-btn-icon-left');
+					}
+					if( (icon = _t.attr('data-icon')) ) {
+						classes.push('ui-icon-'+icon);
+					}
+					_t.removeClass('ui-link');
+					_t.addClass(classes.join(' '));
+				}).trigger('refresh');
+			}
+		}
+		,setControlGroup:function( target, isHorizontal ){
+			var $target = $(target);	
+			var attr = { 'data-role':'controlgroup' }
+			if( isHorizontal ) attr['data-type'] = 'horizontal'
+			$target.attr( attr );
+		}
+		,table:{
+			createHeader:function( headData ){
+				var head = $("<thead></thead>");
+				for( var i =0, len = headData.length; i < len ; i++){
+					var $th = $("<th></th>");
+					var o = headData[i];
+					for ( var attr in o ){
+						var val = o[attr];
+						var attrKey='';
+						switch ( attr ) {
+							case 'colId':
+								attrKey='data-col-id';
+								break;
+							case 'colName':
+								attrKey='data-col-name';
+								$th.append($('<div>'+val+'</div>'));
+								$th.text( val );
+								break;
+							case 'priority':
+								if( val ){
+									attrKey='data-priority';
+									$th.addClass('ui-table-priority-'+val);
+								}
+								break;
+						}
+						if( attrKey ) $th.attr(attrKey,val);
+					}
+					$th.attr('data-colstart',(i+1));
+					//data-priority data-colstart ui-table-priority-2
+					head.append( $th );
+				}
+				
+				return head;
+			}
+			,createBody :function( header, data ){
+				console.log( header );
+				var tbody = $("<tbody></tbody>");
+				for( var i=0, len=data.length;i<len;i++){
+					var $tr = $("<tr></tr>");
+					var o = data[i];
+					for( var k=0,kLen=header.length;k<kLen;k++){
+						var $td = $("<td></td>");
+						var h = header[k];
+						var colId = h.colId;
+						var value = o[h.colId];
+						if( h.priority ){
+							$td.addClass('ui-table-priority-'+h.priority);
+						}
+						$td.attr('data-col-id', colId );
+//						$td.append('<b class="ui-table-cell-label">'+h.colName+'</b>');
+						$td.append("<b>"+value+"</b>");
+						$tr.append($td);
+					}
+					tbody.append($tr);
+				}
+				return tbody;
+			}
+		}
+		,setTable : function ( wrapTarget , option ){
+			var $wrap= $(wrapTarget);
+			var $target;
+			option = option || {};
+			if( $wrap.find('table')[0] ){
+				$target = $wrap.find('table');
+			}else{
+				var $target=$('<table></table>');
+				var header = this.table.createHeader( option.header );
+				var body = this.table.createBody( option.header , option.data );
+				console.log( $target );
+				$target.append( header ).append( body );
+				$wrap.append( $target );
+			}
 
+			var classes =['table-stripe', 'ui-responsive', 'table-stroke'];
+			var _option = {
+					'data-role':'table'
+					,'data-mode':'reflow'
+					,'data-column-btn-text':'컬럼선택'
+			}
+			if ( option.toggle ) _option['data-mode'] = 'columntoggle'; 
+
+			$target.addClass( classes.join(' '));
+			$target.attr(_option);
+			
+			$target.table({
+				create:function(event,ui){
+					$(".ui-table-columntoggle-btn").hide();	
+					if( typeof option.create == 'function') option.create( event, ui );
+				}
+			});
+
+			return $target;
+		}
+}
 /** 메뉴 관련 객체 */
 var MENU = {
 		
@@ -136,7 +291,8 @@ var MENU = {
 			var _panId = this.ID_BOX.menuPanelId;
 			//버튼생성
 			var $menuBtn = $m.createIconButton({
-				icon : "bars"
+				icon : "grid"
+				,header:'left'
 			},function(){
 				$( "#" + _panId ).panel("open");
 			});	
@@ -152,6 +308,16 @@ var MENU = {
 			item.attr("data-id",o.id);
 			item.append( $a );
 			if( o.url ) $a.attr('data-url',o.url);
+
+			// depth 
+			$a.prepend( this._createTab( o.depth ));
+		}
+		,_createTab : function ( depth ){
+			var blank = $("<div></div>").css({
+				display:'inline-block',
+				width: (depth * 10) 
+			});
+			return blank;
 		}
 		// 하위메뉴 트리 생성
 		,_createChild : function( p , $ul ){
@@ -161,7 +327,6 @@ var MENU = {
 					, o = p[i];
 				
 				_t._createItem( o , item );
-				
 				$ul.append( item );
 				if( o.child.length > 0){
 					item.attr("data-icon",'plus');
@@ -191,28 +356,23 @@ var MENU = {
 			
 			_t._createChild( rootObj, menu );
 			
-			// 메뉴 판넬 속성지정은 여기서한다. - jquery mobile 속성 적용
-			$("#" + _t.ID_BOX.menuPanelId )
-				.attr("data-role", "panel")
-				.attr("data-position", "left")
-				.attr("data-display", "overlay")
-				.append(menu);
 			
-			// listview 적용
-			$('ul').listview();
+			// 메뉴 append
+			$("#" + _t.ID_BOX.menuPanelId )
+					.append(menu) // ul append
+					.panel() // panel 생성
+						.find('ul').listview(); // listview 생성 
+						
 			
 			//최초 숨김
 			$('#'+ _t.ID_BOX.menuRootUlId + ' ul').css('display','none');
 
 			//트리설정(뎁스별) - 추후에 정리
 			$('ul.depth0').siblings("a").addClass('topMenu');
-			$('ul.depth0 a').css('padding-left','2em');
-			$('ul.depth1 a').css('padding-left','4em');
 			
 			// 클릭이벤트바인드
 			$("#" + _t.ID_BOX.menuRootUlId ).bind('click', _t.menuClickCallback ); 
-			// 메뉴판생성
-			$("#" + _t.ID_BOX.menuPanelId ).panel(); // 메뉴판 생성
+
 		}
 		,menuClickCallback : function ( event ){
 			var $target = $(event.target);
@@ -228,7 +388,11 @@ var MENU = {
 					.toggleClass('ui-icon-plus',  !$target.hasClass('ui-icon-plus') );
 			}
 			//기타 클릭이벤트 - url 이동 등  - 테스트중 - get/post/ajax 추가해야함
-			if( $target.attr("data-url"))
-				location.href='/lfc' + $target.attr("data-url");
+			if( $target.attr("data-url")){
+				$.mobile.loading('show');
+				setTimeout(function(){
+					location.href='/lfc' + $target.attr("data-url");
+				}, 300);
+			}
 		}
 }

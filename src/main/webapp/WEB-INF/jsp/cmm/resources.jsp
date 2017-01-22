@@ -11,7 +11,11 @@
 <script>
 /** jquery Mobile init  */
 $(document).ready(function(){
-	$(".header").attr("data-role","header");
+	$(".header").attr({
+		"data-role":"header"
+		,'data-position':'fixed'
+// 		,'data-fullscreen':true
+	});
 	$(".footer").attr("data-role","footer");
 });
 </script>

@@ -4,4 +4,9 @@
 	<h1 style='text-align: center;'>Footer</h1>
 </div>
 </body>
+<script>
+$(function(){
+	$(".main_content").trigger('create');
+});
+</script>
 </html>

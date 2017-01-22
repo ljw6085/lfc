@@ -12,22 +12,15 @@
 		/** 페이지 상단에 관련된 스크립트 작성.  */
 		$(document).ready(function(){
 			// 메뉴버튼을 생성한다. - common.js
-			MENU.createMenuButton( 'menuButton' );
+			MENU.createMenuButton( 'header' );
 		});
 	</script>
 	<style>
-		#menuButton {
-			position: absolute;
-			padding-left:0.5em;
-		}
-		
 	</style>
 </head>
 <body>
 <!-- header : content부분으로 이동시킬지 말지 고민중 (페이지타이틀때문) -->
-<div class='header'>
-	<!-- 메뉴버튼 ID -->
-	<div id='menuButton'></div>
+<div id='header' class='header'>
 	<h1 style='text-align: center;'>[LOGO]</h1>
 </div>
 <%@ include file="/WEB-INF/jsp/cmm/inc/menu.jsp" %>

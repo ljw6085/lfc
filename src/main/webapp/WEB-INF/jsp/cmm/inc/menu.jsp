@@ -11,11 +11,9 @@
 		padding : 0 !important;
 	}
 	ul.depth0 a{
-		padding-left: 3 em !important;
 		font-size: 0.8em !important;
 	}
 	ul.depth1 a{
-		padding-left: 5 em !important;
 		font-size: 0.7em !important;
 	}
 	a.topMenu {
@@ -23,7 +21,7 @@
 	}
 </style>	
 <!-- 메뉴 판넬 -->
-<div id="menuPanel">
+<div id="menuPanel" data-role='panel' data-position='left' data-display='overlay' >
 	<div style='height:3em;'>
 		<div>TEST AREA</div>
 	</div>
@@ -32,11 +30,11 @@
 	$( function() {
 		// 메뉴 데이터 DB에서 가져왔다고 가정
 		var temp_menu_data = [
-			{ parent:null, id:"M0000", url:"/index.do", menuNm:"MAIN" },
-			{ parent:null, id:"M0001", url:"", menuNm:"정보조회" },
-			{ parent:null, id:"M0002", url:"", menuNm:"정보관리" },
-			{ parent:null, id:"M0003", url:"", menuNm:"게시판"},
-			{ parent:null, id:"M0004", url:"", menuNm:"운영관리"},
+			{ parent:null, id:"M0000", url:"/index.do", menuNm:"MAIN" ,sort:1 },
+			{ parent:null, id:"M0001", url:"", menuNm:"정보조회", sort:2 },
+			{ parent:null, id:"M0002", url:"", menuNm:"정보관리" ,sort:3 },
+			{ parent:null, id:"M0003", url:"", menuNm:"게시판" ,sort:4 },
+			{ parent:null, id:"M0004", url:"", menuNm:"운영관리", sort:5 },
 			{ parent:"M0001", id:"M0011", url:"", menuNm:"차량조회"},
 			{ parent:"M0001", id:"M0012", url:"", menuNm:"주차조회"},
 			{ parent:"M0002", id:"M0021", url:"", menuNm:"차량정보관리"},
