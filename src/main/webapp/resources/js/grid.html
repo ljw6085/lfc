@@ -15,29 +15,33 @@
 		$(document).ready(function(){
 			var $wrap = $("#gridWrap");
 			
-			var $tableWrap  = $wrap.find('.g-table-wrap');
-			var $bodyWrap = $wrap.find('.g-body-wrap');
-			var $headWrap = $wrap.find('.g-header-wrap');
-			var $body	 = $bodyWrap.find('.g-table-body');
-			var $head	 = $bodyWrap.find('.g-table-head');
-			var $scroll_y_wrap = $tableWrap.find('.y-scroll-wrap');
-			var $scroll_y = $tableWrap.find('.y-scroll');
-			var $scroll_x_wrap = $tableWrap.find('.x-scroll-wrap');
-			var $scroll_x = $tableWrap.find('.x-scroll');
-			var oBodyWrap = $bodyWrap[0];
-			var oBody= $body[0];
-			var paramWidth = 500;
-			var scrollWidth = 20;
-			var paramHeight = 200;
-			var autoFit = true;
+			var $tableWrap  	= $wrap.find('.g-table-wrap')
+				,$bodyWrap 		= $wrap.find('.g-body-wrap')
+				,$headWrap 		= $wrap.find('.g-header-wrap')
+				,$body	 		= $bodyWrap.find('.g-table-body')
+				,$head	 		= $bodyWrap.find('.g-table-head')
+				,$scroll_y_wrap	= $tableWrap.find('.y-scroll-wrap')
+				,$scroll_y 		= $tableWrap.find('.y-scroll')
+				,$scroll_x_wrap	= $tableWrap.find('.x-scroll-wrap')
+				,$scroll_x 		= $tableWrap.find('.x-scroll')
+				,oBodyWrap 		= $bodyWrap[0]
+				,oBody			= $body[0];
+
+			var ATTR_BOX = {
+					paramWidth : 500
+					,scrollWidth : 20
+					,paramHeight : 200
+					,autoFit : true
+			}
 
 			//[1] 높이 세팅 
-			if( ! autoFit ){
-				$tableWrap .width( paramWidth );
-				$bodyWrap.width( paramWidth - scrollWidth );
-				$headWrap.width( paramWidth - scrollWidth );
+			if( ! ATTR_BOX.autoFit ){
+				$tableWrap .width( ATTR_BOX.paramWidth );
+				$bodyWrap.width( ATTR_BOX.paramWidth - ATTR_BOX.scrollWidth );
+				$headWrap.width( ATTR_BOX.paramWidth - ATTR_BOX.scrollWidth );
 			}
-			$bodyWrap.height( paramHeight );
+
+			$bodyWrap.height( ATTR_BOX.paramHeight );
 			
 			//[2] scroll position calculate 변수/함수 관리객체
 			var SCROLL_BOX = {
@@ -203,23 +207,21 @@
 
 				}
 				,resize:function(e){
-					var scrollYWidth = 20;
-					var totalWidth = $wrap[0].offsetWidth - scrollYWidth; 
-					var totalHeight = $wrap[0].offsetHeight - scrollYWidth; 
+
+					var totalWidth = $wrap[0].offsetWidth - ATTR_BOX.scrollWidth;
+					var totalHeight = $wrap[0].offsetHeight - ATTR_BOX.scrollWidth;
 					
 					var windowHeight = $(window).height();
 					
 					if( windowHeight < totalHeight  ){
-						totalHeight = windowHeight - scrollYWidth - $headWrap.outerHeight();
-						console.log( totalHeight , windowHeight , $headWrap.outerHeight());
+						totalHeight = windowHeight - ATTR_BOX.scrollWidth - $headWrap.outerHeight();
 					}
 
-					$headWrap.width( totalWidth);
+					$headWrap.width( totalWidth );
 					$bodyWrap.width( totalWidth );
-
+					
 					$bodyWrap.height( totalHeight );
 					this.setScrollSizeAndCreateAt( 'x' );
-
 					this.setScrollSizeAndCreateAt( 'y' );
 				}
 			}
@@ -252,7 +254,7 @@
 			$scroll_x.on('mouseout', function(e){ this.style.background = '#777'});
 			$scroll_y.on('mouseout', function(e){ this.style.background = '#777'});
 
-/////////////////////---------------------------------------------------- mobile touch event		
+			/////////////////////---------------------------------------------------- mobile touch event		
 			var TOUCH_BOX = {
 				scrollSpeed	: 7
 				,DIRECTION_H : 0
@@ -281,9 +283,9 @@
 					var slope = parseFloat((newY/newX).toFixed(2),10);
 	
 					if( slope > hSlope){//수직이동
-						moveType = TOUCH_BOX.DIRECTION_V ;	
+						moveType = this.DIRECTION_V ;	
 					}else{// 수평이동
-						moveType = TOUCH_BOX.DIRECTION_H ;	
+						moveType = this.DIRECTION_H ;	
 					}
 					return moveType;
 				}
@@ -319,24 +321,6 @@
 					$scroll_x[0].style.left = _left + 'px';	
 	
 				}
-				,getDomSize( target, type ){
-					var length="";	
-					if ( type.toUpperCase() == 'X')	{
-						length = 'Width';
-					}else {
-						length = 'Height';
-					}
-					return $(target)['outer'+length]();
-				}
-				,getDomScrollOffset( target, type ){
-					var direction =""
-					if ( type.toUpperCase() == 'X')	{
-						direction = "Left";
-					}else {
-						direction = "Top";
-					}
-					return $(target)['scroll'+direction]();
-				}
 				,touchmove : function ( e ){
 					 var t = this;						
 					t.callPreventDefault( e );
@@ -347,61 +331,69 @@
 
 					// 사용자 터치이동 방향
 					var direction = t.getTouchType( x , y , t.touchStartPosX , t.touchStartPosY );
-
+					
 					// 움직인 거리
 					var movementX = ( x - t.touchStartPosX ) * -1;
 					var movementY = ( y - t.touchStartPosY ) * -1;
+					
+					var bodyWrapScrollPos
+						,bodySize
+						,scrollWrapSize
+						,scrollCursorSize
+						,scrollDirection
+						,targetCursor
+						,movement;
+
 					if( direction == t.DIRECTION_H ){
-
-						var scrlX = $bodyWrap.scrollLeft() + ( movementX / t.scrollSpeed );	
-
-						if ( scrlX < 0 ) scrlX = 0;
-						else if( scrlX > $body.outerWidth() ) scrlX = $body.outerWidth();
-						
-						$bodyWrap.scrollLeft( scrlX );
-						$headWrap.scrollLeft( scrlX );
-
-						var _left = $bodyWrap.scrollLeft() * 	$scroll_x_wrap.outerWidth() / $body.outerWidth();
-						
-						if( _left > $scroll_x_wrap.outerWidth() -  $scroll_x.outerWidth() ){
-							_left = $scroll_x_wrap.outerWidth() -  $scroll_x.outerWidth() ;
-						}
-							
-						$scroll_x[0].style.left = _left + 'px';	
-
-						
+						bodyWrapScrollPos	= $bodyWrap.scrollLeft();
+						bodySize 			= $body.outerWidth();
+						scrollWrapSize 		= $scroll_x_wrap.outerWidth();
+						scrollCursorSize 	= $scroll_x.outerWidth();
+						scrollDirection 	= 'Left';
+						targetCursor 		= $scroll_x;
+						movement 			= movementX;
 					}else if( direction == t.DIRECTION_V ){
-
-						var scrlY = $bodyWrap.scrollTop() + ( movementY / t.scrollSpeed );	
-						if ( scrlY < 0 ) scrlY = 0;
-						else if( scrlY > $body.outerHeight() ) scrlY = $body.outerHeight();
-						
-						$bodyWrap.scrollTop( scrlY );
-						$headWrap.scrollTop( scrlY );	
-
-						var _top= $bodyWrap.scrollTop() * 	$scroll_y_wrap.outerHeight() / $body.outerHeight();
-						
-						if( _top > $scroll_y_wrap.outerHeight() -  $scroll_y.outerHeight() ){
-							_top = $scroll_y_wrap.outerHeight() -  $scroll_y.outerHeight() ;
-						}
-						
-						$scroll_y[0].style.top = _top + 'px';	
-						
+						bodyWrapScrollPos 	= $bodyWrap.scrollTop();
+						bodySize 			= $body.outerHeight();
+						scrollWrapSize 		= $scroll_y_wrap.outerHeight();
+						scrollCursorSize 	= $scroll_y.outerHeight();
+						scrollDirection 	= 'Top';
+						targetCursor 		= $scroll_y;
+						movement 			= movementY;
 					}else{
-						return;
+						return false;
 					}
+
+					var maxPosition = scrollWrapSize  - scrollCursorSize
+						, scrl 		= bodyWrapScrollPos + ( movement / t.scrollSpeed )
+						, _position = bodyWrapScrollPos * scrollWrapSize / bodySize;
+
+					if( _position > maxPosition) 
+						_position = maxPosition; 
+
+					if ( scrl < 0 ) {
+						scrl = 0;
+					} else if ( scrl > bodySize ) {
+						scrl = bodySize;
+					}
+					
+					$bodyWrap['scroll'+scrollDirection]( scrl );
+					$headWrap['scroll'+scrollDirection]( scrl );
+
+					targetCursor[0].style[scrollDirection.toLowerCase()] = _position + 'px' ;	
+					
+				}
+				,touchend:function(e){
+					this.touchStartPosX = 0;
+					this.touchStartPosY = 0;
 				}
 			} 
 
 			$tableWrap.on('touchstart',function(e){  TOUCH_BOX.touchstart(e)  })
-			.on('touchmove',function(e){
-					TOUCH_BOX.touchmove(e);
-			}).on('touchend',function(e){
-				TOUCH_BOX.touchStartPosX = 0;
-				TOUCH_BOX.touchStartPosY = 0;
-			});
+						.on('touchmove',function(e){ TOUCH_BOX.touchmove(e); })
+							.on('touchend',function(e){ TOUCH_BOX.touchend(e) });
 
-			if ( autoFit ){
+			if ( ATTR_BOX.autoFit ){
 				$(window).on('resize',function(e){
 					SCROLL_BOX.resize(e);
 				}).trigger('resize');
