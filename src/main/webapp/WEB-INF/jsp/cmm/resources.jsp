@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<script>var CONTEXT_PATH="<%=request.getContextPath() %>"</script>
 <script src="<%=request.getContextPath() %>/resources/js/jquery-1.12.0.js"></script>
 <script src="<%=request.getContextPath() %>/resources/js/lib/uc-com-lib.js"></script>
 <script src="<%=request.getContextPath() %>/resources/js/lib/uc-data-lib.js"></script>

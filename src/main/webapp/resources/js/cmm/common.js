@@ -306,9 +306,13 @@ var MENU = {
 							.text( o.menuNm )
 							.attr('data-id',o.id);
 			item.attr("data-id",o.id);
+			item.attr("data-menu-nm",o.menuNm)
 			item.append( $a );
 			if( o.url ) $a.attr('data-url',o.url);
-
+			if( o.icon ) $a.addClass('ui-icon-'+ o.icon);
+			if( CONTEXT_PATH + o.url == location.pathname ){
+				item.addClass('currentMenu');
+			}
 			// depth 
 			$a.prepend( this._createTab( o.depth ));
 		}
@@ -352,7 +356,8 @@ var MENU = {
 			var menu = $("<ul></ul>")
 							.attr("data-role","listview")
 							.attr('id', _t.ID_BOX.menuRootUlId )
-							.addClass('ui-nodisc-icon ui-alt-icon');
+//							.addClass('ui-nodisc-icon ui-alt-icon');
+							.addClass('ui-nodisc-icon');
 			
 			_t._createChild( rootObj, menu );
 			
@@ -365,8 +370,19 @@ var MENU = {
 						
 			
 			//최초 숨김
-			$('#'+ _t.ID_BOX.menuRootUlId + ' ul').css('display','none');
-
+			$('#'+ _t.ID_BOX.menuRootUlId + ' ul').hide();
+			
+			//현재메뉴 선택
+			var pr = $('#'+ _t.ID_BOX.menuRootUlId).find(".currentMenu");
+			var menuNavi = "";
+			while( pr[0] ){
+				if( pr[0].tagName == 'UL' ){ pr.show(); }
+				else if( pr.attr('data-menu-nm') ){
+					menuNavi = menuNavi +"&gt;" + pr.attr('data-menu-nm') 
+				}
+				pr = pr.parent();
+			}
+			$("#menuNavigator").html( "Home"+menuNavi);
 			//트리설정(뎁스별) - 추후에 정리
 			$('ul.depth0').siblings("a").addClass('topMenu');
 			
@@ -391,7 +407,7 @@ var MENU = {
 			if( $target.attr("data-url")){
 				$.mobile.loading('show');
 				setTimeout(function(){
-					location.href='/lfc' + $target.attr("data-url");
+					location.href = CONTEXT_PATH+$target.attr("data-url");
 				}, 300);
 			}
 		}
