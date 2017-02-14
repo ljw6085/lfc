@@ -29,10 +29,15 @@ public class UrlMapping {
 	/** jsp  : */
 	public static final String INDEX_JSP="/index";
 
-	/** url  : */
-	public static final String CODE_LIST_URL="/mgr/cdm/codeList.do";
-	/** jsp  : */
-	public static final String CODE_LIST_JSP="/mgr/cdm/codeList";
+	/** url  : 메뉴관리 리스트조회*/
+	public static final String MGR0001_LIST_URL="/mgr/mgr0001/menuList.do";
+	/** jsp  : 메뉴관리 리스트조회*/
+	public static final String MGR0001_LIST_JSP="/mgr/mgr0001/menuList";
+
+	/** url  : 공통코드관리 */
+	public static final String MGR0002_LIST_URL="/mgr/mgr0002/codeList.do";
+	/** jsp  : 공통코드관리 */
+	public static final String MGR0002_LIST_JSP="/mgr/mgr0002/codeList";
 	
 	
 	
