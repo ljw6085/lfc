@@ -17,6 +17,11 @@ import com.lfc.cmm.login.vo.UserInfoVO;
 
 @Controller
 public class LoginController extends CommonController{
+	@RequestMapping(value = UrlMapping.LOGOUT_URL, method = RequestMethod.GET)
+	public String logout(Locale locale, Model model, HttpServletRequest req) {
+		req.getSession().invalidate();
+		return UrlMapping.LOGIN_JSP;
+	}
 	@RequestMapping(value = UrlMapping.LOGIN_URL, method = RequestMethod.GET)
 	public String login(Locale locale, Model model, HttpServletRequest req) {
 		String returnOK = UrlMapping.INDEX_JSP;

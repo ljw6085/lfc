@@ -36,6 +36,9 @@
 					.height( w );
 			}).trigger('resize');
 			
+			$("#logout").bind('click',function(){
+				location.href=CONTEXT_PATH+"/cmm/login/logout.do";
+			});
 		})
 		.on('swipeleft','.ui-page',function(e){
 			navnext( url+"#page2" );
@@ -60,49 +63,74 @@
 		}
 		
 		</script>
-		<style>
+	<style>
+		.ui-page { background: #eee;}
 	</style>
 </head>
 <body>
 <!-- form 단위로 이루어진 content -->
 <div data-role="page" id='page1' >
 	<div data-role="header" data-position='fixed' id='indexMenu_page1'>
-		<h1>정보조회</h1>
+		<h1>LFC</h1>
 	</div>
 	<div role='main' class='ui-content'>
 		<div class="ui-grid-a">
 		    <div class="ui-block-a block">
-		    	<div class='grid-box'>차량정보조회</div>
+		    	<div class='grid-box'>
+		    		<div>차량정보조회</div>
+			    	<div><img src='<c:url value="/images/car_select_.png"/>' width='50%'></div>
+		    	</div>
 		    </div>
 		    <div class="ui-block-b block">
-		    	<div class='grid-box'>주차정보조회</div>
+		    	<div class='grid-box'>
+		    		<div >주차정보조회</div>
+		    		<div><img src='<c:url value="/images/parking_select_.png"/>' width='50%'></div>
+		    	</div>
 		    </div>
 		    <div class="ui-block-a block">
-		    	<div class='grid-box'>공지사항</div>
+		    	<div class='grid-box'>
+		    		<div>공지사항</div>
+		    		<div><img src='<c:url value="/images/notice_icon_.png"/>' width='50%'></div>
+		    	</div>
 		    </div>
 		    <div class="ui-block-b block">
-		    	<div class='grid-box' id='codeList'>차량코드조회</div>
+		    	<div class='grid-box' id='codeList'>
+		    		<div>차량코드조회</div>
+		    		<div><img src='<c:url value="/images/car_code_select_.png"/>' width='50%'></div>
+	    		</div>
 		    </div>
 		    <div class="ui-block-a block">
-		    	<div class='grid-box '>차량정보관리</div>
+		    	<div class='grid-box '>
+		    		<div>차량정보관리</div>
+		    		<div><img src='<c:url value="/images/car_info_mgr_.png"/>' width='50%'></div>
+		    	</div>
 		    </div>
 		    <div class="ui-block-b block">
-		    	<div class='grid-box '>주차정보관리</div>
+		    	<div class='grid-box '>
+		    		<div>주차정보관리</div>
+		    		<div><img src='<c:url value="/images/parking_info_mgr_.png"/>' width='50%'></div>
+	    		</div>
 		    </div>
 		</div><!-- /grid-c -->
 	</div>
 </div>
 <div data-role="page" id='page2'>
 	<div data-role="header" data-position='fixed' id='indexMenu_page2'> 
-		<h1>관리자페이지</h1> 
+		<h1>LFC - Manager</h1> 
 	</div>
 	<div role='main' class='ui-content'>
 		<div class="ui-grid-a">
 		    <div class="ui-block-a block">
-		    	<div class='grid-box '>공지사항관리</div>
+		    	<div class='grid-box '>
+		    	<div>공지사항관리</div>
+	    		<div><img src='<c:url value="/images/notice_mgr.png"/>' width='50%'></div>
+		    </div>
 		    </div>
 		    <div class="ui-block-b block">
-		    	<div class='grid-box ' id='menuList'>운영관리</div>
+		    	<div class='grid-box ' id='menuList'>
+		    		<div>운영관리</div>
+		    		<div><img src='<c:url value="/images/op_mgr.png"/>' width='50%'></div>
+		    	</div>
 		    </div>
 		</div><!-- /grid-c -->
 	</div>
@@ -111,6 +139,7 @@
 	ID : ${sessionScope.userId }
 	이름 : ${sessionScope.userNm }
 	권한 : ${sessionScope.userAuth }
+	<div id='logout'>로그아웃</div>
 </div>
 <div id='pageNaiv' style='position:fixed; z-index: 9999;bottom:0;left:50%;margin-left:-19px;'> ● ○ </div>
 </body>

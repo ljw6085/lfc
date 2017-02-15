@@ -26,6 +26,8 @@ public class UrlMapping {
 	public static final String LOGIN_URL="/cmm/login/login.do";
 	/** jsp  : */
 	public static final String LOGIN_JSP="/cmm/login/login";
+	/** url  : */
+	public static final String LOGOUT_URL="/cmm/login/logout.do";
 	
 	
 	/** url  : */
