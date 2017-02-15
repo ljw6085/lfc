@@ -1,9 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- 메뉴 판넬 -->
-<div id="menuPanel" data-role='panel' data-position='left' data-display='overlay' >
+<div id="menuPanel" data-role='panel' data-position='left' data-display='push' data-position-fixed="true" >
 <!-- <div id='menuNavigator'></div> -->
 </div>
 <script>
@@ -31,3 +30,4 @@
 		MENU.createMenu( temp_menu_data );
 	});
 </script>
+<div role='main' class='ui-content'>

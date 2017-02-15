@@ -73,7 +73,7 @@
 	<div data-role="header" data-position='fixed' id='indexMenu_page1'>
 		<h1>LFC</h1>
 	</div>
-	<div role='main' class='ui-content'>
+	<div role='main' class='ui-content ui-index'>
 		<div class="ui-grid-a">
 		    <div class="ui-block-a block">
 		    	<div class='grid-box'>
@@ -118,7 +118,7 @@
 	<div data-role="header" data-position='fixed' id='indexMenu_page2'> 
 		<h1>LFC - Manager</h1> 
 	</div>
-	<div role='main' class='ui-content'>
+	<div role='main' class='ui-content ui-index'>
 		<div class="ui-grid-a">
 		    <div class="ui-block-a block">
 		    	<div class='grid-box '>

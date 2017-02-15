@@ -27,8 +27,9 @@
 	</style>
 </head>
 <body>
-<!-- header : content부분으로 이동시킬지 말지 고민중 (페이지타이틀때문) -->
-<div id='header' class='header'>
-	<h1 style='text-align: center;'>[LOGO]</h1>
-</div>
-<%@ include file="/WEB-INF/jsp/cmm/inc/menu.jsp" %>
+<div data-role="page"><!-- page start -->
+	<!-- header : content부분으로 이동시킬지 말지 고민중 (페이지타이틀때문) -->
+	<div id='header' class='header'>
+		<h1 style='text-align: center;'>[LOGO]</h1>
+	</div>
+	<%@ include file="/WEB-INF/jsp/cmm/inc/menu.jsp" %>

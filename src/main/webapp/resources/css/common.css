@@ -68,7 +68,7 @@
 /********************************** 메뉴관련 스타일 지정 */
 
 /********** index css */
-.ui-content { max-width:400px; margin:0 auto;}
+.ui-index.ui-content { max-width:400px !important; margin:0 auto;}
 .grid-box { 
 	display: table-cell;
 	vertical-align: middle;
