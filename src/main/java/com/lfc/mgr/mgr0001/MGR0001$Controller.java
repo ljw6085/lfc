@@ -21,13 +21,21 @@ public class MGR0001$Controller extends CommonController {
 	MGR0001$Service service;
 	
 	@RequestMapping(value = UrlMapping.MGR0001_LIST_URL , method=RequestMethod.GET)
-	public String listView(Locale locale, Model model) {
+	public String listInit(Locale locale, Model model) {
 		return UrlMapping.MGR0001_LIST_JSP;
 	}
 	@RequestMapping(value = UrlMapping.MGR0001_LIST_URL, method=RequestMethod.POST)
 	public String listSelect(Locale locale, Model model) {
-		
 		return UrlMapping.MGR0001_LIST_JSP;
+	}
+	
+	@RequestMapping(value = UrlMapping.MGR0001_INSERT_URL, method=RequestMethod.GET)
+	public String insertInit(Locale locale, Model model) {
+		return UrlMapping.MGR0001_INSERT_JSP;
+	}
+	@RequestMapping(value = UrlMapping.MGR0001_INSERT_URL, method=RequestMethod.POST)
+	public String insertInsert(Locale locale, Model model) {
+		return UrlMapping.MGR0001_INSERT_JSP;
 	}
 	
 }

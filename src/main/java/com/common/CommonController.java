@@ -1,7 +1,5 @@
 package com.common;
 
-import org.springframework.stereotype.Controller;
-
 /**
  * 공통 Controller 객체로써 컨트롤러 단에서 공통으로 사용해야하는 부분이 있다면
  * 여기서 구현한다.
@@ -9,6 +7,5 @@ import org.springframework.stereotype.Controller;
  * @author Leejw
  *
  */
-@Controller
 public class CommonController extends SetLogger {
 }

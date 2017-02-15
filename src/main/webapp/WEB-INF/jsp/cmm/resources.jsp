@@ -16,7 +16,11 @@ $(document).ready(function(){
 		,'data-position':'fixed'
 // 		,'data-fullscreen':true
 	});
-	$(".footer").attr("data-role","footer");
+	$(".footer").attr({
+		"data-role":"footer"
+			,'data-position':'fixed'
+//	 		,'data-fullscreen':true
+		});
 });
 </script>
 <link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/jquery.mobile-1.4.5.css">

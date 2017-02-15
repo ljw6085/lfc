@@ -1,6 +1,7 @@
 package com.common;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * 공통 Service 객체
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Leejw
  *
  */
+@Service
 public class CommonService extends SetLogger{
 	@Autowired
 	public CommonDAO dao;
