@@ -1,6 +1,10 @@
 @CHARSET "utf-8";
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
 
-* {text-shadow:0 0 0 !important;}
+* {
+	text-shadow:0 0 0 !important;
+	font-family: 'Nanum Gothic', "Myriad Pro","Consolas";
+}
 
 .main_content {
 	margin : 0.2em 0.3em;
@@ -49,6 +53,7 @@
 		border-color:#0c2c3c !important;
 		background: #044363 !important;
 		color:#fff !important;
+		font-weight:normal;
 		text-shadow:0 0 0 !important;
 	}
 	#menuPanel ul.depth0 > li > a {

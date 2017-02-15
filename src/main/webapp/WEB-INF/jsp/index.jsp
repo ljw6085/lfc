@@ -83,6 +83,12 @@
 		    <div class="ui-block-b block">
 		    	<div class='grid-box' id='codeList'>차량코드조회</div>
 		    </div>
+		    <div class="ui-block-a block">
+		    	<div class='grid-box '>차량정보관리</div>
+		    </div>
+		    <div class="ui-block-b block">
+		    	<div class='grid-box '>주차정보관리</div>
+		    </div>
 		</div><!-- /grid-c -->
 	</div>
 </div>
@@ -92,12 +98,6 @@
 	</div>
 	<div role='main' class='ui-content'>
 		<div class="ui-grid-a">
-		    <div class="ui-block-a block">
-		    	<div class='grid-box '>차량정보관리</div>
-		    </div>
-		    <div class="ui-block-b block">
-		    	<div class='grid-box '>주차정보관리</div>
-		    </div>
 		    <div class="ui-block-a block">
 		    	<div class='grid-box '>공지사항관리</div>
 		    </div>
