@@ -5,7 +5,7 @@
 </div>
 </body>
 <script>
-$(function(){
+$(document).ready(function(){
 	$(".main_content").trigger('create');
 });
 </script>

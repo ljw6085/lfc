@@ -6,24 +6,25 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.common.CommonController;
 import com.common.UrlMapping;
+import com.common.utils.LfcUtils;
 
 /**
  * Handles requests for the application home page.
  */
 @Controller
-public class HomeController {
+public class HomeController extends CommonController{
 	
-	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+//	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
 	/**
 	 * Simply selects the home view to render by returning its name.
@@ -43,9 +44,23 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = UrlMapping.INDEX_URL , method = RequestMethod.GET)
-	public String index(Locale locale, Model model) {
-		return UrlMapping.INDEX_JSP;
+	public String index(Locale locale, Model model, HttpServletRequest req) {
+		String returnOK = UrlMapping.INDEX_JSP;
+		String returnNG = UrlMapping.LOGIN_JSP;
+		return LfcUtils.isLogin(req, returnOK, returnNG);
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	@RequestMapping(value = "/test.json", method = RequestMethod.GET)
 	public Model testjson(Locale locale, Model model) {

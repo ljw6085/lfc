@@ -1,10 +1,14 @@
 package com.common;
+
+import org.springframework.stereotype.Component;
+
 /**
  * URL Mapping 를 관리한다.
  * 
  * @author Leejw
  *
  */
+@Component
 public class UrlMapping {
 
 	/** url  : /home.do */
@@ -33,6 +37,11 @@ public class UrlMapping {
 	public static final String MGR0001_LIST_URL="/mgr/mgr0001/menuList.do";
 	/** jsp  : 메뉴관리 리스트조회*/
 	public static final String MGR0001_LIST_JSP="/mgr/mgr0001/menuList";
+	
+	/** url  : 메뉴관리 리스트조회*/
+	public static final String MGR0001_INSERT_URL="/mgr/mgr0001/menuInsert.do";
+	/** jsp  : 메뉴관리 리스트조회*/
+	public static final String MGR0001_INSERT_JSP="/mgr/mgr0001/menuInsert";
 
 	/** url  : 공통코드관리 */
 	public static final String MGR0002_LIST_URL="/mgr/mgr0002/codeList.do";

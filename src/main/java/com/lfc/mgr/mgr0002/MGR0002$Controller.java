@@ -26,7 +26,6 @@ public class MGR0002$Controller extends CommonController {
 	}
 	@RequestMapping(value = UrlMapping.MGR0002_LIST_URL , method=RequestMethod.POST)
 	public String codeListSelect(Locale locale, Model model) {
-		
 		return UrlMapping.MGR0002_LIST_JSP;
 	}
 	

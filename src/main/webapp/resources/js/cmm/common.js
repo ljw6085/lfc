@@ -287,16 +287,25 @@ var MENU = {
 			menuPanelId : "menuPanel"
 			,menuRootUlId : "menuList"
 		}
-		,createMenuButton : function( menuBtnId ){
-			var _panId = this.ID_BOX.menuPanelId;
+		,DOM_BOX:{
+			$menuPanel:null
+			,$menuUlRoot:null
+		}
+		,init : function(){
+			this.DOM_BOX.$menuPanel = $( "#" + this.ID_BOX.menuPanelId );  
+			this.DOM_BOX.$menuUlRoot = $( "#" + this.ID_BOX.menuRootUlId );  
+		}
+		,createMenuButton : function( menuBtnId , icon ){
+			var t = this;
+			icon = (typeof icon == 'string')?icon:'bars';
 			//버튼생성
 			var $menuBtn = $m.createIconButton({
-				icon : "grid"
+				icon : icon
 				,header:'left'
 			},function(){
-				$( "#" + _panId ).panel("open");
+				$("#" + t.ID_BOX.menuPanelId).panel("open");
 			});	
-			
+			$menuBtn.addClass('menu-header-btn');//.removeClass('ui-shadow');
 			//버튼append
 			$( '#' + menuBtnId ).append( $menuBtn );
 		}
@@ -310,11 +319,20 @@ var MENU = {
 			item.append( $a );
 			if( o.url ) $a.attr('data-url',o.url);
 			if( o.icon ) $a.addClass('ui-icon-'+ o.icon);
-			if( CONTEXT_PATH + o.url == location.pathname ){
-				item.addClass('currentMenu');
-			}
+			
+			this._compareCurrentUrl( item, o.url );
+			
 			// depth 
 			$a.prepend( this._createTab( o.depth ));
+		}
+		,_compareCurrentUrl:function( item, url ){
+			
+			if( this._getPageId(CONTEXT_PATH + url) ==  this._getPageId(location.pathname)){
+				item.addClass('currentMenu');
+			}
+		}
+		,_getPageId:function(url){
+			return url.substring(0, url.lastIndexOf("/"));
 		}
 		,_createTab : function ( depth ){
 			var blank = $("<div></div>").css({
@@ -327,18 +345,18 @@ var MENU = {
 		,_createChild : function( p , $ul ){
 			var _t = this;
 			for( var i =0 ; i < p.length; i++){
-				var item = $("<li></li>").attr('data-icon','none')
+				var item = $("<li></li>")//.attr('data-icon','none')
 					, o = p[i];
 				
 				_t._createItem( o , item );
 				$ul.append( item );
-				if( o.child.length > 0){
-					item.attr("data-icon",'plus');
+				if( o.child.length > 0){ // 자식들이 존재하면
 					// 서브메뉴설정
 					var subMenu = $("<ul></ul>")
 									.attr('data-role','listeview')
 									.addClass("depth"+o.depth);
 					item.append( subMenu );
+					item.attr('data-icon','carat-d');
 					//재귀호출-컨텍스트 유지
 					arguments.callee.call( _t , o.child , subMenu );
 				}
@@ -355,25 +373,21 @@ var MENU = {
 			//root Menu 생성
 			var menu = $("<ul></ul>")
 							.attr("data-role","listview")
-							.attr('id', _t.ID_BOX.menuRootUlId )
-//							.addClass('ui-nodisc-icon ui-alt-icon');
-							.addClass('ui-nodisc-icon');
+							.attr('id', _t.ID_BOX.menuRootUlId );
 			
 			_t._createChild( rootObj, menu );
 			
-			
 			// 메뉴 append
-			$("#" + _t.ID_BOX.menuPanelId )
-					.append(menu) // ul append
+			_t.DOM_BOX.$menuPanel
+				.append(menu) // ul append
 					.panel() // panel 생성
 						.find('ul').listview(); // listview 생성 
 						
-			
 			//최초 숨김
-			$('#'+ _t.ID_BOX.menuRootUlId + ' ul').hide();
+			menu.find('ul').hide();
 			
 			//현재메뉴 선택
-			var pr = $('#'+ _t.ID_BOX.menuRootUlId).find(".currentMenu");
+			var pr = menu.find(".currentMenu");
 			var menuNavi = "";
 			while( pr[0] ){
 				if( pr[0].tagName == 'UL' ){ pr.show(); }
@@ -387,22 +401,15 @@ var MENU = {
 			$('ul.depth0').siblings("a").addClass('topMenu');
 			
 			// 클릭이벤트바인드
-			$("#" + _t.ID_BOX.menuRootUlId ).bind('click', _t.menuClickCallback ); 
+			menu.bind('click', _t.menuClickCallback ); 
 
 		}
 		,menuClickCallback : function ( event ){
 			var $target = $(event.target);
 			
-			$target
-				.closest("li")
-					.find("ul:eq(0)")
-					.slideToggle('fast');
-
-			if( !$target.hasClass("ui-icon-none") ){
-				$target
-					.toggleClass('ui-icon-minus',  !$target.hasClass('ui-icon-minus') )
-					.toggleClass('ui-icon-plus',  !$target.hasClass('ui-icon-plus') );
-			}
+			var $child = $target.next('ul');
+			if( $child[0] ) $child.slideToggle('fast');
+			
 			//기타 클릭이벤트 - url 이동 등  - 테스트중 - get/post/ajax 추가해야함
 			if( $target.attr("data-url")){
 				$.mobile.loading('show');
