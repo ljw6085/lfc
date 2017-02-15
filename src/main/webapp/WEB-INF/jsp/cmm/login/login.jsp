@@ -24,7 +24,7 @@
 	<div data-role="header" data-position="fixed">
 		<h1>LOGIN</h1>
 	</div>
-	<div data-role="main" class="ui-content">
+	<div data-role="main" class="ui-content ui-index">
 		<div style='text-align: right;'>
 			<select name="slider2" id="slider2" data-role="slider" data-mini="true">
 				<option value="off">Off</option>
