@@ -11,8 +11,26 @@
 <style>
 </style>
 	<script>
+		var COL = [
+				{colId:'header1'}
+				,{colId:'header2'}
+				,{colId:'header3'}
+				,{colId:'header4'}
+		];
+		function makeData ( COL, rowCnt ){
+			var tr = [];
+			for( var j = 0 ; j < rowCnt ; j ++){
+				var td = {};
+				for(var i = 0;i<COL.length; i ++){
+					td[COL[i].colId]	= 'data'+j+'_'+i;
+				}
+				tr.push( td );
+			}
+			return tr;
+		}
 
 		$(document).ready(function(){
+
 			var $wrap = $("#gridWrap");
 			
 			var $tableWrap  	= $wrap.find('.g-table-wrap')
@@ -26,13 +44,139 @@
 				,$scroll_x 		= $tableWrap.find('.x-scroll')
 				,oBodyWrap 		= $bodyWrap[0]
 				,oBody			= $body[0];
-
 			var ATTR_BOX = {
 					paramWidth : 500
 					,scrollWidth : 20
 					,paramHeight : 200
 					,autoFit : true
 			}
+			var DATA_BOX = {
+					COL : []
+					,DATA:[]
+					,START_DATA_IDX : 0
+					,RANGE : 0
+					,TRS:[]
+					,COL_INDEX : []
+					,setColInfo:function(col){
+						this.COL = col;
+						return this;
+					}
+					,addRowData: function( tbody, dataIdx ){
+						var t = this;
+						var tr  = $("<tr></tr>");
+						var td = $("<td class='default'></td>");
+						for( var k = 0, kLen = t.COL.length;k < kLen;k++){
+							var _td = t.setCellData( td.clone()[0], t.COL[k], t.DATA[dataIdx] );
+							tr.append( _td );
+						}
+						tbody.append( tr );
+					}
+					,setCellData: function ( td, col, data ){
+						var value = data[col.colId];
+						//formatter
+						if( typeof col.formatter == 'function' )value = col.formatter(value);
+						td.textContent = value;
+						return td;
+					}
+					,setInitColIndex:function ( col ){
+						var returnColIndex = [];
+						for( var i = 0 , len = col.length; i < len; i++){
+							returnColIndex[i] = col[i].colId;
+						}
+						return returnColIndex; 
+					}
+					,setRowData:function( rangeValue ){
+						var startIdx = rangeValue.startIdx
+							,endIdx = rangeValue.endIdx
+							,trIdx = 0;
+						for( var i = startIdx ; i < endIdx ; i++ ){
+							var tr = $(this.TRS[trIdx++]);
+							if( tr[0] ){
+								tr[0].id = i;
+								var tds = tr.find('td');
+								for(var k = 0; k < this.COL.length; k++){
+									this.setCellData( tds[k], this.COL[k], this.DATA[i] );
+								}
+							}
+						}
+						if( this.getOverWrap() == 0 ){
+							if( this.DATA[endIdx + 1] ){
+								this.addRowData( $body, endIdx + 1);
+								this.TRS	= $body.find('tr');
+								this.RANGE	= TRS.length;
+								this.setRowData( rangeValue );
+								return;
+							}
+						}
+						this.START_DATA_IDX = startIdx;
+					}
+					,getDataRangeIdx :function ( param ){
+						var startIdx = param.startIdx
+							,isLimit = param.isLimit
+							,scrollPos = param.scrollPos;
+						
+						var endIdx = startIdx + this.RANGE;
+						if( isLimit === true || endIdx > this.DATA.length ){
+							endIdx = this.DATA.length;
+							startIdx = endIdx - this.RANGE;
+							var bottomArea = this.getOverWrap();
+							if( bottomArea > 0 ) $bodyWrap.scrollTop ( bottomArea );
+						}else if ( scrollPos && scrollPos < 10 ){
+							startIdx = 0;
+						}
+						
+						return {
+							startIdx : startIdx
+							,endIdx : endIdx
+						}
+					}
+					,setScrollHeight :function ( bodyWrap, scrollCursor, tbody ){
+						var $scrollWrap = $(scrollCursor).parent();
+						if( ! this.DATA ) this.DATA = [];
+						var totalScrollHeight = $(tbody).find('tr')[0].offsetHeight * this.DATA.length;
+						var scrollHeight = (bodyWrap.offsetHeight * $scrollWrap.outerHeight() / totalScrollHeight );
+						if( scrollHeight < 10 ){
+							scrollHeight = 10;
+						}else if ( scrollHeight > $scrollWrap.outerHeight() || (this.DATA.length == this.RANGE && this.getOverWrap() > 0)){
+							scrollHeight = $scrollWrap.outerHeight() - this.getOverWrap();
+						}
+						
+						var bottomArea = this.getOverWrap();
+						if( bottomArea == 0 ){
+							$(scrollCursor).hide();
+						}else{
+							$(scrollCursor).show()
+								.height( scrollHeight );
+						}
+					}
+					,getOverWrap:function(){
+						return $bodyWrap[0].scrollHeight - $bodyWrap[0].offsetHeight;
+					}
+					,createGrid: function( col, data ){
+						this.DATA = data;
+						this.COL = col;
+
+						$body.html("");
+						var i = 0 ;
+						while( true ){
+							if( this.getOverWrap() > 0 || i == this.DATA.length ) break;
+							this.addRowData( $body, i );
+							i++;
+						}
+						this.TRS = $body.find('tr');
+						this.RANGE = this.TRS.length;
+						this.COL_INDEX = this.setInitColIndex( this.COL );
+						
+						this.setScrollHeight( $bodyWrap[0], $scroll_y[0], $body[0] );
+
+					}
+			}
+			//init
+			DATA_BOX.setColInfo( COL );
+			$("#makeGrid").bind('click',function(e){
+				var data = makeData( COL,  $("#dataCnt").val());
+				DATA_BOX.createGrid( COL, data );
+			});
 
 			//[1] 높이 세팅 
 			if( ! ATTR_BOX.autoFit ){
@@ -46,6 +190,7 @@
 			//[2] scroll position calculate 변수/함수 관리객체
 			var SCROLL_BOX = {
 				scrollPosition:0
+				,scrollPositionMax:0
 				,isMousedown:{
 					x:false
 					,y:false
@@ -100,6 +245,7 @@
 					if( scrollPos < 0 ){ scrollPos = 0	}
 					else if ( scrollPos > scrollPosMax ){ scrollPos = scrollPosMax }
 					this.scrollPosition=scrollPos;
+					this.scrollPositionMax=scrollPosMax;
 					return scrollPos;
 				}
 				,applyScrollPosition:function( type , scrollPos ){
@@ -117,8 +263,13 @@
 						$bodyWrap.scrollLeft( bodyScrollLeft );
 						$headWrap.scrollLeft( bodyScrollLeft );
 					}else{
-						var bodyScrollTop = scrollPos / this.getScrollWrapHeight(type) * bodyWrap.scrollHeight;
-						$bodyWrap.scrollTop( bodyScrollTop );
+						var param = {
+								startIdx : Math.round( ( scrollPos / this.getScrollWrapHeight( type ) ) * DATA_BOX.DATA.length )
+								,isLimit : ( scrollPos == this.scrollPositionMax )
+								,scrollPos : scrollPos
+						}
+						var rangeValue = DATA_BOX.getDataRangeIdx ( param );
+						DATA_BOX.setRowData( rangeValue );
 					}
 				}
 				/**
@@ -178,7 +329,6 @@
 						var scrollPos = _SCROLL_BOX.calculateScrollPosition( e, type );
 						_SCROLL_BOX.applyScrollPosition( type );
 						_SCROLL_BOX.applyScrollByBody( type , oBodyWrap);
-
 					}	
 				}
 				,mouseup:function(e, type){
@@ -187,42 +337,45 @@
 					_SCROLL_BOX.scrollPosition = SCROLL_BOX.getScrollCursor( type ).offset().top;
 				}
 				,wheel:function( e ){
+					preventDefault(e);
 					var scrollMovement = getWheelDelta( e.originalEvent );
-					
-					// 스크롤의 위치가 최하단인지 체크
-					var scrollBottom = $bodyWrap[0].scrollHeight - $bodyWrap[0].offsetHeight - 5;
-					if( ($bodyWrap.scrollTop() <= scrollBottom && scrollMovement > 0 )|| ( scrollMovement < 0 && $bodyWrap.scrollTop() > 0) ) {
-						preventDefault(e);
+					if( scrollMovement > 0 ){
+						DATA_BOX.START_DATA_IDX += 5;
+					}else{
+						DATA_BOX.START_DATA_IDX -= 5;
 					}
-					oBodyWrap.scrollTop += scrollMovement;
+					if ( DATA_BOX.START_DATA_IDX < 0 ) DATA_BOX.START_DATA_IDX = 0;
+					var param = {
+							startIdx : DATA_BOX.START_DATA_IDX
+					}
+					var returnValue = DATA_BOX.getDataRangeIdx( param );
+					DATA_BOX.setRowData( returnValue );
 					
-					var scrollCursorHeight = $scroll_y.outerHeight(); 
-					var scrollWrapHeight = $scroll_y_wrap.outerHeight(); 
-					var maxTop = scrollWrapHeight - scrollCursorHeight ;
-					var _top= $bodyWrap.scrollTop() * 	scrollWrapHeight  / $body.outerHeight();
+					var top = DATA_BOX.START_DATA_IDX + 1;
+					var max = DATA_BOX.DATA.length;
+					var per = ( top / max ) * 100;
+					var scrollMax = $scroll_y_wrap.outerHeight() - $scroll_y.outerHeight();
+					var topOfScroll = ( per / 100 )* $scroll_y_wrap.outerHeight();
 					
-					if( _top > maxTop ){ _top = maxTop }
-
-					$scroll_y[0].style.top = _top + 'px';
+					if( returnValue.endIdx == DATA_BOX.DATA.length ||  DATA_BOX.START_DATA_IDX == 0 ){
+						$bodyWrap[0].scrollTop += scrollMovement;
+						if( DATA_BOX.START_DATA_IDX == 0 ){
+							topOfScroll = 0
+						}else{
+							topOfScroll = scrollMax;
+						}
+					}
+					if( topOfScroll > scrollMax ) topOfScroll = scrollMax;
+					$scroll_y[0].style.top = topOfScroll + 'px';
 
 				}
 				,resize:function(e){
 
 					var totalWidth = $wrap[0].offsetWidth - ATTR_BOX.scrollWidth;
-					var totalHeight = $wrap[0].offsetHeight - ATTR_BOX.scrollWidth;
-					
-					var windowHeight = $(window).height();
-					
-					if( windowHeight < totalHeight  ){
-						totalHeight = windowHeight - ATTR_BOX.scrollWidth - $headWrap.outerHeight();
-					}
 
 					$headWrap.width( totalWidth );
 					$bodyWrap.width( totalWidth );
-					
-					$bodyWrap.height( totalHeight );
 					this.setScrollSizeAndCreateAt( 'x' );
-					this.setScrollSizeAndCreateAt( 'y' );
 				}
 			}
 
@@ -478,24 +631,9 @@
 	</style>
 </head>
 <body>
-<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
-	<div id='console'>aaa</div>
+	<div>
+		<input type='text' id='dataCnt'><input type='button' id='makeGrid' value='makeGrid'>
+	</div>
 	<div id='gridWrap'>
 		<div class='g-table-wrap'>
 			<div class='g-colgrp' >
