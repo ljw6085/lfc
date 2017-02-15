@@ -64,7 +64,7 @@
 		
 		</script>
 	<style>
-		.ui-page { background: #eee;}
+		.ui-panel-wrapper { background: #eee !important;}
 	</style>
 </head>
 <body>
@@ -135,7 +135,7 @@
 		</div><!-- /grid-c -->
 	</div>
 </div>
-<div id="menuPanel" data-role='panel' data-position='left' data-display='overlay'>
+<div id="menuPanel" data-role='panel' data-position='left' data-display='push'>
 	ID : ${sessionScope.userId }
 	이름 : ${sessionScope.userNm }
 	권한 : ${sessionScope.userAuth }
