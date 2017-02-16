@@ -196,7 +196,7 @@ var gridMethod = {
 			
 			$(window).bind('resize',_resize).trigger('resize');
 			function _resize(e){
-				grd.eventBox.resize.call( grd, e )
+				if( grd.boxForDom.$wrap.width() >  0 ) grd.eventBox.resize.call( grd, e );
 			}
 			
 		}
@@ -372,6 +372,7 @@ var gridMethod = {
 			var td = $("<td class='"+this.boxForCss.cutString[this.cutString]+"'></td>");
 			
 			for(var k = 0,kLen=col.length;k<kLen;k++){
+				newTr[0].id = dataIdx;
 				var _td = this.setCellData( td.clone()[0], col[k], data[dataIdx] );
 				newTr.append( _td );
 			}

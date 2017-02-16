@@ -5,10 +5,8 @@
 		<h1 style='text-align: center;'>Footer</h1>
 	</div>
 </div><!-- page -->
-</body>
 <script>
 $(document).ready(function(){
 	$(".main_content").trigger('create');
 });
 </script>
-</html>

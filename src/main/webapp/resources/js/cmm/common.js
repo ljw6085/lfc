@@ -282,8 +282,10 @@ var $m = {
 }
 /** 메뉴 관련 객체 */
 var MENU = {
-		
-		ID_BOX : {
+		LIST:[]
+		,DATA:[]
+		,TREE:null
+		,ID_BOX : {
 			menuPanelId : "menuPanel"
 			,menuRootUlId : "menuList"
 		}
@@ -295,7 +297,61 @@ var MENU = {
 			this.DOM_BOX.$menuPanel = $( "#" + this.ID_BOX.menuPanelId );  
 			this.DOM_BOX.$menuUlRoot = $( "#" + this.ID_BOX.menuRootUlId );  
 		}
-		,createMenuButton : function( menuBtnId , icon ){
+		,get$:function(object){
+        	var _result ;
+			switch (dataLib.type( object )) {
+				case 'string':
+					if( $("#"+object)[0] ){
+						_result = $("#"+object);
+					}else if( $("." + object)[0] ){
+						_result = $("."+object);
+					}else{
+						_result = null;
+					}
+					break;
+					
+				case 'object':
+					_result = dataLib.isEmpty( object.jquery ) ? $(object) : object;
+					break;
+				
+				default:
+					_result = null;
+					break;
+			}
+			if( !_result ) return null;
+			return _result;
+		}
+		,createHeaderBackButton:function( wrapper ){
+			MENU.createHeaderButton({
+				wrapper : wrapper
+				,attr:{
+					rel:"back"
+				}
+				,icon:'carat-l'
+			});
+		}
+		/**
+		 * 헤더에 아이콘을 생성/append
+		 */
+		,createHeaderButton : function( option ){
+			var t = this;
+			var target = option.wrapper;
+			var position = ( option.position )?option.position:'left';
+			var icon = (option.icon )? option.icon : 'bars';
+			var click = (typeof option.click == 'function')? option.click : (function(){});
+			var attr = (option.attr)?option.attr:{};
+			//버튼생성
+			var $menuBtn = $m.createIconButton({
+				icon : icon
+				,header : position
+			},click);	
+			for( var nm in attr ) $menuBtn.attr('data-'+nm,attr[nm]);
+			$menuBtn.addClass('menu-header-btn');//.removeClass('ui-shadow');
+			target = this.get$(target);
+			//버튼append
+			target.append( $menuBtn );
+			
+		},createMenuButton : function( menuBtnId , icon ){
 			var t = this;
 			icon = (typeof icon == 'string')?icon:'bars';
 			//버튼생성
@@ -306,8 +362,10 @@ var MENU = {
 				$("#" + t.ID_BOX.menuPanelId).panel("open");
 			});	
 			$menuBtn.addClass('menu-header-btn');//.removeClass('ui-shadow');
+			
+			var target = this.get$(menuBtnId);
 			//버튼append
-			$( '#' + menuBtnId ).append( $menuBtn );
+			target.append( $menuBtn );
 		}
 		// 메뉴별 생성 - 메뉴속성을 만든다.
 		,_createItem : function( o, item ){
@@ -369,7 +427,9 @@ var MENU = {
 
 			// 트리데이터로 메뉴 생성
 			var rootObj = tree.data.child;
-
+			this.LIST = data; 
+			this.DATA = rootObj; 
+			this.TREE = tree;
 			//root Menu 생성
 			var menu = $("<ul></ul>")
 							.attr("data-role","listview")
@@ -417,5 +477,16 @@ var MENU = {
 					location.href = CONTEXT_PATH+$target.attr("data-url");
 				}, 300);
 			}
+		}
+}
+var $j = {
+		documentReady : function(form , callback, pageEventFunc){
+			$(document).ready(function(){
+				var frm = formLib.getForm(form);
+				callback($(frm));
+				if( pageEventFunc ){
+					pageEventFunc( $(frm) , $( ":mobile-pagecontainer" ).pagecontainer );
+				}
+			});
 		}
 }

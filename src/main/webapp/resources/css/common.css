@@ -85,4 +85,13 @@
 	padding:.1em;
 }
 /********** index css */
+
 .ui-controlgroup, fieldset.ui-controlgroup{ margin: 0;}
+
+.defaultTable {border-collapse: collapse;width:100%;}
+.defaultTable td , .defaultTable th{ border:1px solid #ddd;  }
+th.insertTh , td.insertTd { }
+.insertTh { background: #eee;text-align: center;font-weight: bold; padding:.2em;}
+.insertTd { padding:.2em .4em; }
+
+.insertTd .ui-input-text, .insertTd .ui-input-search { margin:0; }

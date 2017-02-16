@@ -29,13 +29,4 @@ public class MGR0001$Controller extends CommonController {
 		return UrlMapping.MGR0001_LIST_JSP;
 	}
 	
-	@RequestMapping(value = UrlMapping.MGR0001_INSERT_URL, method=RequestMethod.GET)
-	public String insertInit(Locale locale, Model model) {
-		return UrlMapping.MGR0001_INSERT_JSP;
-	}
-	@RequestMapping(value = UrlMapping.MGR0001_INSERT_URL, method=RequestMethod.POST)
-	public String insertInsert(Locale locale, Model model) {
-		return UrlMapping.MGR0001_INSERT_JSP;
-	}
-	
 }
