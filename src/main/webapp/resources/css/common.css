@@ -94,6 +94,10 @@
 /********************************** 메뉴관련 스타일 지정 */
 
 /********** index css */
+.ui-content/*  , .ui-header, .ui-footer */{
+	max-width: 1024px !important;
+	margin: 0 auto;
+}
 .ui-index.ui-content {
 	max-width: 400px !important;
 	margin: 0 auto;
