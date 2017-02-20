@@ -13,10 +13,9 @@
 	<!-- Application Loggers -->
 	<logger name="com">
 		<level value="debug" />
-		<appender-ref ref="console"/>
 	</logger>
 	<logger name="java.sql">
-    	<level	value="DEBUG"/>
+    	<level	value="debug"/>
     </logger>
     
 	<!-- 3rdparty Loggers -->
@@ -38,7 +37,7 @@
 
 	<!-- Root Logger -->
 	<root>
-		<priority value="warn" />
+		<priority value="debug" />
 		<appender-ref ref="console" />
 	</root>
 	

@@ -35,6 +35,10 @@ public class UrlMapping {
 	/** jsp  : */
 	public static final String INDEX_JSP="/index";
 
+	
+	/** url  : 공통코드 로드 */
+	public static final String GET_COMMON_CODE="/getCommonCode.do";
+	
 	/** url  : 메뉴관리 리스트조회*/
 	public static final String MGR0001_LIST_URL="/mgr/mgr0001/menuList.do";
 	/** jsp  : 메뉴관리 리스트조회*/
@@ -44,6 +48,18 @@ public class UrlMapping {
 	public static final String MGR0002_LIST_URL="/mgr/mgr0002/codeList.do";
 	/** jsp  : 공통코드관리 */
 	public static final String MGR0002_LIST_JSP="/mgr/mgr0002/codeList";
+
+	/** url  : 공통코드관리 */
+	public static final String MGR0002_INSERT_URL="/mgr/mgr0002/codeInsert.do";
+	/** jsp  : 공통코드관리 */
+	public static final String MGR0002_INSERT_JSP="/mgr/mgr0002/codeInsert";
+	
+	
+	/** url  : 공통코드관리 */
+	public static final String MGR0002_DELETE_URL="/mgr/mgr0002/codeDelete.do";
+	
+	/** url  : 공통코드관리 상세조회 */
+	public static final String MGR0002_DETAIL_SELECT_URL="/mgr/mgr0002/codeDetailSelect.do";
 	
 	
 	

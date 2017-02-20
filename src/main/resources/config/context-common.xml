@@ -14,5 +14,5 @@
     </bean>
     <!-- choose one from above and alias it to the name Spring expects -->
     <alias name="spring.RegularCommonsMultipartResolver" alias="multipartResolver" />
-    
+   
 </beans>

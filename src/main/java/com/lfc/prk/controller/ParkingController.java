@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.common.CommonController;
+import com.common.SetLogger;
 import com.common.UrlMapping;
 import com.lfc.prk.service.ParkingService;
 import com.lfc.prk.vo.PrkplceCellMngVO;
@@ -21,7 +21,7 @@ import com.lfc.prk.vo.PrkplceCellMngVO;
  * Handles requests for the application home page.
  */
 @Controller
-public class ParkingController extends CommonController {
+public class ParkingController extends SetLogger {
 	
 	@Autowired
 	ParkingService service;

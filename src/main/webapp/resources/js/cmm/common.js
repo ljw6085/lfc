@@ -62,8 +62,9 @@ var Common = {
 		 * @param callback - 콜백함수
 		 * @param async - 비동기/동기
 		 */
-		ajaxJson : function( url , data , callback, async ){
-			
+		ajaxJson : function( url , data , callback, method, async ){
+			// controller 단에서 VO 형태로 파라미터를 받을경우, @requestbody로 받아야함.
+			// 또한 ajax 전송시 stringify로 파싱하여 전송
 			var option = {
 					url		 	: url
 					,contentType :'application/json; charset=UTF-8'
@@ -74,12 +75,14 @@ var Common = {
 						console.log( a, b, c );
 					}
 			}
+			
+			if( method ) option.method = method;
 			if ( async 		=== false ) option.async =  false
 			if ( data ){
 				var dt = {};
-				if( ( frm = this.getForm( data )) ){
+				if( ( frm = formLib.getForm( data )) ){
 					// 추후에 FORM도 받아서 전송하도록 만들자
-					var param = frm.serializeArray();
+					var param = $(frm).serializeArray();
 					for ( var i =0 ,len=param.length;i<len;i++ ) {
 						var o = param[i];
 						dt[o.name]=o.value;
@@ -89,7 +92,69 @@ var Common = {
 				}
 				option.data = JSON.stringify( dt );
 			}
+			console.log( option );
 			$.ajax( option );
+		}
+		
+		,loadedCodeList : {}
+		/**
+		 * 공통코드를 조회하여반환한다.
+		 */
+		,getCommonCode:function( parentCode ){
+			var result,t = this;
+			if( !this.loadedCodeList[parentCode] ){
+				Common.ajaxJson(CONTEXT_PATH+"/getCommonCode.do",{ parentCode:parentCode },function(data){
+					t.loadedCodeList[parentCode] = data;
+		    	},'post',false);
+			}
+			result = this.loadedCodeList[parentCode] ; 
+			return result;
+		}
+		
+		,_matchedRegExp:/#[^#]+#/g
+		,_replaceRegExp:/#/g
+		/**
+		 *  _matchedRexExp ( #...# ) 형식에 맞는 문자열을 치환시킨다.
+		 */
+		,matchedReplace:function(str, data){
+			var t = this;
+			var matched = str.match(t._matchedRegExp);
+			for(var i = 0 ,len=matched.length;i<len;i++){
+				var key = matched[i].replace(t._replaceRegExp,'');
+				var replaceVal = data[key];
+				if( typeof replaceVal == 'undefined' ) replaceVal = '';
+				str = str.replace(matched[i],replaceVal);
+			}
+			return str;
+		}
+		
+		/**
+		 *  target 에있는 객체들의 값을 obejct로 반환한다.
+		 *  ( input , textarea )
+		 */
+		,getDataFromDoms:function( $target ){
+			var result = {};
+			$target.find('input,select').each(function(){
+				var name = this.name;
+				var value;
+				if( this.tagName == 'SELECT'){
+					value = $(this).find("option:selected").val();
+				}else{
+					
+					switch (this.type) {
+					case 'radio':
+					case 'checkbox':
+						if( this.checked ) value = this.value;
+						break;
+						
+					default:
+						value = this.value;
+						break;
+					}
+				}
+				if( typeof value != 'undefined' ) result[name] = value;
+			});
+			return result;
 		}
 };
 
@@ -143,48 +208,84 @@ var $m = {
 			if( $t.is('a') || $t.is('button') ){
 				$t.each(function(){
 					var _t = $(this);
-					var classes = ['ui-btn'];
-					for( var attr in option ){
-						var value = option[attr];
-						switch (attr) {
-						case 'mini':
-							if(value === true) classes.push( 'ui-mini' );
-							break;
-						case 'inline':
-							if(value === true) classes.push( 'ui-btn-inline' );
-							break;
-						case 'icon':
-							classes.push( 'ui-icon-'+value );
-							break;
-						case 'iconPosition':
-							classes.push( 'ui-btn-icon-'+value );
-							break;
-						case 'notext':
-							if(value === true) classes.push( 'ui-btn-icon-notext');
-							break;
-						case 'header':
-							classes.push( 'ui-btn-'+value);
-							break;
+					if( _t.attr('data-is-apply') != 'true' ){
+						var classes = ['ui-btn'];
+						for( var attr in option ){
+							var value = option[attr];
+							switch (attr) {
+							case 'mini':
+								if(value === true) classes.push( 'ui-mini' );
+								break;
+							case 'inline':
+								if(value === true) classes.push( 'ui-btn-inline' );
+								break;
+							case 'icon':
+								classes.push( 'ui-icon-'+value );
+								break;
+							case 'iconPosition':
+								classes.push( 'ui-btn-icon-'+value );
+								break;
+							case 'notext':
+								if(value === true) classes.push( 'ui-btn-icon-notext');
+								break;
+							case 'header':
+								classes.push( 'ui-btn-'+value);
+								break;
+							}
 						}
+						if( option ){
+							if( option.corner !== false ) classes.push('ui-corner-all');
+							if( option.shadow !== false ) classes.push('ui-shadow');
+							if( !option.iconPosition &&  !option.notext) classes.push( 'ui-btn-icon-left');
+						}
+						if( (icon = _t.attr('data-icon')) ) {
+							classes.push('ui-icon-'+icon);
+						}
+						if( (color = _t.attr('data-color')) ) {
+							classes.push('ui-btn-color-'+color);
+						}
+						_t.removeClass('ui-link');
+						_t.addClass(classes.join(' '));
+						_t.attr("data-is-apply",true);
 					}
-					if( option ){
-						if( option.corner !== false ) classes.push('ui-corner-all');
-						if( option.shadow !== false ) classes.push('ui-shadow');
-						if( !option.iconPosition &&  !option.notext) classes.push( 'ui-btn-icon-left');
-					}
-					if( (icon = _t.attr('data-icon')) ) {
-						classes.push('ui-icon-'+icon);
-					}
-					_t.removeClass('ui-link');
-					_t.addClass(classes.join(' '));
 				}).trigger('refresh');
 			}
 		}
 		,setControlGroup:function( target, isHorizontal ){
-			var $target = $(target);	
-			var attr = { 'data-role':'controlgroup' }
-			if( isHorizontal ) attr['data-type'] = 'horizontal'
-			$target.attr( attr );
+			var $target = $(target);
+			$target.each(function(){
+				var _t = $(this);
+				if( _t.attr('data-is-apply') != 'true' ){
+					var attr = { 'data-role':'controlgroup' ,'data-mini':'true'}
+					if( isHorizontal ) attr['data-type'] = 'horizontal'
+					_t.attr( attr );
+					_t.attr("data-is-apply",true);
+				}
+			});
+		}
+		,setIcon:function(target , option){
+			var $target = $(target);
+			$target.each(function(){
+				var _t = $(this);
+				if( _t.attr('data-is-apply') != 'true' ){
+					var btnDefaultClassBox = [
+						'ui-btn'
+						,'ui-mini'
+						,'ui-shadow'
+						,'ui-corner-all'
+						,'ui-btn-icon-notext'
+						,'ui-btn-inline'
+					];
+					if( (icon = _t.attr('data-icon')) ) {
+						btnDefaultClassBox.push('ui-icon-'+icon);
+					}
+					if( (color = _t.attr('data-color')) ) {
+						btnDefaultClassBox.push('ui-btn-color-'+color);
+					}
+					_t.addClass( btnDefaultClassBox.join(' ') );
+					_t.attr("data-is-apply",true);
+				}
+			});
 		}
 		,table:{
 			createHeader:function( headData ){
@@ -278,6 +379,27 @@ var $m = {
 			});
 
 			return $target;
+		}
+		
+		,pageMove:function( url , params){
+			var option = {
+					transition: "slide"
+			};
+			if( params ) {
+				option.params = {}
+				$.extend(option.params, params);
+			}
+			$( ":mobile-pagecontainer" ).pagecontainer( "change", url , option);
+		}
+		/**
+		 * => 방향으로swipe 시 메뉴(헤더버튼) 클릭
+		 */
+		,openMenuFromSwipe :function( $uiPage ){
+			$uiPage.on('swiperight',function(e){
+				$(this).find('.header').find('a').trigger('click');
+			});
+		}
+		,callPopup:function( option ){
 		}
 }
 /** 메뉴 관련 객체 */
@@ -480,13 +602,118 @@ var MENU = {
 		}
 }
 var $j = {
-		documentReady : function(form , callback, pageEventFunc){
+		
+		$page : function(){
+			return $( ":mobile-pagecontainer" );
+		}
+		,refreshPage : function( $form ){
+			$m.setIcon($('.btnIcon'));
+			$m.setButton($('.btn'),{
+				mini:true
+				,inline:true
+			});
+			$m.setControlGroup($(".buttonBox"),true);
+			
+			this.$page().trigger('create');
+			
+			if( $form ) formLib.setValidation( $form );
+		}
+		,documents :[]
+		,initDocument : function(){
+			for( var i = 0 ,len = this.documents.length; i < len ;i ++){
+				this.documents[i].call(document);
+			}
+		}
+		,documentReady : function(form , callback, pageEventFunc){
 			$(document).ready(function(){
 				var frm = formLib.getForm(form);
-				callback($(frm));
+				var uiPage = $(frm).closest("[data-role='page']");
+				callback($(frm),uiPage);
 				if( pageEventFunc ){
 					pageEventFunc( $(frm) , $( ":mobile-pagecontainer" ).pagecontainer );
 				}
 			});
+		}
+		,isMobile:function(){
+			var filter = "win16|win32|win64|mac";
+			if(navigator.platform){
+				if(0 > filter.indexOf(navigator.platform.toLowerCase())){
+					return true;
+				}else{
+					return false;
+				}
+			}
+
+		}
+}
+var COMPONENT ={
+		
+		_radio_check:function(  type , option ,$form ){
+			var name 	 = option.name;
+			var cmmnCode = option.cmmnCode;
+			var target 	 = option.target;
+			var classes  = option.classes;
+			var defaultVal = option.defaultVal;
+			
+			var controllgroup = $("<div data-role='controlgroup' data-type='horizontal' data-mini='true'></div>");
+			target.append( controllgroup );
+			
+			controllgroup.controlgroup();
+			
+			var codeMap;
+			if( typeof cmmnCode == 'string' ){
+				codeMap = Common.getCommonCode( cmmnCode );
+			}else{
+				codeMap = cmmnCode;
+			}
+			
+			var i=0;
+			for( var code in codeMap ){
+				var value = codeMap[code];
+				var id = name+"_"+code;
+				$el = $( "<label for='"+id+"'>" + value + "</label><input type='"+  type  +"' name='"+ name +"' id='"+id+"' value='"+code+"'></input>" );
+				
+				if( (typeof defaultVal != 'undefined' && code == defaultVal) || (typeof defaultVal == 'undefined' && i++ == 0 ) ) {
+					$el[1].checked = true;
+				}
+				
+				if( classes ) $($el[1]).addClass( classes );
+				
+				controllgroup.controlgroup( "container" ).append( $el );
+				$( $el[ 1 ] ).checkboxradio();
+			}
+			$j.refreshPage( $form );
+			return controllgroup;
+		}
+		/**
+		 * http://demos.jquerymobile.com/1.4.5/controlgroup-dynamic/ -- 생성정보 참조
+		 * radio 버튼을 생성해준다.
+		 *  {
+		 *  name : input태그 name
+			cmmnCode : 생성할 공통코드
+			target  : 생성된 태그를 append할 타겟
+			classes : 생성된 태그에 적용시킬 클래스
+			}
+		 */
+		,radio:function( option ,$form ){
+			return this._radio_check(  'radio' , option  , $form);
+		},
+		select:function(option){
+			
+		},
+		/**
+		 * checkbox 버튼을 생성해준다.
+		 *  {
+		 *  name : input태그 name
+			cmmnCode : 생성할 공통코드
+			target  : 생성된 태그를 append할 타겟
+			classes : 생성된 태그에 적용시킬 클래스
+			}
+		 */
+		checkbox:function( option , $form ){
+			return this._radio_check(  'checkbox' ,option   ,$form);
+		},
+		flipSwtich:function(option){
+			
 		}
 }

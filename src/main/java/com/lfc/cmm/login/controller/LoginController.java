@@ -10,13 +10,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.common.CommonController;
+import com.common.SetLogger;
 import com.common.UrlMapping;
 import com.common.utils.LfcUtils;
 import com.lfc.cmm.login.vo.UserInfoVO;
 
 @Controller
-public class LoginController extends CommonController{
+public class LoginController extends SetLogger{
+	
 	@RequestMapping(value = UrlMapping.LOGOUT_URL, method = RequestMethod.GET)
 	public String logout(Locale locale, Model model, HttpServletRequest req) {
 		req.getSession().invalidate();
@@ -26,6 +27,7 @@ public class LoginController extends CommonController{
 	public String login(Locale locale, Model model, HttpServletRequest req) {
 		String returnOK = UrlMapping.INDEX_JSP;
 		String returnNG = UrlMapping.LOGIN_JSP;
+		System.out.println(commonModel.getCommonCode());
 		return LfcUtils.isLogin(req, returnOK, returnNG);
 	}
 	@RequestMapping(value = UrlMapping.LOGIN_URL, method = RequestMethod.POST)

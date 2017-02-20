@@ -16,18 +16,15 @@
 			// 메뉴버튼을 생성한다. - common.js
 			MENU.createMenuButton( 'header' );
 			
-			$m.setButton($('.btn'),{
-				mini:true
-				,inline:true
-			});
-			$m.setControlGroup($(".buttonBox"),true);
+			$j.refreshPage();
+			
 		});
 	</script>
 	<style>
 	</style>
 </head>
 <body>
-<div data-role="page"><!-- page start -->
+<div data-role="page" id='pageMain'><!-- page start -->
 	<!-- header : content부분으로 이동시킬지 말지 고민중 (페이지타이틀때문) -->
 	<div id='header' class='header'>
 		<h1 style='text-align: center;'>[LOGO]</h1>

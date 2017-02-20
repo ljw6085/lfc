@@ -5,6 +5,8 @@
 <!-- Mybatis 예제 -->
 <configuration>
     <typeAliases>
+		<typeAlias alias="CmmnCodeVO" type="com.lfc.mgr.mgr0002.vo.CmmnCodeVO"/>
+		<typeAlias alias="CmmnDivCodeVO" type="com.lfc.mgr.mgr0002.vo.CmmnDivCodeVO"/>
 		<typeAlias alias="hashMap" type="java.util.HashMap"/>
 		<typeAlias alias="camelCaseMap" type="com.common.utils.CamelCaseMap"/>
 		<typeAlias alias="linkedHashMap" type="java.util.LinkedHashMap"/>

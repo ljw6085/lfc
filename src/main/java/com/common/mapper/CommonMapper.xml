@@ -2,11 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="Common">
 
-	<select id="test" resultType="string">
-		select 111 from dual
+	<select id="selectCmmnCode" parameterType="CmmnCodeVO" resultType="camelCaseMap">
+		 select
+		 	PARENT_CODE as DIV_CODE,
+			CODE,
+			CODE_NM
+		 from CMMN_CODE
+		 where 1=1
+		 <if test="parentCode != null and parentCode != '' ">
+			 AND PARENT_CODE = #{parentCode}
+		 </if>
+		 AND USE_AT = 'Y'
+		 ORDER BY SORT
 	</select>
-	<select id="list" resultType="map">
-		select * from  conect_user_info
+	<select id="selectAllCmmnDivCode" resultType="CmmnCodeVO">
+		 select
+			CODE,
+			CODE_NM
+		 from CMMN_CODE 
+		 where 1=1
+			AND PARENT_CODE = 'ROOT'
+			AND USE_AT = 'Y'
 	</select>
 	
 </mapper>

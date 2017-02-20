@@ -8,14 +8,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.common.CommonController;
+import com.common.SetLogger;
 import com.common.UrlMapping;
 
 /**
  * Handles requests for the application home page.
  */
 @Controller
-public class MGR0001$Controller extends CommonController {
+public class MGR0001$Controller extends SetLogger {
 	
 	@Autowired
 	MGR0001$Service service;

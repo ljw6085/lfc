@@ -8,5 +8,6 @@
 <script>
 $(document).ready(function(){
 	$(".main_content").trigger('create');
+	$j.initDocument();
 });
 </script>

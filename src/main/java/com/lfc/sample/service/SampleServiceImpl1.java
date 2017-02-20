@@ -3,13 +3,16 @@ package com.lfc.sample.service;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.common.CommonService;
+import com.common.CommonDAO;
+import com.common.SetLogger;
 
 @Service("sample1")
-public class SampleServiceImpl1 extends CommonService implements SampleService{
-	
+public class SampleServiceImpl1 extends SetLogger implements SampleService{
+	@Autowired
+	CommonDAO dao;
 	@Override
 	public void SampleService1() {
 		logger.debug(this.getClass().getName() +" sample service 1 !!");

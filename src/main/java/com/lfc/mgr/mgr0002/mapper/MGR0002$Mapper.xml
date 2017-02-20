@@ -1,5 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="MGR0002">
-	
+	<select id="selectDivCodeList" parameterType="CmmnDivCodeVO" resultType="CmmnDivCodeVO">
+		select
+			CODE as divCode,
+			CODE_NM as divCodeNm,
+			CODE_DC as divCodeDc,
+			USE_AT as divUseAt
+		from CMMN_CODE
+		where 1=1
+		AND PARENT_CODE = 'ROOT'
+		 <if test="divCode != null and divCode != '' ">
+			 AND CODE = #{divCode}
+		 </if>
+		 <if test="divCodeNm != null and divCodeNm != '' ">
+			 AND CODE_NM = #{divCodeNm}
+		 </if>
+		 <if test="divUseAt != null and divUseAt != '' ">
+			 AND USE_AT = #{divUseAt}
+		 </if>
+	</select>	
+	<select id="selectCmmnCode" parameterType="CmmnCodeVO" resultType="CmmnCodeVO">
+		 select
+			PARENT_CODE		as parentCode,
+			CODE			as code,
+			CODE_NM			as codeNm,
+			CODE_DC			as codeDc,
+			USE_AT			as useAt,
+			SORT			as sort,
+			FRST_REGIST_DT	as frstRegistDt,
+			FRST_REGISTER	as frstRegister,
+			LAST_REGIST_DT	as lastRegistDt,
+			LAST_REGISTER   as lastRegister
+		 from CMMN_CODE
+		 where 1=1
+		 <if test="parentCode != null and parentCode != '' ">
+			 AND PARENT_CODE = #{parentCode}
+		 </if>
+		 <if test="code != null and code != '' ">
+			 AND CODE = #{code}
+		 </if>
+		 <if test="codeNm != null and codeNm != '' ">
+			 AND CODE_NM = #{codeNm}
+		 </if>
+		 <if test="useAt != null and useAt != '' ">
+			 AND USE_AT = #{useAt}
+		 </if>
+		 ORDER BY SORT
+	</select>
+	<insert id="insertCmmnCode" parameterType="CmmnCodeVO" >
+		 insert into CMMN_CODE(
+			PARENT_CODE,
+			CODE,
+			CODE_NM,
+			CODE_DC,
+			USE_AT,
+			SORT,
+			FRST_REGIST_DT,
+			FRST_REGISTER,
+			LAST_REGIST_DT,
+			LAST_REGISTER 
+		) values(
+			#{parentCode},
+			#{code},
+			#{codeNm},
+			#{codeDc},
+			#{useAt},
+			#{sort},
+			#{frstRegistDt},
+			#{frstRegister},
+			#{lastRegistDt},
+			#{lastRegister}
+		)
+	</insert>
+	<update id="updateCmmnCode" parameterType="CmmnCodeVO" >
+		 update CMMN_CODE
+		 set
+			PARENT_CODE = #{parentCode},
+			CODE = #{code},
+			CODE_NM = #{codeNm},
+			CODE_DC = #{codeDc},
+			USE_AT = #{useAt},
+			SORT = #{sort},
+			FRST_REGIST_DT = #{frstRegistDt},
+			FRST_REGISTER = #{frstRegister},
+			LAST_REGIST_DT = #{lastRegistDt},
+			LAST_REGISTER  = #{lastRegister }
+		 where 
+			 PARENT_CODE = #{parentCode}
+			 AND CODE = #{code}
+			 AND CODE_NM = #{codeNm}
+			 AND CODE_DC = #{codeDc}
+			 AND USE_AT = #{useAt}
+			 AND SORT = #{sort}
+			 AND FRST_REGIST_DT = #{frstRegistDt}
+			 AND FRST_REGISTER = #{frstRegister}
+			 AND LAST_REGIST_DT = #{lastRegistDt}
+			 AND LAST_REGISTER  = #{lastRegister }
+	</update>
+	<delete id="deleteCmmnCode" parameterType="CmmnCodeVO" >
+		 delete from CMMN_CODE
+		 where 
+			 PARENT_CODE = #{parentCode}
+			 <if test="code != null and code != '' ">
+				 AND CODE = #{code}
+			 </if>
+	</delete>
 </mapper>

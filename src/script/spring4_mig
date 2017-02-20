@@ -1,0 +1,67 @@
+1. 메이븐 형식의 프로젝트라면 POM 파일에 서블릿 3.0 스펙의 API를 사용할 수 있도록 servlet-api.jar dependancy를 업데이트
+<dependency>
+<groupId>javax.servlet</groupId>
+<artifactId>javax.servlet-api</artifactId>
+<version>3.1.0</version>
+<scope>provided</scope> <!-- 런타임시에는 서블릿 컨테이너에의해 제공되므로 provided로 설정 -->
+</dependency>
+
+
+
+2. web.xml namespaces,xsd files 과 version 업데이트
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
+
+
+3. Spring Framework 의 라이브러리 jar 들을 버전 4로 업데이트
+
+4. 스프링 Context 설정 파일의 스키마 로케이션 정보 업데이트. 다음과 유사하게 xsi:schemaLocation 의 스키마 버전 정보를 4.0으로 변경.
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:aop="http://www.springframework.org/schema/aop" 
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:task="http://www.springframework.org/schema/task"
+  xmlns:util="http://www.springframework.org/schema/util" 
+  xmlns:cache="http://www.springframework.org/schema/cache"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd 
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd 
+    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
+    http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.0.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+
+5. Jackson 라이브러리 업데이트. 버전 1.x 의 jackson 라이브러리를 사용하고 있었다면 2점대로 변경. 이는 스프링 라이브러리에 의해 사용된다.
+<dependency>
+<groupId>com.fasterxml.jackson.core</groupId>
+<artifactId>jackson-core</artifactId>
+<version>2.3.0</version>
+</dependency>
+
+<dependency>
+<groupId>com.fasterxml.jackson.core</groupId>
+<artifactId>jackson-databind</artifactId>
+<version>2.3.0</version>
+</dependency>
+
+
+
+6. view resolver 쪽에 jackson 매핑이 1.x 대응이라면 2.x 대응으로 변경.
+1.x jackson mapper 설정이 다음과 같다면..
+ <bean id="jsonMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
+<bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+<property name="objectMapper" ref="jsonMapper" />
+</bean> 
+
+다음과 같이 MappingJackson2JsonView 로 변경 필요.
+<!-- Spring3 이상, jackson 라이브러리 2 이상일 때는 MappingJackson2JsonView 로 설정. -->
+<bean id="jsonMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
+<bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+<property name="objectMapper" ref="jsonMapper" />
+</bean>
+

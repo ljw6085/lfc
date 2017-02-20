@@ -6,87 +6,95 @@
 <link rel="stylesheet" href="<c:url value='/resources/js/zgrid/css/zgrid.css'/>" type="text/css">
 <script type="text/javascript" src="<c:url value='/resources/js/zgrid/zgrid.js'/>"></script>
 <script>
-var data = [
-			{no:'1',groupCode:'GRP0001',divCode:'SYS_DIV_CD',divCodeNm:'시스템구분',useAt:'Y'}
-			,{no:'2',groupCode:'GRP0001',divCode:'USE_AT',divCodeNm:'사용여부',useAt:'Y'}
-			,{no:'3',groupCode:'GRP0002',divCode:'MN_KIND_CD',divCodeNm:'메뉴종류코드',useAt:'Y'}
-			,{no:'4',groupCode:'GRP0002',divCode:'BRD_DIV_CD',divCodeNm:'게시판구분',useAt:'Y'}
-			,{no:'5',groupCode:'GRP0003',divCode:'CAR_DIV_CD',divCodeNm:'차량구분코드',useAt:'Y'}
-	]
-var col = [
-			{ colId:'no', name:'No', priority:'2' ,width:50 },
-			{ colId:'groupCode', name:'그룹코드', priority:'1', width:100} ,
-			{ colId:'divCode', name:'분류코드', priority:'' , width:100},
-			{ colId:'divCodeNm', name:'코드명', priority:'' , width:150},
-			{ colId:'useAt', name:'사용여부', priority:'3'  , width:80}
-		]
-/** Form 단위로 스크립팅 한다. */
-$j.documentReady('codeSelectForm', function($form){
-	$( ":mobile-pagecontainer" ).pagecontainer({
-		change:function(){
-			$(window).trigger('resize');
-		}
-	});
-	
-	grid = $(".gridWrap").grid({
-		col:col
-		,data : data
-		,type:'b'
- 		,columnToggle:false
-		,autoFit : true
-		,height:400
-	});
-	
-    $("#codeInsert").bind('click',function(e){
-    	e.preventDefault();
-    	$( ":mobile-pagecontainer" ).pagecontainer( "change", '#codeInsert' , {
-            transition: "slide"
-        });
-    });
-    
-    grid.boxForDom.$body.find("tr").bind('click',function(e){
-    	//클릭된 row 정보를 세팅
-    	var params = {};
-    	var dt = grid.data[this.id] ;
-    	$.extend( params , dt );
-    	$.mobile.pageChange('#codeInsert',{
-    		transition: "slide",
-            params:params
-    	});
-    	/* $( ":mobile-pagecontainer" ).pagecontainer( "change", '#codeInsert' , {
-            transition: "slide",
-            params:params
-        }); */
-    });
-    
-});
-
-/** Form 단위로 스크립팅 한다. */
-$j.documentReady('codeInsertForm', function($form){
-	var backBtn = MENU.createHeaderBackButton( $form.find('.header') );
-	
-	
-	$(document).on('swiperight','.ui-page',function(e){
-		$form.find('.header').find('a').trigger('click');
-	});
-	
-	$( ":mobile-pagecontainer" ).pagecontainer({
-		// page change 콜백함수.
-		change:function(event,ui){
-			if( ui.options.target == '#codeInsert'){
-				if( ui.options.params ){
-					console.log( '수정!');
-					var prm = ui.options.params;
-					for(var k in prm ){
-						if( $form[0][k] ) $form[0][k].value = prm[k];
-					}
-				}else{
-					$form.find('input:text').val("");
-					console.log( '등록!');
-				}
+$j.documents.push(function(){
+	/** Form 단위로 스크립팅 한다. */
+	$j.documentReady('codeSelectForm', function($form,$uiPage){
+		
+		$m.openMenuFromSwipe($uiPage);
+		
+		var grid = makeGrid( $form );
+		
+		$(window).bind('resize',function(){
+			compactSizingGrid( grid , $uiPage );
+		}).trigger('resize');
+		
+		$form.find('.buttonBox').on('click',function(e){
+			var $target = $(e.target);
+			switch (true) {
+				case $target.hasClass('codeAdd'):
+					addCode();
+					break;
+				case $target.hasClass('codeSelect'):
+					selectCodeList( $form ,  grid );
+					break;
+				default:
+					break;
 			}
-		}
+		});
+		
+	    grid.boxForDom.$body.on('click','tr',function(e){
+	    	//클릭된 row 정보를 세
+	    	var dt = grid.data[this.id] ;
+	    	$m.pageMove( '#codeInsert' , dt );
+	    });
 	});
+	
+	function addCode(){
+		$m.pageMove( '#codeInsert' );
+	}
+	
+	function selectCodeList( $form, grid ){
+		var url = "<c:url value='/mgr/mgr0002/codeList.do'/>";
+    	Common.ajaxJson( url ,$form,function(data){
+			grid.reload( data );
+    	});
+	}
+	
+	function compactSizingGrid( grid , $uiPage ){
+		var originHeight = grid.boxForDom.$bodyWrap.height();
+		var diff = $('body').height()
+					- $uiPage.find(".ui-content").innerHeight()
+					- $uiPage.find(".header").outerHeight()
+					- $uiPage.find(".footer").outerHeight();
+		
+		grid.boxForDom.$bodyWrap.height( originHeight + diff );
+	}
+	
+	function makeGrid( $form ){
+		// 그리드 옵션
+		var option = {
+				col:[
+				    { colId:'divCode', name:'분류코드',  width:100},
+					{ colId:'divCodeNm', name:'코드명',  width:150},
+					{ colId:'divUseAt', name:'사용여부',  width:80}
+				]
+				,data : []
+				,type:'b'
+		 		,columnToggle:false
+				,autoFit : true
+				,height:400
+		}
+		if( $j.isMobile() ){
+			var addOption = {
+					height:'auto'
+					,customColumnLayout: function( colInfo ){
+						var $colgrp = $("<colgroup></colgroup>");
+						var $col = $("<col/>");
+						$colgrp.append($col);
+						return $colgrp;
+					}
+					,customHeaderLayout:function( colInfo ){
+						return "<th style='text-align:center;'></th>";
+					}
+					,customRowLayout:function( i, item ){
+			 			return "<div><div>#divCode#</div><div>#divCodeNm#</div><div>#useAt#</div></div>";
+					}
+			}
+			$.extend( option , addOption );
+		}
+		
+		return $form.find(".gridWrap").grid(option);
+	}
 });
 </script>
 <style>
@@ -95,17 +103,36 @@ $j.documentReady('codeInsertForm', function($form){
 <form name='codeSelectForm'>
 	<!-- 실제 구성될 화면페이지  영역 -->
 	<div class='main_content'>
-	<div id='searchBox' class='ui-grid-a'>
-		<div class='ui-block-a'>
-			<input type='search' id='srch' data-mini='true' placeholder="Search..">
-		</div>
-		<div class='ui-block-b' style='text-align: center;'>
-			<a href='#' id='searchBtn' data-icon='search'></a>
-		</div>
+	<div id='searchBox'>
+		<table class='defaultTable'>
+				<colgroup>
+					<col style='width:20%;'/>
+					<col style='width:30%;'/>
+					<col style='width:20%;'/>
+					<col style='width:30%;'/>
+				</colgroup>
+				<tbody>
+					<tr>
+						<th class='insertTh'>분류코드</th>
+						<td class='insertTd'><input type='text' name='divCode' data-mini="true" placeholder="분류코드"></td>
+						<th class='insertTh'>분류코드명</th>
+						<td class='insertTd'><input type='text' name='divCodeNm' data-mini="true" placeholder="분류코드명"></td>
+					</tr>
+					<tr>
+						<th class='insertTh'>사용여부</th>
+						<td class='insertTd' colspan='3' data-role="controlgroup" data-type="horizontal" data-mini="true">
+							<input type="radio" name="divUseAt" id="div_use_at_y" value="Y" checked="checked">
+					        <label for="div_use_at_y">사용</label>
+					        <input type="radio" name="divUseAt" id="div_use_at_n" value="N">
+					        <label for="div_use_at_n">사용안함</label>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 	</div>
-	<div class='buttonBox' style='text-align: right;'>
-		<a href='#' id='codeInsert' class='btn' data-icon='plus'>코드등록</a>
-		<a href='#' id='codeSelect' class='btn' data-icon='search'>조회</a>
+	<div class='buttonBox' style='text-align: right;margin-top:.5em;'>
+		<a href='#' class='btn codeAdd' data-icon='plus'>코드등록</a>
+		<a href='#' class='btn codeSelect' data-icon='search'>조회</a>
 	</div>
 	<div class='gridWrap' ></div>
 	</div>
@@ -115,64 +142,8 @@ $j.documentReady('codeInsertForm', function($form){
 <%@ include file="/WEB-INF/jsp/cmm/inc/bottom.jsp" %>
 <!-- ############################################################################################################################################ -->
 <!-- 코드등록/수정화면 시작 -->
-<div data-role="page" id='codeInsert'><!-- second page start -->
-<form name='codeInsertForm'>
-	<div class='header' data-role='header'><h1>공통코드 등록/수정</h1></div>
-	<div role='main' class='ui-content'>
-		<div id='infoArea'>
-			<table class='defaultTable'>
-				<colgroup>
-					<col style='width:20%;'/>
-					<col style='width:30%;'/>
-					<col style='width:20%;'/>
-					<col style='width:30%;'/>
-				</colgroup>
-				<tbody>
-					<tr>
-						<td class='insertTd' colspan='4' style='border:0;padding:0;'>
-							<div class='buttonBox' style='margin-bottom:.5em;'>
-								<a href='#' class='btn menuAdd' data-icon='check' >저장</a>
-								<a href='#' class='btn menuEdit' data-icon='edit' >수정</a>
-								<a href='#' class='btn menuDelete' data-icon='delete'>삭제</a>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<th class='insertTh'>그룹코드</th>
-						<td class='insertTd'><input type='text' name='groupCode' placeholder="그룹코드"></td>
-						<th class='insertTh'>분류코드</th>
-						<td class='insertTd'><input type='text' name='divCode' placeholder="분류코드"></td>
-					</tr>
-					<tr>
-						<th class='insertTh'>분류코드명</th>
-						<td class='insertTd'><input type='text' name='divCodeNm' placeholder="분류코드명"></td>
-						<th class='insertTh'>사용여부</th>
-						<td class='insertTd'><input type='text' name='useAt' placeholder="사용여부"></td>
-					</tr>
-					<tr>
-						<td class='insertTd' colspan='4' style='border:0;'>
-							<table class='defaultTable'>
-								<tbody>
-									<tr>
-										<td style='padding:0.1em'>1</td>
-									</tr>
-									<tr>
-										<td style='padding:0.1em'>1</td>
-									</tr>
-									<tr>
-										<td style='padding:0.1em'>1</td>
-									</tr>
-								</tbody>
-							</table>
-						
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-</form>
-</div>
+<!-- second page start -->
+<c:import url="/mgr/mgr0002/codeInsert.do"></c:import>
 <!-- 코드등록화면 끝 -->
 <!-- ############################################################################################################################################ -->
 <%@ include file="/WEB-INF/jsp/cmm/inc/bottom2.jsp" %>

@@ -12,6 +12,7 @@ var _opt = {
 // 기본 프로퍼티 항목
 var props = {
 		name :''
+		,scroll:false
 		,type:'a' // 그리드 타입 A / B ( 리프레시(a) or 객체추가(b) )
 		,id:''
 		,width:0
@@ -43,6 +44,7 @@ var props = {
 				'true':'cutString'
 				,'false':'default'
 			}
+			,rowClass:['zgrid-row']
 		}
 		,varForData:{
 			startDataIdx:0
@@ -94,8 +96,7 @@ function Grid(option){
 	newGrid.call(this,option);
 }
 function Grid2(option){
-	if( option.record < 0 || !option.record ) option.record = option.data.length
-	console.log( option.record );
+//	if( option.record < 0 || !option.record ) option.record = option.data.length
 	newGrid.call(this,option);
 }
 
@@ -134,66 +135,77 @@ var gridMethod = {
 			//이벤트 따로
 			var t = this;
 			
-			grd.boxForDom.$tableWrap
-				.unbind('wheel')
-				.unbind('mouseup')
-				.unbind('mousemove')
-				.unbind('touchstart')
-				.unbind('touchmove')
-				.unbind('touchend');
-			grd.boxForDom.$tableWrap.unbind('wheel');
-			grd.boxForDom.$scroll_x.unbind('mousedown');
-			grd.boxForDom.$scroll_y.unbind('mousedown');
-			$(window).unbind('resize',_resize);
-			
-			if( t.height != 'auto'){
-				grd.boxForDom.$tableWrap.bind('wheel',function(e){
-					if( e.altKey ){
-						grd.eventBox.wheel.x.call( grd , e );
-					}else{
-						grd.eventBox.wheel.y.call( grd , e );
-					}
+			if( t.scroll ){
+				grd.boxForDom.$tableWrap
+					.unbind('wheel')
+					.unbind('mouseup')
+					.unbind('mousemove')
+					.unbind('touchstart')
+					.unbind('touchmove')
+					.unbind('touchend');
+				grd.boxForDom.$tableWrap.unbind('wheel');
+				
+				
+				grd.boxForDom.$scroll_x.unbind('mousedown');
+				grd.boxForDom.$scroll_y.unbind('mousedown');
+				
+				grd.boxForDom.$scroll_x.bind('mousedown',function(e){
+					grd.eventBox.mousedown.call( grd, 'x', e );
 				});
-				grd.boxForDom.$tableWrap.bind('touchmove',function(e){
-					grd.eventBox.touchmove.call( grd, e );
+				grd.boxForDom.$scroll_y.bind('mousedown',function(e){
+					grd.eventBox.mousedown.call( grd, 'y', e );
+				});
+				
+				//scrollbtn 
+				grd.boxForDom.$wrap.find(".g-scroll-btn").bind('mousedown',function(e){
+					$(e.target).addClass('clicked');
+				});
+				
+				grd.boxForDom.$tableWrap.bind('mouseup',function(e){
+					grd.eventBox.mouseup.call( grd, 'x', e );
+					grd.eventBox.mouseup.call( grd, 'y', e );
+					
+					$('.clicked').removeClass('clicked');
+				});
+				
+				grd.boxForDom.$tableWrap.bind('mousemove',function(e){
+					grd.eventBox.mousemove.y.call( grd, e );
+					grd.eventBox.mousemove.x.call( grd, e );
+				});
+				
+				grd.boxForDom.$tableWrap.bind('touchstart',function(e){
+					grd.eventBox.touchstart.call( grd, e );
+				});
+				
+				/*$(document).bind("DOMNodeRemoved", function(e){
+				    console.log("Removed: " , e.target);
+				});*/
+				grd.boxForDom.$tableWrap.bind('touchend',function(e){
+					grd.eventBox.touchend.call( grd, e );
+				});
+			}else{
+				grd.boxForDom.$bodyWrap.bind('scroll',function(e){
+					grd.boxForDom.$headWrap[0].scrollLeft = this.scrollLeft;
 				});
 			}
 			
-			grd.boxForDom.$scroll_x.bind('mousedown',function(e){
-				grd.eventBox.mousedown.call( grd, 'x', e );
-			});
-			grd.boxForDom.$scroll_y.bind('mousedown',function(e){
-				grd.eventBox.mousedown.call( grd, 'y', e );
-			});
-			grd.boxForDom.$tableWrap.bind('mouseup',function(e){
-				grd.eventBox.mouseup.call( grd, 'x', e );
-				grd.eventBox.mouseup.call( grd, 'y', e );
-				
-				$('.clicked').removeClass('clicked');
-			});
-			
-			grd.boxForDom.$tableWrap.bind('mousemove',function(e){
-				grd.eventBox.mousemove.y.call( grd, e );
-				grd.eventBox.mousemove.x.call( grd, e );
-			});
-			
-			grd.boxForDom.$tableWrap.bind('touchstart',function(e){
-				grd.eventBox.touchstart.call( grd, e );
-			});
+			if( t.height != 'auto'){
+				if( t.scroll ){
+					grd.boxForDom.$tableWrap.bind('wheel',function(e){
+							if( e.altKey ){
+								grd.eventBox.wheel.x.call( grd , e );
+							}else{
+								grd.eventBox.wheel.y.call( grd , e );
+							}
+					});
+					grd.boxForDom.$tableWrap.bind('touchmove',function(e){
+						grd.eventBox.touchmove.call( grd, e );
+					});
+				}
+			}
 			
 			
-			/*$(document).bind("DOMNodeRemoved", function(e){
-			    console.log("Removed: " , e.target);
-			});*/
-			grd.boxForDom.$tableWrap.bind('touchend',function(e){
-				grd.eventBox.touchend.call( grd, e );
-			});
-			
-			//scrollbtn 
-			grd.boxForDom.$wrap.find(".g-scroll-btn").bind('mousedown',function(e){
-				$(e.target).addClass('clicked');
-			});
-			
+			$(window).unbind('resize',_resize);
 			$(window).bind('resize',_resize).trigger('resize');
 			function _resize(e){
 				if( grd.boxForDom.$wrap.width() >  0 ) grd.eventBox.resize.call( grd, e );
@@ -212,60 +224,69 @@ var gridMethod = {
 		 */
 		,initCreateGridFrame: function(){
 			var t = this;
+			if( t.type == 'a') t.scroll = true;
 			var dom = t.boxForDom;
 			var _$wrap = dom.$wrap;
 			_$wrap.html("");
 			var $tableWrap = $("<div class='g-wrap'></div>");
-				var $colGrp = $("<div class='g-colgrp'><div class='g-col'></div><div class='g-scroll-area g-col'></div></div>");
+				//scroll
+				var _colgrp_html = "";
+					_colgrp_html += "<div class='g-colgrp'><div class='g-col'></div>"
+					if( t.scroll) _colgrp_html += "<div class='g-scroll-area g-col'></div>"
+					_colgrp_html += "</div>";
+				var $colGrp = $(_colgrp_html); 
 				var $headRow = $("<div class='g-row'></div>");
 					var $headWrap = $("<div class='g-head-wrap'></div>");//id='headerWrap'
 						var $headTable = createTable('head');
 						var $head = $headTable.find('thead');
 						$headWrap.append( $headTable );
-						
-					var $scrollBlankY = $("<div class='g-scroll-area g-scroll-btn-blank g-cell' style=''>&nbsp;</div>");
+				
+					if( t.scroll ) var $scrollBlankY = $("<div class='g-scroll-area g-scroll-btn-blank g-cell' style=''>&nbsp;</div>");
 					
 					$headRow
-						.append( $headWrap )
-						.append( $scrollBlankY );
-						
+						.append( $headWrap );
+						if( t.scroll )$headRow.append( $scrollBlankY );
+					
 				var $bodyRow = $("<div class='g-row'></div>");
 					var $bodyWrap = $("<div class='g-body-wrap'></div>");//id='headerWrap'
 						var $bodyTable = createTable('body');
 						var $body = $bodyTable.find('tbody');
 						$bodyWrap.append( $bodyTable );
-						
-					var $scroll_y_wrap = $("<div class='g-scroll-area g-cell g-scroll-wrap'></div>"); //id='scroll-wrap'
-						var $btnUp = $("<span class='up g-scroll-btn'></span>");
+					
+					if( t.scroll ){
+						var $scroll_y_wrap = $("<div class='g-scroll-area g-cell g-scroll-wrap'></div>"); //id='scroll-wrap'
+							var $btnUp = $("<span class='up g-scroll-btn'></span>");
 						var $scroll_y =$("<div class='g-scroll-y'></div>");//id='scroll'  
 						var $btnDown = $("<span class='down g-scroll-btn'></span>");
 						$scroll_y_wrap
 							.append( $btnUp )
 							.append( $scroll_y )
 							.append( $btnDown );
+					}
 					
-					$bodyRow
-						.append( $bodyWrap )
-						.append( $scroll_y_wrap );
+					$bodyRow.append( $bodyWrap );
+					if( t.scroll )$bodyRow.append( $scroll_y_wrap );
+				if( t.scroll ){
 					
-				var $xScrollRow = $("<div class='g-row g-scroll-x-row'></div>");
-					var $scroll_x_wrap = $("<div class='g-cell g-scroll-wrap' style='height:"+this.varForScroll.scrollBtnSize+"px;'>"); //id='x-scroll-wrap' 
-						var $btnLeft = $("<span class='left g-scroll-btn'></span>");
-						var $scroll_x =$("<div class='g-scroll-x'></div>");//id='x-scroll'   
-						var $btnRight = $("<span class='right g-scroll-btn'></span>");
-						$scroll_x_wrap
-							.append( $btnLeft )
-							.append( $scroll_x )
-							.append( $btnRight );
-					var $scrollBlankX = $("<div class='g-scroll-area g-cell g-scroll-btn-blank' >&nbsp;</div>");
-					$xScrollRow
-						.append( $scroll_x_wrap )
-						.append( $scrollBlankX );
+					var $xScrollRow = $("<div class='g-row g-scroll-x-row'></div>");
+						var $scroll_x_wrap = $("<div class='g-cell g-scroll-wrap' style='height:"+this.varForScroll.scrollBtnSize+"px;'>"); //id='x-scroll-wrap' 
+							var $btnLeft = $("<span class='left g-scroll-btn'></span>");
+							var $scroll_x =$("<div class='g-scroll-x'></div>");//id='x-scroll'   
+							var $btnRight = $("<span class='right g-scroll-btn'></span>");
+							$scroll_x_wrap
+								.append( $btnLeft )
+								.append( $scroll_x )
+								.append( $btnRight );
+						var $scrollBlankX = $("<div class='g-scroll-area g-cell g-scroll-btn-blank' >&nbsp;</div>");
+						$xScrollRow
+							.append( $scroll_x_wrap )
+							.append( $scrollBlankX );
+				}	
 			$tableWrap
 				.append( $colGrp )
 				.append( $headRow )
-				.append( $bodyRow )
-				.append( $xScrollRow );
+				.append( $bodyRow );
+				if( t.scroll )$tableWrap.append( $xScrollRow );
 			
 			_$wrap.append( $tableWrap );
 			
@@ -274,20 +295,23 @@ var gridMethod = {
 				if( !t.width ) t.width = $body.width();
 				$tableWrap.find('.g-table').width( t.width );
 			}
-			
-			$scroll_y[0].style.top = $btnUp[0].offsetHeight + 'px';
-			$scroll_x[0].style.left = $btnLeft[0].offsetWidth + 'px';
-			$scroll_x[0].style.height = this.varForScroll.scrollBtnSize + 'px';
+			if( t.scroll ){
+				$scroll_y[0].style.top = $btnUp[0].offsetHeight + 'px';
+				$scroll_x[0].style.left = $btnLeft[0].offsetWidth + 'px';
+				$scroll_x[0].style.height = this.varForScroll.scrollBtnSize + 'px';
+				
+				dom.$scroll_y_wrap 	= $scroll_y_wrap;
+				dom.$scroll_y 		= $scroll_y;
+				dom.$scroll_x_wrap 	= $scroll_x_wrap;
+				dom.$scroll_x 		= $scroll_x;
+			}
 			
 			dom.$tableWrap 		= $tableWrap;
 			dom.$bodyWrap 		= $bodyWrap;
 			dom.$headWrap 		= $headWrap;
 			dom.$body 			= $body;
 			dom.$head 			= $head;
-			dom.$scroll_y_wrap 	= $scroll_y_wrap;
-			dom.$scroll_y 		= $scroll_y;
-			dom.$scroll_x_wrap 	= $scroll_x_wrap;
-			dom.$scroll_x 		= $scroll_x;
+			
 			
 			if( t.columnToggle && t.type == 'a'){
 				dom.$headWrap.parent().hide();
@@ -368,15 +392,23 @@ var gridMethod = {
 		, addRowData:function( tbody , dataIdx ){
 			var col = this.col;
 			var data = this.data;
-			var newTr = $("<tr></tr>").clone();
-			var td = $("<td class='"+this.boxForCss.cutString[this.cutString]+"'></td>");
-			
-			for(var k = 0,kLen=col.length;k<kLen;k++){
-				newTr[0].id = dataIdx;
-				var _td = this.setCellData( td.clone()[0], col[k], data[dataIdx] );
-				newTr.append( _td );
+			if( data.length < 1) {
+				tbody.append(  this.addBlankRow() );
+				return false;
+			}else{
+				
+				var newTr = $("<tr class='"+this.boxForCss.rowClass.join(' ')+"'></tr>").clone();
+				var td = $("<td class='"+this.boxForCss.cutString[this.cutString]+"'></td>");
+				
+				for(var k = 0,kLen=col.length;k<kLen;k++){
+					newTr[0].id = dataIdx;
+					var _td = this.setCellData( td.clone()[0], col[k], data[dataIdx] );
+					newTr.append( _td );
+				}
+				tbody.append(newTr);
+				
+				return true;
 			}
-			tbody.append(newTr);
 		}
 		/**
 		 *	column 정보를 이용하여 cell에 데이터를 세팅한다.		
@@ -460,31 +492,40 @@ var gridMethod = {
 		}
 		,eventBox :{
 			resize: function(e){
-				var doms 		= this.boxForDom
-					,btnSize	= this.varForScroll.scrollBtnSize
-					,btnSizeX2 	= btnSize * 2 
-					,scrollYwidth = doms.$scroll_y_wrap[0].offsetWidth
-				 	,$scrollx 	= doms.$scroll_x
-				 	,$scrollXParent = doms.$scroll_x_wrap 
-			 	
-			 	var total = doms.$wrap[0].offsetWidth - scrollYwidth;
-			 	doms.$headWrap[0].style.width = total +'px';
-			 	doms.$bodyWrap[0].style.width = total +'px';
-		 		
-		 		//x 스크롤 너비 세팅
-		 		var scrollWidth = ( doms.$bodyWrap[0].offsetWidth * ( $scrollXParent[0].offsetWidth - btnSizeX2 ) )/ doms.$body[0].offsetWidth;
-	 			if( doms.$body[0].offsetWidth <= total) {
-		 			$scrollx.hide();
-		 			doms.$wrap.find(".g-scroll-x-row").hide();
-		 			$scrollXParent.find(".g-scroll-btn").addClass('off');
-		 		}else{
-		 			$scrollx.show();
-		 			doms.$wrap.find(".g-scroll-x-row").show();
-		 			$scrollXParent.find(".g-scroll-btn").addClass('on');
-		 		}
-		 		
-		 		$scrollx[0].style.width = scrollWidth + 'px';
-		 		$scrollx[0].style.left = btnSize + 'px';
+				var doms 		= this.boxForDom;
+				if( this.scroll ){
+						varbtnSize	= this.varForScroll.scrollBtnSize
+						,btnSizeX2 	= btnSize * 2 
+						,scrollYwidth = doms.$scroll_y_wrap[0].offsetWidth
+					 	,$scrollx 	= doms.$scroll_x
+					 	,$scrollXParent = doms.$scroll_x_wrap 
+				 	
+				 	var total = doms.$wrap[0].offsetWidth - scrollYwidth;
+				 	doms.$headWrap[0].style.width = total +'px';
+				 	doms.$bodyWrap[0].style.width = total +'px';
+			 		
+			 		//x 스크롤 너비 세팅
+			 		var scrollWidth = ( doms.$bodyWrap[0].offsetWidth * ( $scrollXParent[0].offsetWidth - btnSizeX2 ) )/ doms.$body[0].offsetWidth;
+		 			if( doms.$body[0].offsetWidth <= total) {
+			 			$scrollx.hide();
+			 			doms.$wrap.find(".g-scroll-x-row").hide();
+			 			$scrollXParent.find(".g-scroll-btn").addClass('off');
+			 		}else{
+			 			$scrollx.show();
+			 			doms.$wrap.find(".g-scroll-x-row").show();
+			 			$scrollXParent.find(".g-scroll-btn").addClass('on');
+			 		}
+			 		
+			 		$scrollx[0].style.width = scrollWidth + 'px';
+			 		$scrollx[0].style.left = btnSize + 'px';
+				}else{
+					if( doms.$body.height() > doms.$bodyWrap.height() ){
+						doms.$headWrap.css('overflow-y','scroll');
+					}
+					var total = doms.$wrap[0].offsetWidth;
+				 	doms.$headWrap[0].style.width = total +'px';
+				 	doms.$bodyWrap[0].style.width = total +'px';
+				}
 			}
 			,wheel : {
 				y : function(e){
@@ -693,6 +734,14 @@ var gridMethod = {
 			/*,height:'auto'
 				,headerHidden:true*/
 		}
+		,reload:function( data ){
+			this.makeGrid( data );
+		}
+		,addBlankRow :function(){
+			var colCnt = this.boxForDom.$headWrap.find("col").length;
+			var blank = $("<td colspan='"+colCnt+"' style='text-align:center;'> No Data </td>");
+			return blank;
+		}
 }
 var _grid1={}
 var _grid2={}
@@ -712,8 +761,7 @@ var grid1 = {
 				if( t.record < 0 && ( t.getOverWrap() > 0  || i == data.length ) )  break;
 				else if( t.record > 0 && i == t.record ) break;
 				
-				t.addRowData( tbody , i );
-				i++;
+				if( !t.addRowData( tbody , i++ ) ) break;
 			}
 			
 			t.varForData.range 	= tbody.find('tr').length;
@@ -727,7 +775,7 @@ var grid1 = {
 			if( t.headerHidden ){
 				t.toggleHeader('hide');
 			}
-			t.setScrollHeight();
+			if( t.scroll ) t.setScrollHeight();
 			t.initSetData();
 		}
 		/**
@@ -847,6 +895,7 @@ var grid2 = {
 			var t = this;
 			if( typeof param_data != 'undefined') t.data = param_data;
 			var data = t.data;
+			t.record = data.length;
 			var tbody = t.boxForDom.$body.html("");
 			var i = 0;
 			
@@ -860,8 +909,7 @@ var grid2 = {
 			// 스크롤이생길때까지 tr생성
 			while( true ){
 				if( t.record > 0 && i == t.record ) break;
-				addrowdata.call(t, tbody , i );
-				i++;
+				if( !addrowdata.call(t, tbody , i++ )) break;
 			}
 			
 			t.varForData.range 	= tbody.find('tr').length;
@@ -872,17 +920,27 @@ var grid2 = {
 //			tbody.find('tr:odd').addClass('g-row-odd-background');
 //			tbody.find('tr:even').addClass('g-row-even-background');
 			
-			t.setScrollHeight();
+			if( t.scroll ) {
+				t.setScrollHeight();
+			}else{
+				t.boxForDom.$bodyWrap.css('overflow','auto');
+			}
 			
 		}
 		,customAddRowData:function( tbody , idx ){
-			var row = this.customRowLayout( this.data[idx] );
-			var newTr = $("<tr></tr>").clone();
-			if( $(row).children()[0].tagName != 'TD' ) row = "<td>"+row+"</td>";
-			row = this.customMatchedReplace( row , this.data[idx] );
-			newTr.append( $(row) );
-			tbody.append(newTr);
-			
+			if( !this.data[idx] ) {
+				tbody.append(  this.addBlankRow() );
+				return false;
+			}else{
+				var row = this.customRowLayout( idx  ,this.data[idx] );
+				var newTr = $("<tr></tr>").clone();
+				newTr.attr('id',idx);
+				if( $(row).children()[0].tagName != 'TD' ) row = "<td>"+row+"</td>";
+				row = this.customMatchedReplace( row , this.data[idx] );
+				newTr.append( $(row) );
+				tbody.append(newTr);
+				return true;
+			}
 		}
 		,_matchedRegExp:/#[^#]+#/g
 		,_replaceRegExp:/#/g

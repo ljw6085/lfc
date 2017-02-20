@@ -530,14 +530,15 @@ var formLib = {
 			if(!_frm) return;
 			var els = _frm.elements;
 			if(typeof els == 'undefined' || els == null ) return;
-			if( _frm._setted )return;
-			_frm._setted = true;
+//			if( _frm._setted )return;
+//			_frm._setted = true;
 			
 			var that = this;
 			
 			for(var i=0,len=els.length;i<len;i++){
-				var element = els[i] 
-					, filters = this._splitFilter(  element.className  ) 
+				var element = els[i];
+				if( element.getAttribute("data-is-apply") ) continue;
+				var filters = this._splitFilter(  element.className  ) 
 					, setAllows = [ element ];
 				for( var j = 1,jlen = filters.length;j<jlen;j++){
 					var fName = filters[j] , hasNum = fName.search(/\[-?[0-9]+\]/g) , numinfo = fName.match(/\[-?[0-9]+\]/g) , num ;
@@ -561,7 +562,7 @@ var formLib = {
 				}
 				// 허용 문자열 세팅
 				if( setAllows.length > 1) this.keyEvent.setAllow.apply( this.keyEvent , setAllows );
-				
+				element.setAttribute("data-is-apply",true);
 			}
 			EventUtil.addHandler( _frm , 'submit', function(event){
 				if( !that.validation( _frm ) )EventUtil.preventDefault(event);

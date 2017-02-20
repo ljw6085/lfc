@@ -1,6 +1,6 @@
 package com.common.utils;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.springframework.stereotype.Component;
 /**
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @SuppressWarnings("serial")
-public class CamelCaseMap extends HashMap<String,Object>{
+public class CamelCaseMap extends LinkedHashMap<String,Object>{
 	@Override
 	public Object put(String key, Object value) {
 		return super.put(StrLib.toCamelCase(key), value);

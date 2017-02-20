@@ -16,7 +16,8 @@ public class SetLogger {
 	@Autowired
 	/** 공통 util */
 	public LfcUtils utils;
-	
+	@Autowired
+	public CommonModel commonModel;
 	/** logger */
 	public final Logger logger;
 	

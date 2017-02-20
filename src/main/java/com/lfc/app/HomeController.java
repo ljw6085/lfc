@@ -13,8 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.common.CommonController;
+import com.common.SetLogger;
 import com.common.UrlMapping;
 import com.common.utils.LfcUtils;
 
@@ -22,7 +23,7 @@ import com.common.utils.LfcUtils;
  * Handles requests for the application home page.
  */
 @Controller
-public class HomeController extends CommonController{
+public class HomeController extends SetLogger{
 	
 //	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
@@ -62,8 +63,8 @@ public class HomeController extends CommonController{
 	
 	
 	
-	@RequestMapping(value = "/test.json", method = RequestMethod.GET)
-	public Model testjson(Locale locale, Model model) {
+	@RequestMapping(value = "/test.json" )
+	public @ResponseBody Model testjson(Locale locale, Model model) {
 		logger.info("json~~~!~! {}.", locale);
 		
 		Date date = new Date();

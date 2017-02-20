@@ -18,30 +18,29 @@
 	
 	
 /** Form 단위로 스크립팅 한다. */
-$j.documentReady('menuSelectForm', function(form){
+$j.documentReady('menuSelectForm', function(form,$uiPage){
 	
 	$( ":mobile-pagecontainer" ).pagecontainer({
 		change:function(){
 			$(window).trigger('resize');
 		}
 	});
-	
 	grid = $("#menuListGrid").grid({
 		col:menucol
 		,data : MENU.LIST
 		,type:'b'
  		,columnToggle:false
 		,autoFit : true
-		,height:400
+		,height: 400
 	});
 });
 	
 /** Form 단위로 스크립팅 한다. */
-$j.documentReady('menuInsertForm', function($form){
+$j.documentReady('menuInsertForm', function($form,$uiPage){
 	MENU.createHeaderBackButton( $form.find('.header') );
 	//트리 생성
 	var root = MENU.DATA;
-	var menu = $("<ul></ul>");
+	var menu = $("<ul class='menuRoot'></ul>");
 	MENU._createChild( MENU.DATA , menu );
 	$("#treeArea").append( menu );
 	
@@ -57,8 +56,8 @@ $j.documentReady('menuInsertForm', function($form){
 	});
 	
 	
-	$(document).on('swiperight','.ui-page',function(e){
-		$form.find('.header').find('a').trigger('click');
+	$uiPage.on('swiperight',function(e){
+		$(this).find('.header').find('a').trigger('click');
 	});
 	
 	function setMappingData( obj ){
@@ -94,6 +93,7 @@ $j.documentReady('menuInsertForm', function($form){
 		overflow: auto;
 		min-height: 33em;
 		float:left;
+		border-right:1px dashed #bbb;
 	}
 	#menuInsert #treeArea ul{
 		margin:0;
@@ -114,11 +114,28 @@ $j.documentReady('menuInsertForm', function($form){
 	#menuInsert #infoArea {
 		width:64%;
 		float:left;
-		margin-left:.2em;
+		margin-left:.8em;
 	}
 	.selected-item{
 		background: #3388cc;
 		color:#fff !important;
+	}
+	
+	.menuRoot > li > a {
+		font-size:1.3em;
+		font-weight: bold;
+		color:#333;
+	}
+	.depth0  {
+		border-top:1px solid #888;
+	}
+	.depth0 > li > a {
+		font-size:1.2em;
+		color:#555;
+	}
+	.depth1 > li > a {
+		font-size: 1.1em;
+		color:#555;
 	}
 </style>
 <!-- form 단위로 이루어진 content -->
@@ -159,7 +176,7 @@ $j.documentReady('menuInsertForm', function($form){
 <%@ include file="/WEB-INF/jsp/cmm/inc/bottom.jsp" %>
 <!-- ############################################################################################################################################ -->
 <!-- 메뉴등록화면 시작 -->
-<div data-role="page" id='menuInsert' style='overflow: scroll;'><!-- second page start -->
+<div data-role="page" id='menuInsert' style='overflow: auto;'><!-- second page start -->
 <form name='menuInsertForm'>
 	<div class='header' data-role='header'><h1>메뉴등록</h1></div>
 	<div role='main' class='ui-content' style='min-width:750px;'>
@@ -180,6 +197,7 @@ $j.documentReady('menuInsertForm', function($form){
 									<a href='#' class='btn menuAdd' data-icon='plus' >추가</a>
 									<a href='#' class='btn menuEdit' data-icon='edit' >수정</a>
 									<a href='#' class='btn menuDelete' data-icon='delete'>삭제</a>
+									<a href='#' class='btn reset' data-icon='refresh' data-color='gray'>초기화</a>
 								</div>
 							</td>
 						</tr>
