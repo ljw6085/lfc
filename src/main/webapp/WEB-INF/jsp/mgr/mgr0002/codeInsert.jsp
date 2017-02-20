@@ -2,13 +2,13 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <script>
+var counter = 0;
 $j.documents.push(function(){
 	/** Form 단위로 스크립팅 한다. */
 	$j.documentReady('codeInsertForm', function($form,$uiPage){
 		var frm = $form[0];
 		MENU.createHeaderBackButton( $form.find('.header') );
 		var backBtn = $form.find('.header').find('a');
-		var counter = 0;
 		
 		var $codeDetailList = $form.find(".codeDetailList");
 		// 분류코드 라디오버튼 생성
