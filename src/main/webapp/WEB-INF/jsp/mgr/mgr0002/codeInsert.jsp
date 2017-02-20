@@ -156,22 +156,23 @@ $j.documents.push(function(){
 		}
 	}
 	
+	// dom 관리방법 강구해볼것	- value mapping #.+#
+	var row ="<tr>";
+		row += "<input type='hidden' name='parentCode' value='#parentCode#'><input type='hidden' name='sort' value='#sort#'>"
+		row += "<td><input type='radio' name='moving-checked' class='moving-checked'></td>"
+		row += "<td><input type='text' name='code' style='text-align:center' class='filter:require:max[6]:eng:num' placeholder='코드' size='6' value='#code#'></td>"
+		row += "<td><input type='text' name='codeNm' class='filter:require' placeholder='코드명' value='#codeNm#'></td>"
+		row += "<td><input type='text' name='codeDc' placeholder='코드설명' value='#codeDc#'></td>"
+		row += "<td class='codeUseAt' style='text-align: center;'></td>"
+		row += "<td style='text-align: center;'> <a href='#' class='btnIcon rowDelete' data-icon='delete' data-color='red' data-notext='true'>삭제</a></td>"
+		row += "</tr>";
+		
 	/* 상세코드List row 추가 함수 */
 	function rowAdd( $form , data , counter){
-		// dom 관리방법 강구해볼것	- value mapping #.+#
-		var row ="<tr>";
-			row += "<input type='hidden' name='parentCode' value='#parentCode#'><input type='hidden' name='sort' value='#sort#'>"
-			row += "<td><input type='radio' name='moving-checked' class='moving-checked'></td>"
-			row += "<td><input type='text' name='code' style='text-align:center' class='filter:require:max[6]:eng:num' placeholder='코드' size='6' value='#code#'></td>"
-			row += "<td><input type='text' name='codeNm' class='filter:require' placeholder='코드명' value='#codeNm#'></td>"
-			row += "<td><input type='text' name='codeDc' placeholder='코드설명' value='#codeDc#'></td>"
-			row += "<td class='codeUseAt' style='text-align: center;'></td>"
-			row += "<td style='text-align: center;'> <a href='#' class='btnIcon rowDelete' data-icon='delete' data-color='red' data-notext='true'>삭제</a></td>"
-			row += "</tr>";
+		//row 전역변수
+		var _row = Common.matchedReplace(row, data);
 		
-		row = Common.matchedReplace(row, data);
-		
-		var $row = $( row );
+		var $row = $( _row );
 		$(".codeDetailList").append($row);
 		var $target = $row.find(".codeUseAt");
 		
@@ -206,7 +207,7 @@ $j.documents.push(function(){
 						<tr>
 							<td class='insertTd' colspan='4' style='border:0;padding:0;'>
 								<div class='buttonBox infoBtnBox' style='margin-bottom:.5em;'>
-									<a href='#' id='_infoSave' class='btn save' data-icon='check' data-mini='true' data-color='green'>저장</a>
+									<a href='#' id='_infoSave' class='btn save' data-icon='check' data-mini='true'>저장</a>
 									<a href='#' id='_infoDelete' class='btn delete' data-icon='delete' data-mini='true' data-color='red'>삭제</a>
 									<a href='#' id='_infoReset' class='btn reset' data-icon='refresh' data-mini='true' data-color='gray'>초기화</a>
 								</div>
@@ -229,7 +230,7 @@ $j.documents.push(function(){
 						<tr>
 							<td class='insertTd' colspan='4' style='border:0;'>
 								<div class='buttonBox rowBtnBox' style='margin-top:.5em;'>
-									<a href='#' id='_rowAdd' class='btn rowAdd' data-icon='plus' data-mini='true' data-color='green'>행추가</a>
+									<a href='#' id='_rowAdd' class='btn rowAdd' data-icon='plus' data-mini='true'>행추가</a>
 									<a href='#' id='_rowUp' class='btn rowUp' data-icon='carat-u' data-mini='true'>위로</a>
 									<a href='#' id='_rowDown' class='btn rowDown' data-icon='carat-d' data-mini='true'>아래로</a>
 								</div>
