@@ -2,22 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="MGR0001">
 
-	<select id="selectMGR0001Mapper" parameterType="com.lfc.mgr.mgr0001.vo.MenuInfoVO" resultType="hashMap">
+	<select id="selectMenuList" parameterType="menuInfoVO" resultType="menuInfoVO">
 		 select
-			MENU_ID,
-			MENU_DIV,
-			MENU_NM,
-			MENU_KIND_CD,
-			MENU_PID,
-			MENU_URL,
-			MENU_IMG1,
-			MENU_IMG2,
-			MENU_ICON,
-			SORT,
-			USE_AUTH,
-			USE_AT,
-			REG_DT,
-			REG_USER_ID
+			MENU_ID			as menuId     ,
+			MENU_DIV		as menuDiv    ,
+			MENU_NM			as menuNm     ,
+			MENU_KIND_CD	as menuKindCd ,
+			MENU_PID		as menuPid    ,
+			MENU_URL		as menuUrl    ,
+			MENU_IMG1		as menuImg1   ,
+			MENU_IMG2		as menuImg2   ,
+			MENU_ICON		as menuIcon   ,
+			SORT			as sort       ,
+			USE_AUTH		as useAuth    ,
+			USE_AT			as useAt      ,
+			REG_DT			as regDt      ,
+			REG_USER_ID     as regUserId  
 		 from MENU_INFO
 		 where 1=1
 		 <if test="menuId != null and menuId != '' ">
@@ -35,35 +35,14 @@
 		 <if test="menuPid != null and menuPid != '' ">
 			 AND MENU_PID = #{menuPid}
 		 </if>
-		 <if test="menuUrl != null and menuUrl != '' ">
-			 AND MENU_URL = #{menuUrl}
-		 </if>
-		 <if test="menuImg1 != null and menuImg1 != '' ">
-			 AND MENU_IMG1 = #{menuImg1}
-		 </if>
-		 <if test="menuImg2 != null and menuImg2 != '' ">
-			 AND MENU_IMG2 = #{menuImg2}
-		 </if>
-		 <if test="menuIcon != null and menuIcon != '' ">
-			 AND MENU_ICON = #{menuIcon}
-		 </if>
-		 <if test="sort != null and sort != '' ">
-			 AND SORT = #{sort}
-		 </if>
 		 <if test="useAuth != null and useAuth != '' ">
 			 AND USE_AUTH = #{useAuth}
 		 </if>
 		 <if test="useAt != null and useAt != '' ">
 			 AND USE_AT = #{useAt}
 		 </if>
-		 <if test="regDt != null and regDt != '' ">
-			 AND REG_DT = #{regDt}
-		 </if>
-		 <if test="regUserId != null and regUserId != '' ">
-			 AND REG_USER_ID = #{regUserId}
-		 </if>
 	</select>
-	<insert id="insertMGR0001Mapper" parameterType="com.lfc.mgr.mgr0001.vo.MenuInfoVO" >
+	<insert id="insertMenu" parameterType="menuInfoVO" >
 		 insert into MENU_INFO(
 			MENU_ID,
 			MENU_DIV,
@@ -96,10 +75,9 @@
 			#{regUserId}
 		)
 	</insert>
-	<update id="updateMGR0001Mapper" parameterType="com.lfc.mgr.mgr0001.vo.MenuInfoVO" >
+	<update id="updateMenu" parameterType="menuInfoVO" >
 		 update MENU_INFO
 		 set
-			MENU_ID = #{menuId},
 			MENU_DIV = #{menuDiv},
 			MENU_NM = #{menuNm},
 			MENU_KIND_CD = #{menuKindCd},
@@ -114,37 +92,12 @@
 			REG_DT = #{regDt},
 			REG_USER_ID = #{regUserId}
 		 where 
-			 MENU_ID = #{menuId}
-			 AND MENU_DIV = #{menuDiv}
-			 AND MENU_NM = #{menuNm}
-			 AND MENU_KIND_CD = #{menuKindCd}
-			 AND MENU_PID = #{menuPid}
-			 AND MENU_URL = #{menuUrl}
-			 AND MENU_IMG1 = #{menuImg1}
-			 AND MENU_IMG2 = #{menuImg2}
-			 AND MENU_ICON = #{menuIcon}
-			 AND SORT = #{sort}
-			 AND USE_AUTH = #{useAuth}
-			 AND USE_AT = #{useAt}
-			 AND REG_DT = #{regDt}
-			 AND REG_USER_ID = #{regUserId}
+		 AND 1=1
+		 AND MENU_ID = #{menuId}
 	</update>
-	<delete id="deleteMGR0001Mapper" parameterType="com.lfc.mgr.mgr0001.vo.MenuInfoVO" >
+	<delete id="deleteMenu" parameterType="menuInfoVO" >
 		 delete from MENU_INFO
 		 where 
 			 MENU_ID = #{menuId}
-			 AND MENU_DIV = #{menuDiv}
-			 AND MENU_NM = #{menuNm}
-			 AND MENU_KIND_CD = #{menuKindCd}
-			 AND MENU_PID = #{menuPid}
-			 AND MENU_URL = #{menuUrl}
-			 AND MENU_IMG1 = #{menuImg1}
-			 AND MENU_IMG2 = #{menuImg2}
-			 AND MENU_ICON = #{menuIcon}
-			 AND SORT = #{sort}
-			 AND USE_AUTH = #{useAuth}
-			 AND USE_AT = #{useAt}
-			 AND REG_DT = #{regDt}
-			 AND REG_USER_ID = #{regUserId}
 	</delete>
 </mapper>

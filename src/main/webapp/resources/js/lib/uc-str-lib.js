@@ -268,13 +268,15 @@ var strLib = {
 	     * @param {Boolean} isUpper : 대문자로 변환 여부 
 	     * @returns
 	     */
-	    toUnnderScore:function(str, isUpper){
+	    toUnderScore:function(str, isUpper , hipen){
 	    	// camelCase -> _, 대문자 로 변경
+	    	var splitStr = "_";
+	    	if( hipen ) splitStr = '-';
 			var tmp ="";
 			for(var i=0,len=str.length;i<len;i++){
 				var ch = str.charAt(i);
 				if( ch.charCodeAt() < 97	){
-					tmp += "_"+ch;
+					tmp += splitStr+ch;
 				}else{
 					tmp += ch;
 				}

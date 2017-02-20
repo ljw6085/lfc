@@ -238,3 +238,8 @@ th.insertTh, td.insertTd {
 .ui-btn-color-purple.ui-btn-icon-notext:after {
 	background-color: rgba(156, 39, 176, 0.5) /*{global-icon-disc}*/;
 }
+
+.ui-checkbox input.txtC, .ui-radio input.txtC{
+		left:50%;
+		margin:-11px;
+	}

@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.lfc.mgr.mgr0001.vo.MenuInfoVO;
 import com.lfc.mgr.mgr0002.vo.CmmnCodeVO;
 
 @Component
@@ -17,7 +18,15 @@ public class CommonModel {
 
 	private Map<String,Map<String,String>> commonCode;
 	private Map<String,String> commonDivCode;
-
+	private List<MenuInfoVO> menuList;
+	
+	public List<MenuInfoVO> getMenuList(){
+		return menuList;
+	}
+	public void setMenuList(List<MenuInfoVO> menuList){
+		this.menuList = menuList;
+	}
+	
 	public void refreshCommonCode(){
 		commonCode = new HashMap<String,Map<String,String>>();
 		commonDivCode= new HashMap<String,String>();

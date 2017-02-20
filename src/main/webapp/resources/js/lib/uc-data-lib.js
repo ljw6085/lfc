@@ -311,8 +311,8 @@ var dataLib = {
 		 * @param data
 		 * @returns {TreeData} - tree구조로 변환한 데이터를 가지고있는 객체 ( 'data' 프로퍼티 에 변환된 데이터가 존재함 )
 		 */
-		treeData : function( data ){
-			return new TreeData( data );
+		treeData : function( data , option){
+			return new TreeData( data , option);
 		},
 		/**
 		 *  String 형태의 
@@ -398,8 +398,12 @@ var dataLib = {
  * @property {Array} dataByDepth - depth 별 데이터
  * @return {TreeData}
  */
-function TreeData( data ){
-	
+function TreeData( data , option){
+	var pId = 'parent', id = 'id';
+	if( option.parentId ) pId = option.parentId;
+	if( option.id ) id= option.id;
+	this.pId = pId;
+	this.id = id;
 	this.dataByDepth = [];
 	this.data = this.makeTreeData(  this.setDepth( data ) );
 	
@@ -436,6 +440,8 @@ function TreeData( data ){
 TreeData.prototype.makeTreeData = function( data ){
 	var _t = this , treeResult, r;
 	
+	var _parent = _t.pId;
+	var _id = _t.id;
 	_t.dataByDepth = r =  [];
 	
 	data.sorting({
@@ -446,7 +452,7 @@ TreeData.prototype.makeTreeData = function( data ){
    		var t = this, cursor = 0;
    		
    		for(var i=0,len=t.length;i<len;i++){
-   			var c = t[i] , d = c.depth, id = c.id;
+   			var c = t[i] , d = c.depth, id = c[_id];
    			if( typeof r[d] =='undefined' ){
 				r[d] = {
 					depth:d
@@ -464,7 +470,8 @@ TreeData.prototype.makeTreeData = function( data ){
    				for(var k=0,kLen=keys.length;k<kLen;k++){
    					var key = keys[k], cur = o[key];
    					if(key == 'depth') continue;
-   					var pId = cur.parent;
+//   					var pId = cur.parent;
+   					var pId = cur[_parent];
    					upper[ pId ].child.push( cur );
    					parents[pId] = 0;
    				}
@@ -506,10 +513,11 @@ TreeData.prototype.makeTreeData = function( data ){
  * @returns {Array}
  */
 TreeData.prototype.setDepth = function( data ){
-	
+	var _parent = this.pId;
+	var _id = this.id;
 	var known = {} , unknown = {},unknownLst = [];
 	for(var i=0,len=data.length;i<len;i++){
-		var d = data[i], p = d.parent, id = d.id, dep = d.depth;
+		var d = data[i], p = d[_parent], id = d[_id], dep = d.depth;
 		if( p == null || typeof p == 'undefined' || id.toLowerCase() == 'root' || dep == 0){
 			known[id] = 0;
 		}else{
@@ -532,7 +540,7 @@ TreeData.prototype.setDepth = function( data ){
 	
 	for(var i=0,len=data.length;i<len;i++){
 		var d= data[i];
-		d.depth = known[d.id];
+		d.depth = known[d[_id]];
 	}
 	
 	return data;

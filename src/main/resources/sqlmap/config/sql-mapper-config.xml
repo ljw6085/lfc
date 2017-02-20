@@ -5,6 +5,7 @@
 <!-- Mybatis 예제 -->
 <configuration>
     <typeAliases>
+		<typeAlias alias="menuInfoVO" type="com.lfc.mgr.mgr0001.vo.MenuInfoVO"/>
 		<typeAlias alias="CmmnCodeVO" type="com.lfc.mgr.mgr0002.vo.CmmnCodeVO"/>
 		<typeAlias alias="CmmnDivCodeVO" type="com.lfc.mgr.mgr0002.vo.CmmnDivCodeVO"/>
 		<typeAlias alias="hashMap" type="java.util.HashMap"/>

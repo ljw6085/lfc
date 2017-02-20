@@ -30,8 +30,6 @@
 	.g-head-wrap , .g-body-wrap { overflow: hidden; }
 	.g-head{}
 	.g-body{}
-/* 	.g-body tr:hover {background: #eee;} */
-/* 	.g-body tr {cursor:pointer;} */
 	
 	.g-scroll-wrap {
 		border:1px solid #ddd; 
@@ -97,7 +95,7 @@
 	.g-body-wrap {color:#333;}
 	.g-body > tr > td ,.g-head > tr > th  {padding:.4em .5em; line-height:1.5em;}
 	
-	.g-body > tr:nth-child(odd) td {background: #efefef; }
+	.g-body > tr:nth-child(odd) {background: #efefef; }
 	
 	.g-head > tr > th  {border-bottom: 2px solid rgba(0,0,0,.1);background: none;text-align: left;}
 	.g-body > tr{ border-top: 1px solid rgba(0,0,0,.1);}
@@ -105,7 +103,9 @@
 	
 	.g-row-odd-background {}
 	.g-row-even-background{}
-
+	
+	.g-body tr:hover {background-color: #d9f1ff! important;}
+	.g-body tr {cursor:pointer;}
 	
 	/* Hide all prioritized columns by default */
 @media only all {

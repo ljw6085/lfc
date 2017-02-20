@@ -493,14 +493,14 @@ var MENU = {
 		,_createItem : function( o, item ){
 			var $a = $("<a></a>")
 							.text( o.menuNm )
-							.attr('data-id',o.id);
-			item.attr("data-id",o.id);
+							.attr('data-id',o.menuId);
+			item.attr("data-id",o.menuId);
 			item.attr("data-menu-nm",o.menuNm)
 			item.append( $a );
-			if( o.url ) $a.attr('data-url',o.url);
-			if( o.icon ) $a.addClass('ui-icon-'+ o.icon);
+			if( o.menuUrl ) $a.attr('data-url',o.menuUrl);
+			if( o.menuIcon ) $a.addClass('ui-icon-'+ o.menuIcon);
 			
-			this._compareCurrentUrl( item, o.url );
+			this._compareCurrentUrl( item, o.menuUrl );
 			
 			// depth 
 			$a.prepend( this._createTab( o.depth ));
@@ -545,7 +545,7 @@ var MENU = {
 		,createMenu : function ( data ){
 			var _t = this;
 			// 트리데이터 생성
-			var tree = dataLib.treeData( data );
+			var tree = dataLib.treeData( data ,{parentId:'menuPid',id:'menuId'});
 
 			// 트리데이터로 메뉴 생성
 			var rootObj = tree.data.child;
@@ -624,14 +624,11 @@ var $j = {
 				this.documents[i].call(document);
 			}
 		}
-		,documentReady : function(form , callback, pageEventFunc){
+		,documentReady : function(form , callback){
 			$(document).ready(function(){
 				var frm = formLib.getForm(form);
 				var uiPage = $(frm).closest("[data-role='page']");
 				callback($(frm),uiPage);
-				if( pageEventFunc ){
-					pageEventFunc( $(frm) , $( ":mobile-pagecontainer" ).pagecontainer );
-				}
 			});
 		}
 		,isMobile:function(){

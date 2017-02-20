@@ -159,7 +159,7 @@ $j.documents.push(function(){
 	// dom 관리방법 강구해볼것	- value mapping #.+#
 	var row ="<tr>";
 		row += "<input type='hidden' name='parentCode' value='#parentCode#'><input type='hidden' name='sort' value='#sort#'>"
-		row += "<td><input type='radio' name='moving-checked' class='moving-checked'></td>"
+		row += "<td><input type='radio' name='moving-checked' class='moving-checked txtC'></td>"
 		row += "<td><input type='text' name='code' style='text-align:center' class='filter:require:max[6]:eng:num' placeholder='코드' size='6' value='#code#'></td>"
 		row += "<td><input type='text' name='codeNm' class='filter:require' placeholder='코드명' value='#codeNm#'></td>"
 		row += "<td><input type='text' name='codeDc' placeholder='코드설명' value='#codeDc#'></td>"
@@ -194,7 +194,7 @@ $j.documents.push(function(){
 <div data-role="page" id='codeInsert'><!-- second page start -->
 	<form name='codeInsertForm' action="/lfc/mgr/mgr0002/codeInsert.do">
 		<div class='header' data-role='header'><h1>공통코드 등록/수정</h1></div>
-		<div role='main' class='ui-content'>
+		<div role='main' class='ui-content'  style='min-width:750px;'>
 			<div id='infoArea'>
 				<table class='defaultTable'>
 					<colgroup>

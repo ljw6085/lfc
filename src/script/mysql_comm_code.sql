@@ -243,6 +243,22 @@ CREATE UNIQUE INDEX MENU_INFO_PK ON MENU_INFO
 	MENU_ID
 );
 
+INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `MENU_KIND_CD`, `MENU_URL`, `MENU_ICON`, `SORT`, `USE_AT`) VALUES ('M0000', 'HOME', '', '/index.do', 'home', '0', 'Y');
+INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `SORT`, `USE_AT`) VALUES ('M0001', '정보조회', '1', 'Y');
+INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `SORT`, `USE_AT`) VALUES ('M0002', '정보관리', '2', 'Y');
+INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `SORT`, `USE_AT`) VALUES ('M0003', '게시판', '3', 'Y');
+INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `SORT`, `USE_AT`) VALUES ('M0004', '운영관리', '4', 'Y');
+INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `MENU_PID`, `SORT`, `USE_AT`) VALUES ('M0005', '차량조회', 'M0001', '0', 'Y');
+INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `MENU_PID`, `SORT`, `USE_AT`) VALUES ('M0006', '주차조회', 'M0001', '1', 'Y');
+INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `MENU_PID`, `SORT`, `USE_AT`) VALUES ('M0007', '차량정보관리', 'M0002', '0', 'Y');
+INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `MENU_PID`, `SORT`, `USE_AT`) VALUES ('M0008', '주차정보관리', 'M0002', '1', 'Y');
+INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `MENU_PID`, `SORT`, `USE_AT`) VALUES ('M0009', '공지사항', 'M0003', '0', 'Y');
+INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `MENU_PID`, `SORT`, `USE_AT`) VALUES ('M0010', '문의사항', 'M0003', '1', 'Y');
+INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `MENU_PID`, `SORT`, `USE_AT`) VALUES ('M0011', '사용자관리', 'M0004', '0', 'Y');
+INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `MENU_PID`, `MENU_URL`, `SORT`, `USE_AT`) VALUES ('M0012', '메뉴관리', 'M0004', '/mgr/mgr0001/menuList.do', '1', 'Y');
+INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `MENU_PID`, `MENU_URL`, `SORT`, `USE_AT`) VALUES ('M0013', '코드관리', 'M0004', '', '2', 'Y');
+INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `MENU_PID`, `MENU_URL`, `MENU_ICON`, `SORT`, `USE_AT`) VALUES ('M0014', '공통코드관리', 'M0013', '/mgr/mgr0002/codeList.do', 'carat-r', '0', 'Y');
+INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `MENU_PID`, `SORT`, `USE_AT`) VALUES ('M0015', '차량코드관리', 'M0013', '1', 'Y');
 
 
 

@@ -18,6 +18,10 @@ $j.documents.push(function(){
 			compactSizingGrid( grid , $uiPage );
 		}).trigger('resize');
 		
+		$j.$page().on('pagechange',function(e){
+			$(window).trigger('resize');
+		});
+		
 		$form.find('.buttonBox').on('click',function(e){
 			var $target = $(e.target);
 			switch (true) {
@@ -102,7 +106,7 @@ $j.documents.push(function(){
 <!-- form 단위로 이루어진 content -->
 <form name='codeSelectForm'>
 	<!-- 실제 구성될 화면페이지  영역 -->
-	<div class='main_content'>
+	<div class='main_content' style='min-width:750px;'>
 	<div id='searchBox'>
 		<table class='defaultTable'>
 				<colgroup>
