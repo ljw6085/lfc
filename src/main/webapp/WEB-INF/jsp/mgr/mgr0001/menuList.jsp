@@ -44,33 +44,12 @@ $j.documentReady('menuSelectForm', function(form,$uiPage){
 <form name='menuSelectForm'>
 	<!-- 실제 구성될 화면페이지  영역 -->
 	<div class='main_content' style='min-width:750px;'>
-		<div class='searchBox'>
-			<table style='width:100%;'>
-				<colgroup>
-					<col style='width:20%'/>
-					<col style='width:30%'/>
-					<col style='width:20%'/>
-					<col style='width:30%'/>
-				</colgroup>
-				<tbody>
-					<tr>
-						<th >메뉴ID</th>
-						<td  style='display: block'><input type='text' data-mini='true'></td>
-						<th >메뉴명</th>
-						<td ><input type='text' data-mini='true'></td>
-					</tr>
-					<tr>	
-						<td colspan='4' style='border:0'>
-							<div class='buttonBox' style='margin-top:.5em;'>
-								<a href='#' id='insert' class='btn' data-icon='gear' data-transition='slide'>관리</a>
-								<a href='#' id='select' class='btn' data-icon='search'>조회</a>
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+		<div>
+			<div class='buttonBox' style='margin:.5em 0;'>
+				<a href='#' id='insert' class='btn' data-icon='check' data-color='green'>저장</a>
+				<a href='#' id='select' class='btn' data-icon='refresh' data-color='gray'>초기화</a>
+			</div>
 		</div>
-		<div id='menuListGrid' style='border-top:3px solid #ddd;margin:5px;'></div>
 		<div id='menuList'>
 			<table class='defaultTable menuList'>
 				<colgroup>
