@@ -111,8 +111,8 @@ var Common = {
 			return result;
 		}
 		
-		,_matchedRegExp:/#[^#]+#/g
-		,_replaceRegExp:/#/g
+		,_matchedRegExp:/%{[^}]+}/g
+		,_replaceRegExp:/[%{}]/g
 		/**
 		 *  _matchedRexExp ( #...# ) 형식에 맞는 문자열을 치환시킨다.
 		 */
@@ -122,7 +122,7 @@ var Common = {
 			for(var i = 0 ,len=matched.length;i<len;i++){
 				var key = matched[i].replace(t._replaceRegExp,'');
 				var replaceVal = data[key];
-				if( typeof replaceVal == 'undefined' ) replaceVal = '';
+				if( typeof replaceVal == 'undefined' || null == replaceVal ) replaceVal = '';
 				str = str.replace(matched[i],replaceVal);
 			}
 			return str;
@@ -140,7 +140,6 @@ var Common = {
 				if( this.tagName == 'SELECT'){
 					value = $(this).find("option:selected").val();
 				}else{
-					
 					switch (this.type) {
 					case 'radio':
 					case 'checkbox':

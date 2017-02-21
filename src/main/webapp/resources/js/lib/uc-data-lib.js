@@ -695,9 +695,11 @@ Array.prototype.sorting = function( sortOpt , callback ){
 		}
 		
 		// sort 실행
-		var t = this.sort(sortFunc);
-		if( typeof callback == 'function') callback.call(this, t );
-		return t;
+		if( this.sort ){
+			var t = this.sort(sortFunc);
+			if( typeof callback == 'function') callback.call(this, t );
+			return t;
+		}
 		
 }
 /**
