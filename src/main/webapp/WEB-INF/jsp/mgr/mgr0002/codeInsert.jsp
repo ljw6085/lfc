@@ -37,7 +37,6 @@ $j.documents.push(function(){
 					$codeDetailList.find('tr').each(function(i,item){
 						var t = $(this);
 						var rowInfo = Common.getDataFromDoms( t );
-						
 						// 라디오버튼(사용여부)의 경우 name이 다르므로( USE_AT_x 형태 ), 따로 세팅해줌
 						for(var k in rowInfo) {
 							if( /USE_AT*/.test(k) )rowInfo.useAt = rowInfo[k];
@@ -79,21 +78,12 @@ $j.documents.push(function(){
 		});
 		
 		$form.find(".rowBtnBox").bind('click',function(e){
-			var tr = getMovingCheckedRow( $codeDetailList );
-			
 			switch ( e.target.id ) {
-				case '_rowUp':
-					tr.insertBefore(  tr.prev('tr') );
-					break;
-				case '_rowDown':
-					tr.insertAfter(  tr.next('tr') );
-					break;
 				case '_rowAdd':
 					counter++; // 전역변수
 					rowAdd( $form ,{
 						parentCode : frm.divCode.value
 					}, counter);
-					initMovingCheckRadioBtn( $codeDetailList ,'last');
 					break;
 		
 				default:
@@ -104,20 +94,27 @@ $j.documents.push(function(){
 		
 		$uiPage.on( 'click', '.rowDelete', function(e){
 			$(e.target).closest('tr').remove();
-			initMovingCheckRadioBtn( $codeDetailList );
 		});// delete
 	
+		$(".codeListTable").sortable({
+			items:" > tbody > tr"
+			,axis:'y'
+			,handle: ".move_icon"
+	        ,opacity: 0.7
+	        ,delay: 50
+	        ,dropOnEmpty: true
+	        ,pullPlaceholder: false
+	        ,stop:function(e){
+	        }
+			,helper: function(e, ui) {
+				ui.children().each(function() {
+			        $(this).width($(this).width());
+			    });
+				return ui;
+			}
+		});
 		
 	});
-	
-	function getMovingCheckedRow( $codeDetailList ){
-		return $codeDetailList.find('.moving-checked:checked').closest('tr');
-	}
-	
-	function initMovingCheckRadioBtn( $codeDetailList , direction ){
-		if( !direction ) direction = 'first' 
-		$codeDetailList.find('.moving-checked:'+direction).prop("checked",true);
-	}
 	
 	function initCodeList( $form,  params ){
 		var frm = $form[0];
@@ -146,7 +143,6 @@ $j.documents.push(function(){
 					}
 				}
 				counter = $codeDetailList.find('tr').length;
-				initMovingCheckRadioBtn( $codeDetailList );
 	    	});
 			
 		}else{
@@ -158,11 +154,11 @@ $j.documents.push(function(){
 	
 	// dom 관리방법 강구해볼것	- value mapping #.+#
 	var row ="<tr>";
-		row += "<input type='hidden' name='parentCode' value='#parentCode#'><input type='hidden' name='sort' value='#sort#'>"
-		row += "<td><input type='radio' name='moving-checked' class='moving-checked txtC'></td>"
-		row += "<td><input type='text' name='code' style='text-align:center' class='filter:require:max[6]:eng:num' placeholder='코드' size='6' value='#code#'></td>"
-		row += "<td><input type='text' name='codeNm' class='filter:require' placeholder='코드명' value='#codeNm#'></td>"
-		row += "<td><input type='text' name='codeDc' placeholder='코드설명' value='#codeDc#'></td>"
+		row += "<input type='hidden' name='parentCode' value='%{parentCode}'><input type='hidden' name='sort' value='%{sort}'>"
+		row += "<td style='text-align:center;'><div class='move_icon'></div></td>"
+		row += "<td><input type='text' name='code' style='text-align:center' class='filter:require:max[6]:eng:num' placeholder='코드' size='6' value='%{code}'></td>"
+		row += "<td><input type='text' name='codeNm' class='filter:require' placeholder='코드명' value='%{codeNm}'></td>"
+		row += "<td><input type='text' name='codeDc' placeholder='코드설명' value='%{codeDc}' style='width:100%;'></td>"
 		row += "<td class='codeUseAt' style='text-align: center;'></td>"
 		row += "<td style='text-align: center;'> <a href='#' class='btnIcon rowDelete' data-icon='delete' data-color='red' data-notext='true'>삭제</a></td>"
 		row += "</tr>";
@@ -186,17 +182,12 @@ $j.documents.push(function(){
 	}
 });
 </script> 
-<style>
-	.codeDetailList td {
-		border:0;
-	}
-</style>
 <div data-role="page" id='codeInsert'><!-- second page start -->
 	<form name='codeInsertForm' action="/lfc/mgr/mgr0002/codeInsert.do">
 		<div class='header' data-role='header'><h1>공통코드 등록/수정</h1></div>
-		<div role='main' class='ui-content'  style='min-width:750px;'>
-			<div id='infoArea'>
-				<table class='defaultTable'>
+		<div role='main' class='ui-content'  style='min-width:1024px;'>
+			<div id='infoArea' style='text-align: center;'>
+				<table class='defaultTable' >
 					<colgroup>
 						<col style='width:20%;'/>
 						<col style='width:30%;'/>
@@ -231,37 +222,35 @@ $j.documents.push(function(){
 							<td class='insertTd' colspan='4' style='border:0;'>
 								<div class='buttonBox rowBtnBox' style='margin-top:.5em;'>
 									<a href='#' id='_rowAdd' class='btn rowAdd' data-icon='plus' data-mini='true'>행추가</a>
-									<a href='#' id='_rowUp' class='btn rowUp' data-icon='carat-u' data-mini='true'>위로</a>
-									<a href='#' id='_rowDown' class='btn rowDown' data-icon='carat-d' data-mini='true'>아래로</a>
 								</div>
 							</td>
 						</tr>
 						<tr>
-							<td class='insertTd' colspan='4' style='border:0;'>
-								<table class='defaultTable'>
-									<colgroup>
-										<col style='width:5%'>
-										<col style='width:10%'>
-										<col style='width:20%'>
-										<col style='width:25%'>
-										<col style='width:15%'>
-										<col style='width:5%'>
-									</colgroup>
-									<thead >
-										<tr>
-											<th class='insertTh'>선택</th>
-											<th class='insertTh'>코드</th>
-											<th class='insertTh'>코드명</th>
-											<th class='insertTh'>코드설명</th>
-											<th class='insertTh'>사용여부</th>
-											<th class='insertTh'>삭제</th>
-										</tr>
-									</thead>
-									<tbody class='codeDetailList'></tbody>
-								</table>
+							<td class='insertTd' colspan='4' style='border:0;width:100%'>
 							</td>
 						</tr>
 					</tbody>
+				</table>
+				<table class='defaultTable codeListTable'  style='width:100%'>
+					<colgroup>
+						<col style='width:5%'>
+						<col style='width:10%'>
+						<col style='width:20%'>
+						<col style='width:45%'>
+						<col style='width:15%'>
+						<col style='width:5%'>
+					</colgroup>
+					<thead>
+						<tr>
+							<th class='insertTh'>이동</th>
+							<th class='insertTh'>코드</th>
+							<th class='insertTh'>코드명</th>
+							<th class='insertTh'>코드설명</th>
+							<th class='insertTh'>사용여부</th>
+							<th class='insertTh'>삭제</th>
+						</tr>
+					</thead>
+					<tbody class='codeDetailList'></tbody>
 				</table>
 			</div>
 		</div>
