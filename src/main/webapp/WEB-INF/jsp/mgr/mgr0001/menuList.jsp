@@ -220,7 +220,7 @@ function makeRow(mnInfo){
 <!-- form 단위로 이루어진 content -->
 <form name='menuSelectForm'>
 	<!-- 실제 구성될 화면페이지  영역 -->
-	<div class='main_content' style='min-width:750px;'>
+	<div class='main_content' style='min-width:1024px;'>
 		<div>
 			<div class='buttonBox' style='margin:.5em 0;'>
 				<a href='#' id='insert' class='btn' data-icon='check' data-color='green'>저장</a>
