@@ -156,9 +156,9 @@ $j.documents.push(function(){
 	var row ="<tr>";
 		row += "<input type='hidden' name='parentCode' value='%{parentCode}'><input type='hidden' name='sort' value='%{sort}'>"
 		row += "<td style='text-align:center;'><div class='move_icon'></div></td>"
-		row += "<td><input type='text' name='code' style='text-align:center' class='filter:require:max[6]:eng:num' placeholder='코드' size='6' value='%{code}'></td>"
-		row += "<td><input type='text' name='codeNm' class='filter:require' placeholder='코드명' value='%{codeNm}'></td>"
-		row += "<td><input type='text' name='codeDc' placeholder='코드설명' value='%{codeDc}' style='width:100%;'></td>"
+		row += "<td><input type='text' data-mini='true' name='code' style='text-align:center' class='filter:require:max[6]:eng:num' placeholder='코드' size='6' value='%{code}'></td>"
+		row += "<td><input type='text' data-mini='true'  name='codeNm' class='filter:require' placeholder='코드명' value='%{codeNm}'></td>"
+		row += "<td><input type='text' data-mini='true'  name='codeDc' placeholder='코드설명' value='%{codeDc}' style='width:100%;'></td>"
 		row += "<td class='codeUseAt' style='text-align: center;'></td>"
 		row += "<td style='text-align: center;'> <a href='#' class='btnIcon rowDelete' data-icon='delete' data-color='red' data-notext='true'>삭제</a></td>"
 		row += "</tr>";
@@ -182,10 +182,13 @@ $j.documents.push(function(){
 	}
 });
 </script> 
+<style>
+	.insertTh { font-size: 0.9em;}
+</style>
 <div data-role="page" id='codeInsert'><!-- second page start -->
 	<form name='codeInsertForm' action="/lfc/mgr/mgr0002/codeInsert.do">
 		<div class='header' data-role='header'><h1>공통코드 등록/수정</h1></div>
-		<div role='main' class='ui-content'  style='min-width:1024px;'>
+		<div role='main' class='ui-content'  style='min-width:900px;'>
 			<div id='infoArea' style='text-align: center;'>
 				<table class='defaultTable' >
 					<colgroup>
@@ -210,11 +213,11 @@ $j.documents.push(function(){
 								<input type='text' name='divCode' placeholder="분류코드">
 							</td>
 							<th class='insertTh'>분류코드명</th>
-							<td class='insertTd'><input type='text' name='divCodeNm' placeholder="분류코드명"></td>
+							<td class='insertTd'><input type='text' name='divCodeNm' placeholder="분류코드명" data-mini='true'></td>
 						</tr>
 						<tr class='searchArea'>
 							<th class='insertTh'>분류코드설명</th>
-							<td class='insertTd'><input type='text' name='divCodeDc' placeholder="분류코드설명"></td>
+							<td class='insertTd'><input type='text' name='divCodeDc' placeholder="분류코드설명" data-mini='true'></td>
 							<th class='insertTh'>사용여부</th>
 							<td class='insertTd divUseAt'></td>
 						</tr>

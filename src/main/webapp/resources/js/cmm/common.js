@@ -235,16 +235,19 @@ var $m = {
 						if( option ){
 							if( option.corner !== false ) classes.push('ui-corner-all');
 							if( option.shadow !== false ) classes.push('ui-shadow');
-							if( !option.iconPosition &&  !option.notext) classes.push( 'ui-btn-icon-left');
+							if( !option.iconPosition &&  !option.notext && _t.attr('data-icon')) classes.push( 'ui-btn-icon-left');
 						}
+						
 						if( (icon = _t.attr('data-icon')) ) {
 							classes.push('ui-icon-'+icon);
 						}
 						if( (color = _t.attr('data-color')) ) {
 							classes.push('ui-btn-color-'+color);
 						}
+						var cls = classes.join(' ');
+						if( _t.attr('data-full') ) cls = cls.replace('ui-btn-inline','');
 						_t.removeClass('ui-link');
-						_t.addClass(classes.join(' '));
+						_t.addClass(cls);
 						_t.attr("data-is-apply",true);
 					}
 				}).trigger('refresh');

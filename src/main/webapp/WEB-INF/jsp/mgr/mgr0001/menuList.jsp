@@ -10,8 +10,19 @@
 $j.documentReady('menuSelectForm', function(form,$uiPage){
 	var sortableManager = {
 			movingTarget:[]	
-			,wscrolltop:0
 	}
+
+	// popup 초기화
+	$("#dialog").popup();
+
+	// ROOT Btn Area Append
+	var colCnt = $('.menuListTable').find("col").length;
+	var rootTr ="<tr data-menu-pid='null' data-menu-id='newRoot' data-depth='0'>";
+		rootTr+="<td><a href='#' class='btnIcon menuAdd' data-icon='plus' ></a></td>";
+		rootTr+="<td colspan='"+(colCnt-1)+"'></td></tr>";
+	$uiPage.find(".menuDataList").append(rootTr);
+	
+	// MENU List Create
 	makeMenuList( MENU.TREE.data.child );
 	
 	var clicked = false;
@@ -21,8 +32,9 @@ $j.documentReady('menuSelectForm', function(form,$uiPage){
 	},function(){
 		rowHoverFunction.call(this, 'out' ,clicked );
 	});
-	$("#dialog").popup();
+
 	//********************************* EVENT BIND------------------------------------------------------------------------------------
+	
 	var rIdx=0;
 	$(".menuDataList").on('click' , '.btnIcon' ,function(e){
 		var curRow = $(e.target).closest('tr')
@@ -42,12 +54,21 @@ $j.documentReady('menuSelectForm', function(form,$uiPage){
 				break;
 			case $(e.target).hasClass('menuAdd'): //메뉴추가
 				var newMenuInfo = {}
+				if ( curId == 'newRoot' ){
+					menuInfo = {
+							menuPid:null
+							,depth:-1
+					}
+				}else if( curId.indexOf('_new_')>-1){
+					return;
+				}
+			
 				$.extend(newMenuInfo , menuInfo);
 				newMenuInfo.menuNm 	= "메뉴명을입력하세요.";
 				newMenuInfo.menuUrl = "URL을 입력하세요.";
 				newMenuInfo.menuPid = menuInfo.menuId;
 				newMenuInfo.depth 	= menuInfo.depth+1;
-				newMenuInfo.menuId 	= "new_"+(rIdx++);
+				newMenuInfo.menuId 	= "_new_"+(rIdx++);
 				var $tr = makeRow(newMenuInfo);
 				curRow.after($tr);
 				$j.refreshPage();
@@ -77,9 +98,30 @@ $j.documentReady('menuSelectForm', function(form,$uiPage){
 		$(".disabled").removeClass("disabled");
 		
 	}).bind('click',function(e){ // menu Folder
-		if( e.target.tagName == 'INPUT' || $(e.target).hasClass('move_icon')|| e.target.tagName == 'A')return;
+		var target = e.target;
+		if( $(target).hasClass('move_icon')|| target.tagName == 'A')return;
 		
-		var $row = $(e.target).closest('tr') 
+		var $row = $(target).closest('tr');	
+		//checkbox 이벤트
+		if( target.type == 'checkbox'){
+			// check box 이벤트 수정해야함 --
+			var parents = getParents($row);
+			var childs = getChildes($row);
+			var auth = $(target).attr('data-auth');
+			var chk = target.checked;
+			for( var i =0,len=parents.length;i<len;i++) 
+					parents[i].find('[data-auth="'+auth+'"]').prop('checked',chk);
+			for( var i =0,len=childs.length;i<len;i++) 
+					childs[i].find('[data-auth="'+auth+'"]').prop('checked',chk);
+			return;
+		}
+		
+		if( $row[0].id.indexOf('_new_') > -1 ){
+			$row.find(".menuMgr").trigger('click');	
+			return;
+		}
+			
+		var $row = $(target).closest('tr') 
 			, childs = getChildes( $row ) ;
 			$row.toggleClass('hiddenChilds','');
 		
@@ -101,7 +143,6 @@ $j.documentReady('menuSelectForm', function(form,$uiPage){
 		,start		:function(e,ui){
 			ui.placeholder.height( ui.item.height() );
 			sortableManager.movingTarget = getChildes( ui.item , ui.placeholder );
-			sortableManager.wscrolltop = $(window).scrollTop();
 		}
 		,sort		: function(e,ui){
 			// 유효하지 않은 움직임은 보여주지말자
@@ -170,6 +211,22 @@ function getChildes($row, placeholder){
 	}
 	return movingTarget;
 }
+function getParents($row ){
+	var depth = $row.attr('data-depth');
+	var p_id = $row.attr('data-menu-pid');
+	var targets=[];
+	var _prv = $row.prev();
+	while(true){
+		if( p_id.toUpperCase() == 'NULL' ) break;
+
+		if( _prv.length && _prv.attr("data-menu-id") == p_id ){
+			targets.push( _prv );
+			p_id = _prv.attr('data-menu-pid');
+		}
+		_prv = _prv.prev();	
+	}
+	return targets;
+}
 
 // Menu List를 생성한다.
 var topMenuCounter = 0;
@@ -191,14 +248,13 @@ function makeRow(mnInfo){
 	// %{ ... } 형태로 key 값을 매핑시킨다.
 	var tr = "<tr id='%{menuId}' class='imMenu'>"; 
 		tr += "<td style='text-align:center;' ><div class='move_icon'></div></td>"; // menu명
-// 		tr += "<td style='text-align: center;'>%{addBtn}</td>"; // detail
 		tr += "<td style='border-left:0'>%{blankBox}%{menuNm}%{addBtn}</td>"; // menu명
 		tr += "<td>%{menuUrl}</td>"; // url
 		tr += "<td><input type='checkbox' class='txtC'></td>"; // useAt
-		tr += "<td><input type='checkbox' class='txtC'></td>"; // userAuth -1
-		tr += "<td><input type='checkbox' class='txtC'></td>"; // userAuth -2
-		tr += "<td><input type='checkbox' class='txtC'></td>"; // userAuth -3
-		tr += "<td><input type='checkbox' class='txtC'></td>"; // userAuth -4
+		tr += "<td><input type='checkbox' class='txtC' data-auth='1'></td>"; // userAuth -1
+		tr += "<td><input type='checkbox' class='txtC' data-auth='2'></td>"; // userAuth -2
+		tr += "<td><input type='checkbox' class='txtC' data-auth='4'></td>"; // userAuth -4
+		tr += "<td><input type='checkbox' class='txtC' data-auth='8'></td>"; // userAuth -8
 		tr += "<td style='text-align: center;'>%{mgrBtn}</td>"; // detail
 		tr += "<td style='text-align: center;'>%{delBtn}</td>"; // detail
 		tr += "</tr>";
@@ -206,6 +262,7 @@ function makeRow(mnInfo){
 	
 	var $tr =$(newTr);
 	for(var k in mnInfo){
+		switch (k) { case 'blankBox': case 'mgrBtn': case 'addBtn': case 'delBtn': continue; break; }
 		var data = mnInfo[k];
 		if( k == 'menuPid' && !data )$tr.attr('data-menu-pid','NULL');
 		if( typeof data == 'object' || typeof data == 'undefined') continue;
@@ -230,22 +287,30 @@ function makeRow(mnInfo){
 	.ui-btn-icon-notext:after, .ui-btn-icon-left:after, .ui-btn-icon-right:after{
 		margin-top: -10px;
 	}
+	
+	.ui-checkbox input, .ui-radio input{
+		width:18px;
+		height:18px;
+	}
+	.ui-checkbox input.txtC, .ui-radio input.txtC{
+		margin: -10px;
+	}
 </style>
 <!-- form 단위로 이루어진 content -->
 <form name='menuSelectForm'>
 	<!-- 실제 구성될 화면페이지  영역 -->
 	<div class='main_content' style='min-width:900px;'>
 		<div>
+			<p>############### 체크박스 이벤트 수정하기 , CRUD !</p>
 			<div class='buttonBox' style='margin:.5em 0;'>
 				<a href='#' id='insert' class='btn' data-icon='check'>저장</a>
 				<a href='#' id='select' class='btn' data-icon='refresh' data-color='gray'>초기화</a>
 			</div>
 		</div>
-		<div id='menuLoadList'>
+		<div style='min-width: 900px;table-layout: fixed;overflow-y:scroll;'>
 			<table class='defaultTable menuListTable'>
 				<colgroup>
 					<col style='width:5%'/>
-<%-- 					<col style='width:6%'/> --%>
 					<col style='width:25%'/>
 					<col style='width:*'/>
 					<col style='width:5%'/>
@@ -260,7 +325,6 @@ function makeRow(mnInfo){
 				<thead>
 					<tr>
 						<th rowspan='2'>순서</th>
-<!-- 						<th rowspan='2'>추가</th> -->
 						<th rowspan='2'>메뉴명</th>
 						<th rowspan='2'>URL</th>
 						<th rowspan='2'>사용<br/>여부</th>
@@ -275,26 +339,94 @@ function makeRow(mnInfo){
 						<th>운영<br/>관리자</th>
 					</tr>
 				</thead>
-				<tbody class='menuDataList'> </tbody>
+			</table>
+		</div>
+		<div id='menuLoadList' style='max-height:500px;overflow-y:scroll;min-width: 900px;table-layout: fixed;'>
+			<table class='defaultTable menuListTable'>
+				<colgroup>
+					<col style='width:5%'/>
+					<col style='width:25%'/>
+					<col style='width:*'/>
+					<col style='width:5%'/>
+					
+					<col style='width:6%'/>
+					<col style='width:6%'/>
+					<col style='width:6%'/>
+					<col style='width:6%'/>
+					<col style='width:6%'/>
+					<col style='width:6%'/>
+				</colgroup>
+				<tbody class='menuDataList'></tbody>
 			</table>
 		</div>
 	</div>
 	<!--// main_content  -->
 </form>
-	<div id="dialog" data-role="popup" data-overlay-theme="a" data-theme="a" style='width:500px'>
-	  <form>
-	        <div style="padding:10px 20px;">
-	            <h3>Please sign in</h3>
-	            <label for="un" class="ui-hidden-accessible">Username:</label>
-	            <input type="text" name="user" id="un" value="" placeholder="username" data-theme="a">
-	            <label for="pw" class="ui-hidden-accessible">Password:</label>
-	            <input type="password" name="pass" id="pw" value="" placeholder="password" data-theme="a">
-				<button type="submit" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check">Sign in</button>
-				<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
-				<a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" data-transition="flow">Delete</a>
-	        </div>
-	    </form>
-	</div>
+<div id="dialog" data-role="popup" data-overlay-theme="a" data-theme="a" style='width:600px'>
+	<form name='menuPopupFrm'>
+	  	<div style="padding:10px 20px;">
+				<h3>Menu Detail Info</h3>
+				<table class='defaultTable'>
+					<colgroup>
+						<col style='width:20%'/>
+						<col style='width:30%'/>
+						<col style='width:20%'/>
+						<col style='width:30%'/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<th class='insertTh'>부모메뉴ID</th>
+							<td>
+								<input type='hidden' name='menuPid'>
+								<span id='popupMenuPid'></span>
+							</td>
+							<th class='insertTh'>메뉴ID</th>
+							<td style='text-align: center;'>
+								<input type='hidden' name='menuId'>
+								<span id='popupMenuId'>M0022</span><a href='#' class='btn' data-icon='refresh'>조회</a>	
+							</td>
+						</tr>
+						<tr>
+							<th class='insertTh'><label for='popupMenuNm'>메뉴명</label></th>
+							<td>
+								<input type='text' id='popupMenuNm' name='menuNm' placeholder='메뉴명' data-mini='true'>
+							</td>
+							<th class='insertTh'><label for='popupIcon'>ICON</label></th>
+							<td>
+								<input type='text' id='popupIcon' name='menuIcon' placeholder='메뉴 Icon' data-mini='true'>
+							</td>
+						</tr>
+						<tr>
+							<th class='insertTh'><label for='popupMenuUrl'>URL</label></th>
+							<td colspan='3'>
+								<input type='text' id='popupMenuUrl' name='menuUrl' placeholder='URL' data-mini='true'>
+							</td>
+						</tr>
+						<tr>
+							<th class='insertTh'><label for='popupMenuImg1'>IMG1</label></th>
+							<td colspan='3'>
+								<input type='text' id='popupMenuImg1' name='menuImg1' placeholder='메뉴이미지 1' data-mini='true'>
+							</td>
+						</tr>
+						<tr>
+							<th class='insertTh'><label for='popupMenuImg2'>IMG2</label></th>
+							<td colspan='3' >
+								<input type='text' id='popupMenuImg2' name='menuImg2' placeholder='메뉴이미지 2' data-mini='true'>
+							</td>
+						</tr>
+						<tr>
+							<td colspan='2' style='border:0'>
+								<a href='#' class="btn" data-full='true' data-icon='check' data-color='green'>적용</a>
+							</td>
+							<td colspan='2' style='border:0'>
+								<a href='#' class="btn" data-full='true' data-icon='delete' data-color='red' data-rel='back'>닫기</a>
+							</td>
+						</tr>
+					</tbody>	
+				</table>
+		</div>
+    </form>
+</div>
 <!-- 화면 하단 include  -->
 <%@ include file="/WEB-INF/jsp/cmm/inc/bottom.jsp" %>
 <%@ include file="/WEB-INF/jsp/cmm/inc/bottom2.jsp" %>
