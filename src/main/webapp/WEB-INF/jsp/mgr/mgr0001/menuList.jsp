@@ -10,6 +10,7 @@
 $j.documentReady('menuSelectForm', function(form,$uiPage){
 	var sortableManager = {
 			movingTarget:[]	
+			,wscrolltop:0
 	}
 	makeMenuList( MENU.TREE.data.child );
 	
@@ -98,7 +99,9 @@ $j.documentReady('menuSelectForm', function(form,$uiPage){
 		,placeholder: "placeholderBox"
 		,axis		:'y'
 		,start		:function(e,ui){
+			ui.placeholder.height( ui.item.height() );
 			sortableManager.movingTarget = getChildes( ui.item , ui.placeholder );
+			sortableManager.wscrolltop = $(window).scrollTop();
 		}
 		,sort		: function(e,ui){
 			// 유효하지 않은 움직임은 보여주지말자
@@ -120,12 +123,10 @@ $j.documentReady('menuSelectForm', function(form,$uiPage){
 			sortableManager.movingTarget = [];
 		},
 		helper		: function(e, ui) {
-			var $p = $("<div style='background:#eee;'></div>") , mt = getChildes( ui );
-			$p.append( ui.clone() );
-			for(var i = 0;i< mt.length;i++)  
-				$p.append(  $(mt[i]).clone()  );
-			
-			return $p;
+			ui.children().each(function() {  
+			    $(this).width($(this).width());  
+			  });  
+			  return ui; 
 		}
 		
 	}).disableSelection();
@@ -184,14 +185,14 @@ function makeMenuList( mData ){
 function makeRow(mnInfo){
 	mnInfo.blankBox= "<div style='display:inline-block;width:"+mnInfo.depth*20+"px;height:20px;'>&nbsp;</div>";
 	mnInfo.mgrBtn = "<a href='#' class='btnIcon menuMgr' data-icon='gear' ></a>";
-	mnInfo.addBtn = "<a href='#' class='btnIcon menuAdd' data-icon='plus' data-color='green'></a>";
+	mnInfo.addBtn = "<a href='#' class='btnIcon menuAdd' data-icon='plus' ></a>";
 	mnInfo.delBtn = "<a href='#' class='btnIcon menuDel' data-icon='delete' data-color='red'></a>";
-	if( mnInfo.depth > 1 ) mnInfo.addBtn = "";
+	if( mnInfo.depth > 1 ) mnInfo.addBtn = mnInfo.blankBox;
 	// %{ ... } 형태로 key 값을 매핑시킨다.
 	var tr = "<tr id='%{menuId}' class='imMenu'>"; 
 		tr += "<td style='text-align:center;' ><div class='move_icon'></div></td>"; // menu명
-		tr += "<td style='text-align: center;'>%{addBtn}</td>"; // detail
-		tr += "<td style='border-left:0'>%{blankBox}%{menuNm}</td>"; // menu명
+// 		tr += "<td style='text-align: center;'>%{addBtn}</td>"; // detail
+		tr += "<td style='border-left:0'>%{blankBox}%{menuNm}%{addBtn}</td>"; // menu명
 		tr += "<td>%{menuUrl}</td>"; // url
 		tr += "<td><input type='checkbox' class='txtC'></td>"; // useAt
 		tr += "<td><input type='checkbox' class='txtC'></td>"; // userAuth -1
@@ -216,14 +217,27 @@ function makeRow(mnInfo){
 });
 </script>
 <style>
+	.ui-btn-icon-left:after, .ui-btn-icon-right:after, .ui-btn-icon-top:after, .ui-btn-icon-bottom:after, .ui-btn-icon-notext:after{
+		width:20px;
+		height:20px;
+	}
+	.ui-mini.ui-btn-icon-notext{
+		font-size: 10px;
+	}
+	.ui-btn-icon-notext:after, .ui-btn-icon-top:after, .ui-btn-icon-bottom:after{
+		margin-left: -10px;
+	}
+	.ui-btn-icon-notext:after, .ui-btn-icon-left:after, .ui-btn-icon-right:after{
+		margin-top: -10px;
+	}
 </style>
 <!-- form 단위로 이루어진 content -->
 <form name='menuSelectForm'>
 	<!-- 실제 구성될 화면페이지  영역 -->
-	<div class='main_content' style='min-width:1024px;'>
+	<div class='main_content' style='min-width:900px;'>
 		<div>
 			<div class='buttonBox' style='margin:.5em 0;'>
-				<a href='#' id='insert' class='btn' data-icon='check' data-color='green'>저장</a>
+				<a href='#' id='insert' class='btn' data-icon='check'>저장</a>
 				<a href='#' id='select' class='btn' data-icon='refresh' data-color='gray'>초기화</a>
 			</div>
 		</div>
@@ -231,7 +245,7 @@ function makeRow(mnInfo){
 			<table class='defaultTable menuListTable'>
 				<colgroup>
 					<col style='width:5%'/>
-					<col style='width:6%'/>
+<%-- 					<col style='width:6%'/> --%>
 					<col style='width:25%'/>
 					<col style='width:*'/>
 					<col style='width:5%'/>
@@ -246,7 +260,7 @@ function makeRow(mnInfo){
 				<thead>
 					<tr>
 						<th rowspan='2'>순서</th>
-						<th rowspan='2'>추가</th>
+<!-- 						<th rowspan='2'>추가</th> -->
 						<th rowspan='2'>메뉴명</th>
 						<th rowspan='2'>URL</th>
 						<th rowspan='2'>사용<br/>여부</th>

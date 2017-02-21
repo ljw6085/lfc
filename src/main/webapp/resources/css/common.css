@@ -44,23 +44,21 @@
 
 
 /* ****************************************************************************************** MGR0001 : 메뉴관리 페이지  */
-	#menuLoadList {border: 1px solid #044363}
-	
 	.menuListTable th { background: #044363; color:#fff; border:1px solid #044363;}
-	.menuListTable td { padding: 0 .5em; border:0;border-bottom:1px solid #eee;}
+	.menuListTable td { padding: 0 .5em; ;border:1px solid #ccc;}
 	
 	.menuListTable tr { cursor: pointer;}
 	.menuListTable tr:hover{ font-weight: bold !important;}
-	.menuListTable tr[data-depth='0'] { background:#ddd; font-size:1.2em; }
-	.menuListTable tr[data-depth='1'] { font-size:1.1em; }
-	.menuListTable tr[data-depth='2'] { font-size:1em; }
+	.menuListTable tr[data-depth='0'] { background:#ddd; font-size:1em; }
+	.menuListTable tr[data-depth='1'] { font-size:0.9em; }
+	.menuListTable tr[data-depth='2'] { font-size:0.8em; }
 
 	.menuListTable .mouseoverClass{ background: #eee; }
 	.menuListTable .mouseoverMainClass{background: #ddd !important;}
 	.menuListTable .placeholderBox { height: 2.5em; background:#333;}
 	.menuListTable .movingSelected {background:rgba(0,0,0,.15) !important;}
 	.menuListTable .ui-sortable-helper {
-		margin-top:-5em;
+/* 		margin-top:-5em; */
 	    display: table;
 	}
 
