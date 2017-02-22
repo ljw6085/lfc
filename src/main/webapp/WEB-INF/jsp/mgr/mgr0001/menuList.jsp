@@ -298,21 +298,14 @@ function mgrButtonClickFunction( target ){
 			break;
 		case target.hasClass('menuMgr'): //메뉴관리(팝업)
 			
-			//get Max MenuId
-			var rowData = curRow.data();
-			var pnm = $("#"+rowData.menuPid).attr('data-menu-nm');
-			$("#tempRowId").val( curId );
-			if( curId.indexOf('_new_') == 0 )curId = "";
-				rowData.menuId = curId;
-				
-			for( var k in  rowData){
-				if( menuPopupFrm[k] )
-						menuPopupFrm[k].value = rowData[k];
-			}
+			var rowData = curRow.data() 
+				, _openedId = curId; //temp
+			if( curId.indexOf('_new_') == 0 ) curId = "";
+			rowData.menuId = curId;
 			
-			$("#dialog").popup("open",{
-				transition:'pop'
-			});
+			setMenuEditPopup( rowData );
+			openMenuEditPopup( _openedId );
+			
 			break;
 		case target.hasClass('menuAdd'): //메뉴추가
 			var newMenuInfo = {}
@@ -478,6 +471,23 @@ function makeRow(mnInfo){
 	}
 	return $tr;
 }
+
+function setMenuEditPopup( rowData ){
+	$("#dialog").find("input").val("");
+	
+	for( var k in  rowData){
+		if( menuPopupFrm[k] ) menuPopupFrm[k].value = rowData[k];
+	}
+}
+
+function openMenuEditPopup( openId ){
+	$("#dialog")
+			.find("#tempRowId").val( openId )
+		.end()
+		.popup("open",{
+			transition:'pop'
+		});
+}
 });
 </script>
 <style>
@@ -496,11 +506,11 @@ function makeRow(mnInfo){
 	}
 	
 	.ui-checkbox input, .ui-radio input{
-		width:18px;
-		height:18px;
+		width:16px;
+		height:16px;
 	}
 	.ui-checkbox input.txtC, .ui-radio input.txtC{
-		margin: -10px;
+		margin: -8px;
 	}
 	tr[id^='_new_']{
 		cursor:pointer;
@@ -552,7 +562,7 @@ function makeRow(mnInfo){
 				</thead>
 			</table>
 		</div>
-		<div id='menuLoadList' style='max-height:500px;overflow-y:scroll;min-width: 900px;table-layout: fixed;'>
+		<div id='menuLoadList' style='min-height:500px;min-height:550px;overflow-y:scroll;min-width: 900px;table-layout: fixed;'>
 			<table class='defaultTable menuListTable'>
 				<colgroup>
 					<col style='width:5%'/>
