@@ -260,5 +260,5 @@ INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `MENU_PID`, `MENU_URL`, `SO
 INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `MENU_PID`, `MENU_URL`, `MENU_ICON`, `SORT`, `USE_AT`) VALUES ('M0014', '공통코드관리', 'M0013', '/mgr/mgr0002/codeList.do', 'carat-r', '0', 'Y');
 INSERT INTO `lfc`.`menu_info` (`MENU_ID`, `MENU_NM`, `MENU_PID`, `SORT`, `USE_AT`) VALUES ('M0015', '차량코드관리', 'M0013', '1', 'Y');
 
-
+update menu_info set use_auth = 15;
 
