@@ -275,7 +275,7 @@ var strLib = {
 			var tmp ="";
 			for(var i=0,len=str.length;i<len;i++){
 				var ch = str.charAt(i);
-				if( ch.charCodeAt() < 97	){
+				if( ch.charCodeAt() > 57 && ch.charCodeAt() < 97	){
 					tmp += splitStr+ch;
 				}else{
 					tmp += ch;

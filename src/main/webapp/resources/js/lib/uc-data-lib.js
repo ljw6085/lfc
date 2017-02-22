@@ -727,3 +727,7 @@ Array.prototype.filter = function( filter ){
 	}
 	return result;
 }
+if(Object.defineProperty){
+	Object.defineProperty( Array.prototype, 'sorting', { enumerable: false });
+	Object.defineProperty( Array.prototype, 'filter', { enumerable: false });
+}

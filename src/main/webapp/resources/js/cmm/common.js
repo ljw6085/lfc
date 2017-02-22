@@ -716,3 +716,12 @@ var COMPONENT ={
 			
 		}
 }
+$.fn.setAttr = function(key , value){
+	if( typeof key == 'string' && typeof value != 'undefined'){
+		$(this).attr(key, value);
+		if( key.indexOf('data-') == 0){
+			var dataKey = strLib.toCamelCase(key.substring(5));
+			$(this).data(dataKey,value);
+		}
+	}
+}

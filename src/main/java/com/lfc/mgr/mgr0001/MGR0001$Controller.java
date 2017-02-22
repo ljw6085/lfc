@@ -39,4 +39,10 @@ public class MGR0001$Controller extends SetLogger {
 		return commonModel.getMenuList();
 	}
 	
+	@RequestMapping(value = UrlMapping.MGR0001_INSERT_URL, method=RequestMethod.POST)
+	public @ResponseBody List<MenuInfoVO> menuInsert(@RequestBody List<MenuInfoVO> param){
+		logger.debug("--############# param = {}", param);
+		return param;
+	}
+	
 }
