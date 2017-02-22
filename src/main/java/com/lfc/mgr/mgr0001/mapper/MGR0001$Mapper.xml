@@ -2,6 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="MGR0001">
 
+	<select id="getMaxMenuId" resultType="hashMap">
+		SELECT 
+			CONCAT('M', LPAD( SUBSTR( MAX(MENU_ID) , 2 ) + 1 , 4 ,'0'))  as menuId
+		FROM MENU_INFO
+	</select>
 	<select id="selectMenuList" parameterType="menuInfoVO" resultType="menuInfoVO">
 		 select
 			MENU_ID			as menuId     ,
@@ -99,6 +104,9 @@
 	<delete id="deleteMenu" parameterType="menuInfoVO" >
 		 delete from MENU_INFO
 		 where 
-			 MENU_ID = #{menuId}
+		 1=1
+		 <if test="menuId != null and menuId != '' ">
+			 AND MENU_ID = #{menuId}
+		 </if>
 	</delete>
 </mapper>

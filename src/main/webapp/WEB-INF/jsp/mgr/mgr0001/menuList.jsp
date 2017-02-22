@@ -6,13 +6,14 @@
 <link rel="stylesheet" href="<c:url value='/resources/js/zgrid/css/zgrid.css'/>" type="text/css">
 <script type="text/javascript" src="<c:url value='/resources/js/zgrid/zgrid.js'/>"></script>
 <script>
-/** Form 단위로 스크립팅 한다. */
-// popup
+/** -----------  POPUP ------------ Form 단위로 스크립팅 한다. */
 $j.documentReady('menuPopupFrm', function(form,$uiPage){
 	form.find(".popupMenuApply").bind("click", function(){
+		// menuId 자동채번
+		var resultMenuId =  getNewMenuId();
 		var result = Common.getDataFromDoms(form);
 		//[1] menuId 자동채번 후 세팅
-		result.menuId = 'M9999';
+		result.menuId = resultMenuId;
 		
 		var clickedId = result.tempRowId;
 		for( var k in result ){
@@ -28,8 +29,49 @@ $j.documentReady('menuPopupFrm', function(form,$uiPage){
 		
 		form.find(".popupMenuClose").trigger('click');
 	});
+	
+	// icon 관련 이벤트
+	form.find("#popupIcon").bind('click',function(){
+		var w = $("#iconArea").width();
+		var h = $("#iconArea").height();
+		$("#iconArea").css({
+			'margin-left': w/2 * -1 + 'px'
+			,'margin-top': h/2 * -1 + 'px'
+		});
+		$("#iconArea").slideDown('fast');
+	});
+	form.find(".iconClose").bind('click',function(){
+		$("#iconArea").slideUp('fast');
+	});
+	form.find(".iconList li").bind('click',function(){
+		var icon = $(this).find(".text").text();
+		$("#setIconName").text(icon);
+		form[0].menuIcon.value = icon;
+		$("#iconArea").slideUp('fast');
+	});
+	
+/**  메뉴ID 자동채번 함수 */
+function getNewMenuId(){
+	var	pageMaxMenuNum = 0 ,dbMaxMenuNum = 0
+	//max menu Id setting
+	$(".menuDataList").find('.imMenu').each(function(i){
+		var num = +this.id.substring(1);
+		if( pageMaxMenuNum < num ) pageMaxMenuNum = num;
+	});
+	pageMaxMenuNum++;
+	
+	var url = "<c:url value='/mgr/mgr0001/getMaxMenuId.do'/>";
+	Common.ajaxJson(url,null,function(result){
+		dbMaxMenuNum = +result.menuId.substring(1)
+	},'post',false);
+	var maxId = (dbMaxMenuNum >= pageMaxMenuNum )? dbMaxMenuNum : pageMaxMenuNum ;
+	var resultMenuId = 'M'+ strLib.fillLeft(maxId+'',4,'0');	
+	return resultMenuId ;
+}
 });
-/** Form 단위로 스크립팅 한다. */
+
+
+/** -------- MAIN --------- Form 단위로 스크립팅 한다. */
 $j.documentReady('menuSelectForm', function(form,$uiPage){
 /********************************** 전역변수 */
 	var sortableManager = {
@@ -42,7 +84,7 @@ $j.documentReady('menuSelectForm', function(form,$uiPage){
 /********************************* INITAILIZE AREA */
 	// popup 초기화
 	$("#dialog").popup();
-
+	
 	// ROOT Btn Area Append
 	var colCnt = $('.menuListTable').find("col").length;
 	var rootTr ="<tr data-menu-pid='null' data-menu-id='newRoot' data-depth='0'>";
@@ -75,7 +117,9 @@ $j.documentReady('menuSelectForm', function(form,$uiPage){
 				
 				break;
 			case 'reset':
-				
+				$(".imMenu").remove();
+				makeMenuList( MENU.TREE.data.child );
+				$j.refreshPage();
 				break;
 		}
 	});
@@ -289,7 +333,8 @@ function setCheckboxChangeFunction( $row ,checkbox ){
 function mgrButtonClickFunction( target ){
 	var curRow = target.closest('tr') 
 		,curId = curRow.attr('data-menu-id')
-		,menuInfo = MENU.TREE.getById(curId);
+// 		,menuInfo = MENU.TREE.getById(curId);
+		,menuInfo = curRow.data();
 	switch (true) {
 		case target.hasClass('menuDel'): // 메뉴삭제
 			var childs = getChildes( curRow ) ;
@@ -308,7 +353,6 @@ function mgrButtonClickFunction( target ){
 			
 			break;
 		case target.hasClass('menuAdd'): //메뉴추가
-			var newMenuInfo = {}
 			if ( curId == 'newRoot' ){
 				menuInfo = {
 						menuPid:null
@@ -317,15 +361,16 @@ function mgrButtonClickFunction( target ){
 			}else if( curId.indexOf('_new_')>-1){
 				return;
 			}
-		
-			$.extend(newMenuInfo , menuInfo);
-			newMenuInfo.menuNm 	= "메뉴명을 입력하세요.";
-			newMenuInfo.menuUrl = "";
-			newMenuInfo.menuIcon = "";
-			newMenuInfo.menuPid = menuInfo.menuId;
-			newMenuInfo.depth 	= menuInfo.depth+1;
-			newMenuInfo.menuId 	= "_new_"+(rIdx++);
-			newMenuInfo.useAt	= 'Y';
+			var newMenuInfo = {
+					menuId 	: "_new_"+(rIdx++), 
+					menuNm 	: "메뉴명을 입력하세요.",    
+					menuUrl : "",               
+					menuIcon : "",              
+					menuPid : menuInfo.menuId,  
+					depth 	: menuInfo.depth+1, 
+					useAt	: menuInfo.useAt,   
+					useAuth : menuInfo.useAuth
+			};
 			var $tr = makeRow( newMenuInfo );
 			curRow.after($tr);
 			$j.refreshPage();
@@ -474,9 +519,12 @@ function makeRow(mnInfo){
 
 function setMenuEditPopup( rowData ){
 	$("#dialog").find("input").val("");
-	
+	$("#setIconName").text("");
 	for( var k in  rowData){
-		if( menuPopupFrm[k] ) menuPopupFrm[k].value = rowData[k];
+		if( menuPopupFrm[k] ) {
+			menuPopupFrm[k].value = rowData[k];
+			if( k == 'menuIcon')$("#setIconName").text(rowData[k]);
+		}
 	}
 }
 
@@ -510,7 +558,7 @@ function openMenuEditPopup( openId ){
 		height:16px;
 	}
 	.ui-checkbox input.txtC, .ui-radio input.txtC{
-		margin: -8px;
+		margin:-13px -8px;
 	}
 	tr[id^='_new_']{
 		cursor:pointer;
@@ -520,15 +568,14 @@ function openMenuEditPopup( openId ){
 <!-- form 단위로 이루어진 content -->
 <form name='menuSelectForm'>
 	<!-- 실제 구성될 화면페이지  영역 -->
-	<div class='main_content' style='min-width:900px;'>
+	<div class='main_content' style='width:800px;'>
 		<div>
-			<p>############### CRUD !, 새로추가된메뉴 에서 (+)시 처리, 초기화, 메뉴ID 자동채번후 가져오기(메뉴등록시) , menuMgr 버튼 버그(이전정보껄로처리됨)</p>
 			<div class='buttonBox' style='margin:.5em 0;'>
 				<a href='#' id='save' class='btn' data-icon='check'>저장</a>
 				<a href='#' id='reset' class='btn' data-icon='refresh' data-color='gray'>초기화</a>
 			</div>
 		</div>
-		<div style='min-width: 900px;table-layout: fixed;overflow-y:scroll;'>
+		<div style='width: 800px;table-layout: fixed;'>
 			<table class='defaultTable menuListTable'>
 				<colgroup>
 					<col style='width:5%'/>
@@ -562,7 +609,7 @@ function openMenuEditPopup( openId ){
 				</thead>
 			</table>
 		</div>
-		<div id='menuLoadList' style='min-height:500px;min-height:550px;overflow-y:scroll;min-width: 900px;table-layout: fixed;'>
+		<div id='menuLoadList' style='width: 800px;table-layout: fixed;'>
 			<table class='defaultTable menuListTable'>
 				<colgroup>
 					<col style='width:5%'/>
@@ -611,7 +658,9 @@ function openMenuEditPopup( openId ){
 							</td>
 							<th class='insertTh'><label for='popupIcon'>ICON</label></th>
 							<td>
-								<input type='text' id='popupIcon' name='menuIcon' placeholder='메뉴 Icon' data-mini='true'>
+								<input type='hidden' name='menuIcon'>
+								<span id='setIconName'></span>
+								<a href='#' data-rel='popup' id='popupIcon' class='btn' data-icon='search' data-mini='true'>Icon</a>
 							</td>
 						</tr>
 						<tr>
@@ -642,6 +691,75 @@ function openMenuEditPopup( openId ){
 						</tr>
 					</tbody>	
 				</table>
+				
+		<!-- 아이콘 팝업창 -->
+		<div id='iconArea' style='display:none;background: #fff;position: absolute;top:50%;left:50%;width:400px;height:400px;'
+			class='ui-popup ui-body-a ui-overlay-shadow ui-corner-all' >
+			<style>
+				#iconArea ul { list-style-type: none; padding: 0; margin: 1em; }
+				#iconArea li { width: 6em; float: left; padding:0 0.5em; }
+				.iconList .ui-btn-icon-notext:after {margin-top : 0 }
+				.iconList .ui-icon, #iconArea .text { display: inline-block; vertical-align: middle; }
+				.iconList .text { padding-left: 1.2em; font-size:.9em; cursor:pointer; }
+				.iconList .text:hover { font-weight: bold; }
+				.iconList span { position: relative; left: 20px; cursor: pointer;}
+				.iconList span.ui-btn-icon-notext { vertical-align: middle; }
+			</style>
+			<a href='#' class='btnIcon iconClose' data-icon='delete' data-color='red' style='position: absolute;top:-10px;right:-10px;'></a>
+			<ul class="iconList">
+				<li> <span class="ui-btn-icon-notext ui-icon-action"></span> <span class="text">action</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-alert"></span> <span class="text">alert</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-arrow-d"></span> <span class="text">arrow-d</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-arrow-d-l"></span> <span class="text">arrow-d-l</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-arrow-d-r"></span> <span class="text">arrow-d-r</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-arrow-l"></span> <span class="text">arrow-l</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-arrow-r"></span> <span class="text">arrow-r</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-arrow-u"></span> <span class="text">arrow-u</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-arrow-u-l"></span> <span class="text">arrow-u-l</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-arrow-u-r"></span> <span class="text">arrow-u-r</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-audio"></span> <span class="text">audio</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-back"></span> <span class="text">back</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-bars"></span> <span class="text">bars</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-bullets"></span> <span class="text">bullets</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-calendar"></span> <span class="text">calendar</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-camera"></span> <span class="text">camera</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-carat-d"></span> <span class="text">carat-d</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-carat-l"></span> <span class="text">carat-l</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-carat-r"></span> <span class="text">carat-r</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-carat-u"></span> <span class="text">carat-u</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-check"></span> <span class="text">check</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-clock"></span> <span class="text">clock</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-cloud"></span> <span class="text">cloud</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-comment"></span> <span class="text">comment</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-delete"></span> <span class="text">delete</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-edit"></span> <span class="text">edit</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-eye"></span> <span class="text">eye</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-forbidden"></span> <span class="text">forbidden</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-forward"></span> <span class="text">forward</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-gear"></span> <span class="text">gear</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-grid"></span> <span class="text">grid</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-heart"></span> <span class="text">heart</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-home"></span> <span class="text">home</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-info"></span> <span class="text">info</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-location"></span> <span class="text">location</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-lock"></span> <span class="text">lock</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-mail"></span> <span class="text">mail</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-minus"></span> <span class="text">minus</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-navigation"></span> <span class="text">navigation</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-phone"></span> <span class="text">phone</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-plus"></span> <span class="text">plus</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-power"></span> <span class="text">power</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-recycle"></span> <span class="text">recycle</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-refresh"></span> <span class="text">refresh</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-search"></span> <span class="text">search</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-shop"></span> <span class="text">shop</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-star"></span> <span class="text">star</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-tag"></span> <span class="text">tag</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-user"></span> <span class="text">user</span> </li>
+				<li> <span class="ui-btn-icon-notext ui-icon-video"></span> <span class="text">video</span> </li>
+				<li> <span class="ui-btn-icon-notext "></span> <span class="text"></span> </li>
+	 		</ul>
+		</div>
 		</div>
     </form>
 </div>

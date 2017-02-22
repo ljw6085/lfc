@@ -2,6 +2,7 @@ package com.lfc.mgr.mgr0001;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,8 +42,20 @@ public class MGR0001$Controller extends SetLogger {
 	
 	@RequestMapping(value = UrlMapping.MGR0001_INSERT_URL, method=RequestMethod.POST)
 	public @ResponseBody List<MenuInfoVO> menuInsert(@RequestBody List<MenuInfoVO> param){
-		logger.debug("--############# param = {}", param);
+		// 전체삭제
+		service.deleteMenuList(new MenuInfoVO());
+		
+		// 화면정보 그대로 insert
+		for(MenuInfoVO vo : param) service.insertMenuList(vo);
+		
+		// 세션 메뉴리스트 업데이트
+		commonModel.setMenuList(service.selectMenuList(new MenuInfoVO()));
 		return param;
+	}
+
+	@RequestMapping(value = UrlMapping.MGR0001_GET_MAX_MENUID_URL, method=RequestMethod.POST)
+	public @ResponseBody Map<String,String> getMaxMenuId(){
+		return service.getMaxMenuId();
 	}
 	
 }

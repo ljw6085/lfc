@@ -104,7 +104,7 @@ $j.documents.push(function(){
 <!-- form 단위로 이루어진 content -->
 <form name='codeSelectForm'>
 	<!-- 실제 구성될 화면페이지  영역 -->
-	<div class='main_content' style='min-width:900px;'>
+	<div class='main_content' style='width:800px;'>
 	<div id='searchBox'>
 		<table class='defaultTable'>
 				<colgroup>

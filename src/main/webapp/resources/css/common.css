@@ -4,7 +4,7 @@
 @import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
 
 * { text-shadow: 0 0 0 !important; font-family: 'Nanum Gothic', "Myriad Pro", "Consolas"; }
-.main_content { margin: 0.2em 0.3em; min-height: 25em; }
+.main_content { margin: 0.2em auto; min-height: 25em; }
 .menu-header-btn { background: none !important; border: none !important; }
 .buttonBox { text-align: right; margin-top: .5em; }
 .searchBox { margin: .3em; }
@@ -44,8 +44,8 @@
 
 
 /* ****************************************************************************************** MGR0001 : 메뉴관리 페이지  */
-	.menuListTable th { background: #044363; color:#fff; border:1px solid #044363;}
-	.menuListTable td { padding: 0 .5em; ;border:1px solid #ccc;}
+	.menuListTable th { background: #044363; color:#fff; border:1px solid #044363; font-size: .9em;}
+	.menuListTable td { padding: 0 .5em; ;border:0;border-bottom:1px solid #ccc;}
 	
 	.menuListTable tr { }
 	.menuListTable tr:hover{ font-weight: bold !important;}

@@ -188,7 +188,7 @@ $j.documents.push(function(){
 <div data-role="page" id='codeInsert'><!-- second page start -->
 	<form name='codeInsertForm' action="/lfc/mgr/mgr0002/codeInsert.do">
 		<div class='header' data-role='header'><h1>공통코드 등록/수정</h1></div>
-		<div role='main' class='ui-content'  style='min-width:900px;'>
+		<div role='main' class='ui-content'  style='width:800px;'>
 			<div id='infoArea' style='text-align: center;'>
 				<table class='defaultTable' >
 					<colgroup>
@@ -236,12 +236,12 @@ $j.documents.push(function(){
 				</table>
 				<table class='defaultTable codeListTable'  style='width:100%'>
 					<colgroup>
-						<col style='width:5%'>
+						<col style='width:10%'>
 						<col style='width:10%'>
 						<col style='width:20%'>
-						<col style='width:45%'>
-						<col style='width:15%'>
-						<col style='width:5%'>
+						<col style='width:30%'>
+						<col style='width:20%'>
+						<col style='width:10%'>
 					</colgroup>
 					<thead>
 						<tr>

@@ -45,6 +45,8 @@ public class UrlMapping {
 	public static final String MGR0001_LIST_JSP="/mgr/mgr0001/menuList";
 	/** url  : 메뉴관리 메뉴등록/수정*/
 	public static final String MGR0001_INSERT_URL="/mgr/mgr0001/menuInert.do";
+	/** url  : 메뉴Id 자동채번 load */
+	public static final String MGR0001_GET_MAX_MENUID_URL="/mgr/mgr0001/getMaxMenuId.do";
 	
 	/** url  : 공통코드관리 */
 	public static final String MGR0002_LIST_URL="/mgr/mgr0002/codeList.do";

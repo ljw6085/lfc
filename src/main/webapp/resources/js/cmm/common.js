@@ -548,7 +548,6 @@ var MENU = {
 			var _t = this;
 			// 트리데이터 생성
 			var tree = dataLib.treeData( data ,{parentId:'menuPid',id:'menuId'});
-
 			// 트리데이터로 메뉴 생성
 			var rootObj = tree.data.child;
 			this.LIST = data; 

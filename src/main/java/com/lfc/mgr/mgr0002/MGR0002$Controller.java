@@ -112,6 +112,8 @@ public class MGR0002$Controller extends SetLogger {
 			}
 		}
 		returnMap.put("result", r+"");
+		
+		commonModel.refreshCommonCode();
 		return returnMap;
 	}
 	
