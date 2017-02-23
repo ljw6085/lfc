@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.common.CommonModel;
 import com.common.SetLogger;
 import com.common.UrlMapping;
 import com.lfc.mgr.mgr0001.vo.MenuInfoVO;
@@ -26,9 +25,6 @@ public class MGR0001$Controller extends SetLogger {
 	@Autowired
 	MGR0001$Service service;
 
-	@Autowired
-	CommonModel commonModel;
-	
 	@RequestMapping(value = UrlMapping.MGR0001_LIST_URL , method=RequestMethod.GET)
 	public String listInit(Locale locale, Model model) {
 		return UrlMapping.MGR0001_LIST_JSP;
