@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PRK0002">
+	<select id="selectPrkplaceCell" parameterType="PrkCellVO" resultType="camelCaseMap">
+		 select
+			PRKPLCE_CODE,
+			PRKPLCE_FLR_CODE,
+			CELL_MAPNG_ID,
+			CELL_TYPE,
+			STYLE_CLS,
+			SALE_CAR_INNB,
+			X,
+			Y,
+			WIDTH,
+			HEIGHT
+		 from PRKPLCE_CELL_MNG
+		 where 1=1
+		 <if test="prkplceCode != null and prkplceCode != '' ">
+			 AND PRKPLCE_CODE = #{prkplceCode}
+		 </if>
+		 <if test="prkplceFlrCode != null and prkplceFlrCode != '' ">
+			 AND PRKPLCE_FLR_CODE = #{prkplceFlrCode}
+		 </if>
+		 <if test="cellMapngId != null and cellMapngId != '' ">
+			 AND CELL_MAPNG_ID = #{cellMapngId}
+		 </if>
+		 <if test="cellType != null and cellType != '' ">
+			 AND CELL_TYPE = #{cellType}
+		 </if>
+		 <if test="styleCls != null and styleCls != '' ">
+			 AND STYLE_CLS = #{styleCls}
+		 </if>
+		 <if test="saleCarInnb != null and saleCarInnb != '' ">
+			 AND SALE_CAR_INNB = #{saleCarInnb}
+		 </if>
+		 <if test="x != null and x != '' ">
+			 AND X = #{x}
+		 </if>
+		 <if test="y != null and y != '' ">
+			 AND Y = #{y}
+		 </if>
+		 <if test="width != null and width != '' ">
+			 AND WIDTH = #{width}
+		 </if>
+		 <if test="height != null and height != '' ">
+			 AND HEIGHT = #{height}
+		 </if>
+	</select>
+	<insert id="insertPrkplaceCell" parameterType="PrkCellVO" >
+		 insert into PRKPLCE_CELL_MNG(
+			PRKPLCE_CODE,
+			PRKPLCE_FLR_CODE,
+			CELL_MAPNG_ID,
+			CELL_TYPE,
+			STYLE_CLS,
+			SALE_CAR_INNB,
+			X,
+			Y,
+			WIDTH,
+			HEIGHT
+		) values(
+			#{prkplceCode},
+			#{prkplceFlrCode},
+			#{cellMapngId},
+			#{cellType},
+			#{styleCls},
+			#{saleCarInnb},
+			#{x},
+			#{y},
+			#{width},
+			#{height}
+		)
+	</insert>
+	<update id="updatePrkplaceCell" parameterType="PrkCellVO" >
+		 update PRKPLCE_CELL_MNG
+		 set
+			PRKPLCE_CODE = #{prkplceCode},
+			PRKPLCE_FLR_CODE = #{prkplceFlrCode},
+			CELL_MAPNG_ID = #{cellMapngId},
+			CELL_TYPE = #{cellType},
+			STYLE_CLS = #{styleCls},
+			SALE_CAR_INNB = #{saleCarInnb},
+			X = #{x},
+			Y = #{y},
+			WIDTH = #{width},
+			HEIGHT = #{height}
+		 where 
+			 PRKPLCE_CODE = #{prkplceCode}
+			 AND PRKPLCE_FLR_CODE = #{prkplceFlrCode}
+			 AND CELL_MAPNG_ID = #{cellMapngId}
+			 AND CELL_TYPE = #{cellType}
+			 AND STYLE_CLS = #{styleCls}
+			 AND SALE_CAR_INNB = #{saleCarInnb}
+			 AND X = #{x}
+			 AND Y = #{y}
+			 AND WIDTH = #{width}
+			 AND HEIGHT = #{height}
+	</update>
+	<delete id="deletePrkplaceCell" parameterType="PrkCellVO" >
+		 delete from PRKPLCE_CELL_MNG
+		 where 
+			 PRKPLCE_CODE = #{prkplceCode}
+			 AND PRKPLCE_FLR_CODE = #{prkplceFlrCode}
+			 AND CELL_MAPNG_ID = #{cellMapngId}
+			 AND CELL_TYPE = #{cellType}
+			 AND STYLE_CLS = #{styleCls}
+			 AND SALE_CAR_INNB = #{saleCarInnb}
+			 AND X = #{x}
+			 AND Y = #{y}
+			 AND WIDTH = #{width}
+			 AND HEIGHT = #{height}
+	</delete>
+</mapper>

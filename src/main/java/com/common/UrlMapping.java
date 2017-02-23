@@ -78,9 +78,22 @@ public class UrlMapping {
 	public static final String PRK0001_MAIN_JSP="/prk/prk0001/parkingListMain";
 	
 	/** url  : 주차장관리 관리페이지이동 */
-	public static final String PRK0001_MANAGER_URL="/prk/prk0001/parkingListManager.do";
+	public static final String PRK0001_MANAGER_URL="/prk/prk0002/parkingListManager.do";
 	/** jsp  : 주차장관리 관리페이지이동 */
-	public static final String PRK0001_MANAGER_JSP="/prk/prk0001/parkingListManager";
+	public static final String PRK0001_MANAGER_JSP="/prk/prk0002/parkingListManager";
+	
+	/** url  : 주차장관리 메인 */
+	public static final String PRK0002_MAIN_URL="/prk/prk0002/parkingMgrMain.do";
+	/** jsp  : 주차장관리 메인이동 */
+	public static final String PRK0002_MAIN_JSP="/prk/prk0002/parkingMgrMain";
+	
+	/** url  : 주차장관리 관리페이지이동 */
+	public static final String PRK0002_INSERT_URL="/prk/prk0002/parkingMgrInsert.do";
+	/** jsp  : 주차장관리 관리페이지이동 */
+	public static final String PRK0002_INSERT_JSP="/prk/prk0002/parkingMgrInsert";
+	
+	
+	
 	/**
 	 * url : /prk/insertPrkData.do<br>
 	 * desc : 주차장데이터 입력
