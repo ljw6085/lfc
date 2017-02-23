@@ -19,14 +19,36 @@ $j.documents.push(function() {
 			console.log(initParams);
 		});
 		
-		
+		//http://stackoverflow.com/questions/705250/is-there-a-jquery-plugin-which-combines-draggable-and-selectable
 		var grid_size = 10;
+		var selected = $([]), offset = {top:0, left:0}; 
 		var draggableOpt = {
 				snap: "#drawable"
 				, scroll : true
 				, containment: "parent"
 				, scope: "tasks"
 				, grid : [ grid_size, grid_size ]
+				,start: function(ev, ui) {
+			        selected = $(".ui-selected").each(function() {
+			            var el = $(this);
+			             el.data("offset", el.offset());
+			         });
+
+			         if( !$(this).hasClass("ui-selected")) $(this).addClass("ui-selected");
+			         offset = $(this).offset();
+			     },
+			     drag: function(ev, ui) {
+			         var dt = ui.position.top - offset.top, dl = ui.position.left - offset.left;
+
+			         // take all the elements that are selected expect $("this"), which is the element being dragged and loop through each.
+			         selected.not(this).each(function() {
+			              // create the variable for we don't need to keep calling $("this")
+			              // el = current element we are on
+			              // off = what position was this element at when it was selected, before drag
+			              var el = $(this), off = el.data("offset");
+			              el.css({top: off.top + dt, left: off.left + dl});
+			         });
+			     }
 		}
 		var resizableOpt = {
 			grid : grid_size * 2
@@ -48,51 +70,9 @@ $j.documents.push(function() {
 			$(".box:last").before(cell);
 		});
 		
+		
 		$("#drawable").selectable({
 			filter: ".box"
-			,start:function(){
-				var $box = $("<div id='selector' style='background:#eee;position:absolute;'></div>");
-				$("#drawable").append( $box );
-			}
-			,stop : function(){
-				$("#selector").draggable({
-					snap: "#drawable"
-					, scroll : true
-					, containment: "parent"
-					, scope: "tasks"
-					, grid : [ grid_size, grid_size ]
-					,stop:function(e,ui){
-						var mvingTop = ui.position.top - ui.originalPosition.top;
-						var mvingLeft = ui.position.left - ui.originalPosition.left;
-						$(ui.helper).find('.box').each(function(){
-							var t = $(this).offset().top + mvingTop
-							var l = $(this).offset().left + mvingLeft
-							$(this).data({
-								top:t
-								,left:l
-							});
-						});
-					}
-				});
-// 				$("#selector").remove();
-			}
-			,selected : function(e,ui){
-				$box.append( ui.selected );
-			}
-			,unselecting: function( e, ui) {
-			}
-			,unselected:function(e,ui){
-				///---------------------
-				 var t = $(ui.unselected).data('top');
-				 var l = $(ui.unselected).data('left');
-				 console.log( t );
-				 $(ui.unselected).offset({
-					 top:t
-					 ,left:l
-				 });
-				$("#drawable").append( ui.unselected );
-				console.log( e );
-			}
 		});
 		/* var dragableOption = {
 				snap: "#drawable"
