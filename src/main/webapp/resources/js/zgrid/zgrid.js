@@ -137,76 +137,76 @@ var gridMethod = {
 			
 			if( t.scroll ){
 				grd.boxForDom.$tableWrap
-					.unbind('wheel')
-					.unbind('mouseup')
-					.unbind('mousemove')
-					.unbind('touchstart')
-					.unbind('touchmove')
-					.unbind('touchend');
-				grd.boxForDom.$tableWrap.unbind('wheel');
+					.off('wheel')
+					.off('mouseup')
+					.off('mousemove')
+					.off('touchstart')
+					.off('touchmove')
+					.off('touchend');
+				grd.boxForDom.$tableWrap.off('wheel');
 				
 				
-				grd.boxForDom.$scroll_x.unbind('mousedown');
-				grd.boxForDom.$scroll_y.unbind('mousedown');
+				grd.boxForDom.$scroll_x.off('mousedown');
+				grd.boxForDom.$scroll_y.off('mousedown');
 				
-				grd.boxForDom.$scroll_x.bind('mousedown',function(e){
+				grd.boxForDom.$scroll_x.on('mousedown',function(e){
 					grd.eventBox.mousedown.call( grd, 'x', e );
 				});
-				grd.boxForDom.$scroll_y.bind('mousedown',function(e){
+				grd.boxForDom.$scroll_y.on('mousedown',function(e){
 					grd.eventBox.mousedown.call( grd, 'y', e );
 				});
 				
 				//scrollbtn 
-				grd.boxForDom.$wrap.find(".g-scroll-btn").bind('mousedown',function(e){
+				grd.boxForDom.$wrap.find(".g-scroll-btn").on('mousedown',function(e){
 					$(e.target).addClass('clicked');
 				});
 				
-				grd.boxForDom.$tableWrap.bind('mouseup',function(e){
+				grd.boxForDom.$tableWrap.on('mouseup',function(e){
 					grd.eventBox.mouseup.call( grd, 'x', e );
 					grd.eventBox.mouseup.call( grd, 'y', e );
 					
 					$('.clicked').removeClass('clicked');
 				});
 				
-				grd.boxForDom.$tableWrap.bind('mousemove',function(e){
+				grd.boxForDom.$tableWrap.on('mousemove',function(e){
 					grd.eventBox.mousemove.y.call( grd, e );
 					grd.eventBox.mousemove.x.call( grd, e );
 				});
 				
-				grd.boxForDom.$tableWrap.bind('touchstart',function(e){
+				grd.boxForDom.$tableWrap.on('touchstart',function(e){
 					grd.eventBox.touchstart.call( grd, e );
 				});
 				
-				/*$(document).bind("DOMNodeRemoved", function(e){
+				/*$(document).on("DOMNodeRemoved", function(e){
 				    console.log("Removed: " , e.target);
 				});*/
-				grd.boxForDom.$tableWrap.bind('touchend',function(e){
+				grd.boxForDom.$tableWrap.on('touchend',function(e){
 					grd.eventBox.touchend.call( grd, e );
 				});
 			}else{
-				grd.boxForDom.$bodyWrap.bind('scroll',function(e){
+				grd.boxForDom.$bodyWrap.on('scroll',function(e){
 					grd.boxForDom.$headWrap[0].scrollLeft = this.scrollLeft;
 				});
 			}
 			
 			if( t.height != 'auto'){
 				if( t.scroll ){
-					grd.boxForDom.$tableWrap.bind('wheel',function(e){
+					grd.boxForDom.$tableWrap.on('wheel',function(e){
 							if( e.altKey ){
 								grd.eventBox.wheel.x.call( grd , e );
 							}else{
 								grd.eventBox.wheel.y.call( grd , e );
 							}
 					});
-					grd.boxForDom.$tableWrap.bind('touchmove',function(e){
+					grd.boxForDom.$tableWrap.on('touchmove',function(e){
 						grd.eventBox.touchmove.call( grd, e );
 					});
 				}
 			}
 			
 			
-			$(window).unbind('resize',_resize);
-			$(window).bind('resize',_resize).trigger('resize');
+			$(window).off('resize',_resize);
+			$(window).on('resize',_resize).trigger('resize');
 			function _resize(e){
 				if( grd.boxForDom.$wrap.width() >  0 ) grd.eventBox.resize.call( grd, e );
 			}

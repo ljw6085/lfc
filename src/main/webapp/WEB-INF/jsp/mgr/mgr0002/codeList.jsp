@@ -14,7 +14,7 @@ $j.documents.push(function(){
 		
 		var grid = makeGrid( $form );
 		
-		$(window).bind('resize',function(){
+		$(window).on('resize',function(){
 			compactSizingGrid( grid , $uiPage );
 		}).trigger('resize');
 		

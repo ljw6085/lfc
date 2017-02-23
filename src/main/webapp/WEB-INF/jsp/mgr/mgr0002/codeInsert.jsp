@@ -27,7 +27,7 @@ $j.documents.push(function(){
 			}
 		});// page move
 		
-		$form.find(".infoBtnBox").bind('click',function(e){
+		$form.find(".infoBtnBox").on('click',function(e){
 			switch (e.target.id) {
 				/** 저장*/	
 				case '_infoSave':
@@ -77,7 +77,7 @@ $j.documents.push(function(){
 			}
 		});
 		
-		$form.find(".rowBtnBox").bind('click',function(e){
+		$form.find(".rowBtnBox").on('click',function(e){
 			switch ( e.target.id ) {
 				case '_rowAdd':
 					counter++; // 전역변수

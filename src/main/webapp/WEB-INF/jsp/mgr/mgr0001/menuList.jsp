@@ -8,7 +8,7 @@
 <script>
 /** -----------  POPUP ------------ Form 단위로 스크립팅 한다. */
 $j.documentReady('menuPopupFrm', function(form,$uiPage){
-	form.find(".popupMenuApply").bind("click", function(){
+	form.find(".popupMenuApply").on("click", function(){
 		// menuId 자동채번
 		var resultMenuId =  getNewMenuId();
 		var result = Common.getDataFromDoms(form);
@@ -31,23 +31,24 @@ $j.documentReady('menuPopupFrm', function(form,$uiPage){
 	});
 	
 	// icon 관련 이벤트
-	form.find("#popupIcon").bind('click',function(){
-		var w = $("#iconArea").width();
-		var h = $("#iconArea").height();
-		$("#iconArea").css({
+	var $iconListArea = $("#iconArea");
+	form.find("#popupIcon").on('click',function(){
+		var w = $iconListArea.width();
+		var h = $iconListArea.height();
+		$iconListArea.css({
 			'margin-left': w/2 * -1 + 'px'
 			,'margin-top': h/2 * -1 + 'px'
 		});
-		$("#iconArea").slideDown('fast');
+		$iconListArea.slideDown('fast');
 	});
-	form.find(".iconClose").bind('click',function(){
-		$("#iconArea").slideUp('fast');
+	form.find(".iconClose").on('click',function(){
+		$iconListArea.slideUp('fast');
 	});
-	form.find(".iconList li").bind('click',function(){
+	form.find(".iconList li").on('click',function(){
 		var icon = $(this).find(".text").text();
 		$("#setIconName").text(icon);
 		form[0].menuIcon.value = icon;
-		$("#iconArea").slideUp('fast');
+		$iconListArea.slideUp('fast');
 	});
 	
 /**  메뉴ID 자동채번 함수 */
@@ -58,12 +59,14 @@ function getNewMenuId(){
 		var num = +this.id.substring(1);
 		if( pageMaxMenuNum < num ) pageMaxMenuNum = num;
 	});
-	pageMaxMenuNum++;
+	pageMaxMenuNum++; // 현재페이지에서의 menuId max값
 	
 	var url = "<c:url value='/mgr/mgr0001/getMaxMenuId.do'/>";
 	Common.ajaxJson(url,null,function(result){
-		dbMaxMenuNum = +result.menuId.substring(1)
+		dbMaxMenuNum = +result.menuId.substring(1)  // DB에서의 menuId max값
 	},'post',false);
+	
+	// 두 max값을 비교해서 더 큰 max값을 이용하여 채번한다.
 	var maxId = (dbMaxMenuNum >= pageMaxMenuNum )? dbMaxMenuNum : pageMaxMenuNum ;
 	var resultMenuId = 'M'+ strLib.fillLeft(maxId+'',4,'0');	
 	return resultMenuId ;
@@ -96,10 +99,15 @@ $j.documentReady('menuSelectForm', function(form,$uiPage){
 	// MENU List Create
 	makeMenuList( MENU.TREE.data.child );
 	
-	$uiPage.find(".buttonBox").bind('click',function(e){
+	$uiPage.find(".buttonBox").on('click',function(e){
 		
 		switch (e.target.id) {
 			case 'save':
+				/** 지금은 귀찮아서 menu 등록시, 메뉴를 전체 삭제한 후, 그냥 다시 insert한다.
+					나중에 안귀찮을때,
+					추가 또는 수정되거나 삭제된 메뉴에 대해서는 flag를 따로 주어 넘긴후,
+					flag에 맞게 update/delete/insert 하도록 수정하자
+				*/
 				var param = [];
 				$menuDataList.find(".imMenu").each(function(i){
 					var o = {};
@@ -156,7 +164,7 @@ $menuDataList
 			$row.setAttr('data-use-auth',_auth);
 		}
 	})
-	.bind('mousedown',function(e){
+	.on('mousedown',function(e){
 		// sortable 전 mousedown 이벤트로 선행작업을 실행한다.
 		clicked = true;
 		var tbody = $(this)
@@ -171,14 +179,14 @@ $menuDataList
 				.addClass('disabled');
 		
 	})
-	.bind('mouseup',function(e){
+	.on('mouseup',function(e){
 		// 초기화
 		clicked = false;
 		$(".this").removeClass("this");
 		$(".disabled").removeClass("disabled");
 		
 	})
-	.bind('click',function(e){ // menu Folder
+	.on('click',function(e){ // menu Folder
 		var target = e.target;
 		var $row = $(target).closest('tr');	
 		
@@ -202,6 +210,7 @@ $menuDataList
 			
 			//[4] 새로 생성된 row를 클릭한 경우 메뉴등록화면을 보여주자
 			case  $row[0].id.indexOf('_new_') > -1 :
+				console.log( $row.find(".menuMgr") );
 				$row.find(".menuMgr").trigger('click');	
 				return;
 				break;
@@ -282,10 +291,10 @@ function setCheckboxChangeFunction( $row ,checkbox ){
 		return;
 	}
 		
-	var childs = getChildes($row)
-		,pid = $row.attr('data-menu-pid')
-		,id = $row.attr('data-menu-id')
-		,chk = checkbox.checked;
+	var childs 	= getChildes($row)
+		,pid 	= $row.attr('data-menu-pid')
+		,id 	= $row.attr('data-menu-id')
+		,chk 	= checkbox.checked;
 	
 	
 	
@@ -353,24 +362,36 @@ function mgrButtonClickFunction( target ){
 			
 			break;
 		case target.hasClass('menuAdd'): //메뉴추가
-			if ( curId == 'newRoot' ){
-				menuInfo = {
-						menuPid:null
-						,depth:-1
-				}
-			}else if( curId.indexOf('_new_')>-1){
-				return;
+		
+			// 메뉴정보를 입력하지않은경우( 아직 id가 _new_x 인경우) 진행하지않음
+			if( curId.indexOf('_new_') > -1) return;
+			
+			// 상위메뉴가 있는경우 상위메뉴를 상속받아 기본값으로 세팅
+			var newMenuPid	= menuInfo.menuId,  
+				newDepth 	= menuInfo.depth+1, 
+				newUseAt	= menuInfo.useAt,   
+				newUseAuth	= menuInfo.useAuth;
+			
+			// Root 메뉴인경우 기본값세팅
+			if ( curId == 'newRoot' ){ 
+				newMenuPid	= null;
+				newDepth 	= 0;
+				newUseAt	= 'Y';
+				newUseAuth	= 15;
 			}
+			
+			// 새로운메뉴 객체 정보
 			var newMenuInfo = {
 					menuId 	: "_new_"+(rIdx++), 
-					menuNm 	: "메뉴명을 입력하세요.",    
-					menuUrl : "",               
+					menuNm 	: "",    
+					menuUrl : "클릭하여 정보를 입력하세요.",
 					menuIcon : "",              
-					menuPid : menuInfo.menuId,  
-					depth 	: menuInfo.depth+1, 
-					useAt	: menuInfo.useAt,   
-					useAuth : menuInfo.useAuth
+					menuPid : newMenuPid,  
+					depth 	: newDepth, 
+					useAt	: newUseAt,   
+					useAuth : newUseAuth
 			};
+			
 			var $tr = makeRow( newMenuInfo );
 			curRow.after($tr);
 			$j.refreshPage();
@@ -454,7 +475,9 @@ function makeMenuList( mData ){
 	for( var i = 0 , len=mData.length;i<len;i++){
 		var mnInfo = mData[i]; 
 		var $tr = makeRow(mnInfo);
-		$(".menuDataList").append($tr);
+		
+// 		$(".menuDataList").append($tr);
+		$menuDataList.append($tr);
 		
 		if( mnInfo.child.length > 0) arguments.callee( mnInfo.child ); // 하위메뉴가 있으면 재귀
 	}
@@ -657,10 +680,10 @@ function openMenuEditPopup( openId ){
 								<input type='text' id='popupMenuNm' name='menuNm' placeholder='메뉴명' data-mini='true'>
 							</td>
 							<th class='insertTh'><label for='popupIcon'>ICON</label></th>
-							<td>
+							<td style='text-align: center;'>
 								<input type='hidden' name='menuIcon'>
 								<span id='setIconName'></span>
-								<a href='#' data-rel='popup' id='popupIcon' class='btn' data-icon='search' data-mini='true'>Icon</a>
+								<a href='#' data-rel='popup' id='popupIcon' class='btn' data-icon='search' data-mini='true'>선택</a>
 							</td>
 						</tr>
 						<tr>
