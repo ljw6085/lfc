@@ -20,6 +20,7 @@ $j.documents.push(function() {
 		});
 		
 		//http://stackoverflow.com/questions/705250/is-there-a-jquery-plugin-which-combines-draggable-and-selectable
+		// 그리드 갭
 		var grid_size = 10;
 		var selected = $([]), offset = {top:0, left:0}; 
 		var draggableOpt = {
@@ -29,75 +30,104 @@ $j.documents.push(function() {
 				, scope: "tasks"
 				, grid : [ grid_size, grid_size ]
 				,start: function(ev, ui) {
-			        selected = $(".ui-selected").each(function() {
-			            var el = $(this);
-			             el.data("offset", el.offset());
-			         });
-
-			         if( !$(this).hasClass("ui-selected")) $(this).addClass("ui-selected");
-			         offset = $(this).offset();
+					selected = $(".ui-selected").each(function() {
+							var el = $(this);
+				             el.data("offset", el.offset());
+				    });
+			        offset = ui.offset;
 			     },
 			     drag: function(ev, ui) {
-			         var dt = ui.position.top - offset.top, dl = ui.position.left - offset.left;
-
-			         // take all the elements that are selected expect $("this"), which is the element being dragged and loop through each.
-			         selected.not(this).each(function() {
-			              // create the variable for we don't need to keep calling $("this")
-			              // el = current element we are on
-			              // off = what position was this element at when it was selected, before drag
-			              var el = $(this), off = el.data("offset");
-			              el.css({top: off.top + dt, left: off.left + dl});
-			         });
+			    	 var dt = ui.offset.top - offset.top, dl = ui.offset.left - offset.left;
+			    	 selected.not(this).each(function(){
+			    		 var _t= $(this)
+			    		 	, o = _t.data('offset')
+			    		 	, t = o.top
+			    		 	, l = o.left;
+			    		 _t.offset({ top: t+dt ,left:l+dl });
+			    	 });
 			     }
 		}
 		var resizableOpt = {
 			grid : grid_size * 2
 		}
-		$(" .box ").draggable(draggableOpt).resizable(resizableOpt);
-		
-		$('#drawable').on("mouseover"," .box ", function() {
-			$(this).addClass("move-cursor")
-		}).on("mousedown"," .box ",function() {
-			$(this).removeClass("move-cursor").addClass("grab-cursor").addClass("opac");
-		})
-		.on("mouseup"," .box ",function() {
-			$(this).removeClass("grab-cursor").removeClass("opac").addClass("move-cursor");
-		});
-		
-		$("#cellAdd").on('click',function(){
-			var cell = $("<div class='box'></div>");
-			cell.draggable(draggableOpt).resizable(resizableOpt);
-			$(".box:last").before(cell);
-		});
-		
-		
+
+		$(" .box ")
+			.draggable(draggableOpt)
+				.resizable(resizableOpt);
+
 		$("#drawable").selectable({
 			filter: ".box"
+		})	
+		.on("mouseover"," .box " ,function() { $(this).addClass("move-cursor") })
+		.on("mousedown"," .box " ,function() { $(this).removeClass("move-cursor").addClass("grab-cursor").addClass("opac"); })
+		.on("mouseup"  ," .box " ,function() { $(this).removeClass("grab-cursor").removeClass("opac").addClass("move-cursor"); });
+		
+		var copyCells=$([]);
+		$(document).on('keydown',function(e){
+			if( e.keyCode == 67 && e.ctrlKey ){
+				copyCells = $('.ui-selected');
+			}else if( e.keyCode == 86 && e.ctrlKey ){
+				copyCells.each(function(){
+					var t = $(this);
+					var top = this.offsetTop;
+					var left = this.offsetLeft;
+					var div = $("<div class='box'></div>")
+								.css({
+									width: t.width()
+									,height:t.height()
+									,position:'absolute'
+								})
+								.offset({
+									top:top
+									,left:left + (+t.css('width').replace('px',''))
+								})
+								.draggable(draggableOpt)
+								.resizable(resizableOpt);
+					$("#drawable").append(div);
+				});
+			}
 		});
-		/* var dragableOption = {
-				snap: "#drawable"
-				, grid: [ 56, 86 ]
-				, snapMode:'outer'
-				, scope: "tasks"
-				, containment: "parent"
-		}
-		$(".dragable").draggable( dragableOption );
 		
 		$("#cellAdd").on('click',function(){
-			var cell = $("<div class='dragable'></div>");
-			cell.draggable(dragableOption);
-			$("#drawable").prepend(cell);
-			var rect = d3.select("#drawable")
-				.append('svg')
-				.append('rect')
-				.attr('class','dragable')
-				.attr("x",0)
-				.attr("y",0)
-				.attr('width','56')
-				.attr('height','86')
-				.attr('fill','hotpink');
-			console.log($(rect._groups[0]).draggable(dragableOption) );
-		}); */
+			var cell = $("<div class='box' style='top:0px;left:0px;'></div>");
+			var box = $(".box:last");
+			$("#drawable").append(cell);
+			cell.draggable(draggableOpt).resizable(resizableOpt);
+			var o = box.offset() ,l = o.left + box.width() ,t = o.top;
+			cell.offset({ top:t ,left:l });
+		})
+		$('#cellDel').on('click',function(){
+			$(".ui-selected").remove();	
+		});
+		$("#cellTopAlign").on('click',function(){
+			var minTop = 99999999;
+			$('.ui-selected').each(function(){
+				var t = $(this).offset().top;
+				if( minTop >= t) minTop = t;
+			}).offset({top:minTop});
+		});
+		$("#cellBottomAlign").on('click',function(){
+			var maxBottom = 0;
+			$('.ui-selected').each(function(){
+				var t = $(this).offset().top;
+				if( maxBottom <= t) maxBottom = t;
+			}).offset({top:maxBottom});
+		});
+		$("#cellLeftAlign").on('click',function(){
+			var minLeft=9999999;
+			$('.ui-selected').each(function(){
+				var l = $(this).offset().left;
+				if( minLeft >= l) minLeft= l;
+			}).offset({left:minLeft});
+		});
+		$("#cellRightAlign").on('click',function(){
+			var maxRight= 0;
+			$('.ui-selected').each(function(){
+				var l = $(this).offset().left;
+				if( maxRight <= l) maxRight= l;
+			}).offset({left:maxRight});
+		});
+
 	});
 });
 </script>
@@ -116,14 +146,16 @@ $j.documents.push(function() {
 #drawable {
 	background:
 		url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGUlEQVQYV2NkIBIwEqmOYVQh3pAiNnj+AwALaAEKfsPrZgAAAABJRU5ErkJggg==);
-/* 	background-position: 18px 11px; */
-	background-position: 36px 22px;
+	background-position: 18px 11px; 
+	position: relative;
 }
 
 .box {
 	width: 50px;
 	height: 80px;
 	background-color: #54cfb3;
+	position: absolute;
+	border:1px solid #ddd;
 }
 
 .opac {
@@ -146,15 +178,18 @@ $j.documents.push(function() {
 			<h1>주차장정보 등록/수정</h1>
 		</div>
 		<div role='main' class='ui-content'>
-			<div>
-				<a href='#' id='cellAdd' class='btn' data-icon='plus'>Cell Add</a>
-			</div>
-			<div id='drawArea'
-				style='width: 100%; height: 500px; overflow: auto;'>
-				<div id='drawable' style='width: 100%; height: 800px;'>
-					<div class='box'></div>
-				</div>
-			</div>
+		<div>
+			<a href='#' id='cellAdd' class='btn' data-icon='plus'>Cell Add</a>
+			<a href='#' id='cellDel' class='btn' data-icon='delete'>Cell Del</a>
+			<a href='#' id='cellCopy' class='btn' data-icon='delete'>Cell Copy</a>
+			<a href='#' id='cellTopAlign' class='btn' data-icon='refresh'>Top Align</a>
+			<a href='#' id='cellBottomAlign' class='btn' data-icon='refresh'>Bottom Align</a>
+			<a href='#' id='cellLeftAlign' class='btn' data-icon='refresh'>Left Align</a>
+			<a href='#' id='cellRightAlign' class='btn' data-icon='refresh'>Right Align</a>
+		</div>
+		<div id='drawable' style='width: 100%; height: 800px;'>
+			<div class='box' ></div>
+		</div>
 		</div>
 	</form>
 </div>
