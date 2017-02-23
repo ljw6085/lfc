@@ -39,7 +39,8 @@ $j.documentReady('prkManagerFrm', function($form,$uiPage){
 					
 		$(window).resize(function(){
 			var $svg = $("svg");
-			$svg.css('height', ($svg.width()/1.6));
+// 			$svg.css('height', ($svg.width()/1.6));
+			$svg.css('height', '400px');
 		});
 		
 		var svg;
@@ -117,7 +118,7 @@ $j.documentReady('prkManagerFrm', function($form,$uiPage){
 							break;
 						} 
 					}
-				},false);
+				},'get',false);
 			}
 			
 			
