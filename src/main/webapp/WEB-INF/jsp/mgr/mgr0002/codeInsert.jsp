@@ -2,6 +2,10 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <script>
+/** 
+	화면이동이 필요할때, jsp를 따로 관리하고자 하면
+	$j.documents 에 초기화 함수를 push 해야한다. 
+*/
 var counter = 0;
 $j.documents.push(function(){
 	/** Form 단위로 스크립팅 한다. */
@@ -19,13 +23,17 @@ $j.documents.push(function(){
 		});
 		
 		var initParams;
-		$( ":mobile-pagecontainer" ).pagecontainer({
+		$j.pageMoveCallback(function(params){
+			initParams = params;
+			initCodeList( $form, params );
+		});
+		/* $( ":mobile-pagecontainer" ).pagecontainer({
 			// page change 콜백함수.
 			change:function(event,ui){
 				initParams = ui.options.params;
 				initCodeList( $form, initParams );
 			}
-		});// page move
+		});// page move */
 		
 		$form.find(".infoBtnBox").on('click',function(e){
 			switch (e.target.id) {

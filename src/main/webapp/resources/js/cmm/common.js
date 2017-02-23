@@ -92,7 +92,6 @@ var Common = {
 				}
 				option.data = JSON.stringify( dt );
 			}
-			console.log( option );
 			$.ajax( option );
 		}
 		
@@ -324,7 +323,6 @@ var $m = {
 				return head;
 			}
 			,createBody :function( header, data ){
-				console.log( header );
 				var tbody = $("<tbody></tbody>");
 				for( var i=0, len=data.length;i<len;i++){
 					var $tr = $("<tr></tr>");
@@ -357,7 +355,6 @@ var $m = {
 				var $target=$('<table></table>');
 				var header = this.table.createHeader( option.header );
 				var body = this.table.createBody( option.header , option.data );
-				console.log( $target );
 				$target.append( header ).append( body );
 				$wrap.append( $target );
 			}
@@ -383,16 +380,6 @@ var $m = {
 			return $target;
 		}
 		
-		,pageMove:function( url , params){
-			var option = {
-					transition: "slide"
-			};
-			if( params ) {
-				option.params = {}
-				$.extend(option.params, params);
-			}
-			$( ":mobile-pagecontainer" ).pagecontainer( "change", url , option);
-		}
 		/**
 		 * => 방향으로swipe 시 메뉴(헤더버튼) 클릭
 		 */
@@ -624,6 +611,7 @@ var $j = {
 			for( var i = 0 ,len = this.documents.length; i < len ;i ++){
 				this.documents[i].call(document);
 			}
+			this.documents = [];
 		}
 		,documentReady : function(form , callback){
 			$(document).ready(function(){
@@ -642,6 +630,26 @@ var $j = {
 				}
 			}
 
+		}
+		,pageMove:function( url , params ){
+			var option = {
+					transition: "slide"
+			};
+			if( params ) {
+				option.params = {}
+				$.extend(option.params, params);
+			}
+			this.$page().pagecontainer( "change", url , option);
+		}
+		,pageMoveCallback :function( callback ){
+			if( typeof callback == 'function' ){
+				this.$page().pagecontainer({
+					// page change 콜백함수.
+					change:function(event,ui){
+						callback(ui.options.params);
+					}
+				});// page move
+			}
 		}
 }
 var COMPONENT ={

@@ -6,6 +6,10 @@
 <link rel="stylesheet" href="<c:url value='/resources/js/zgrid/css/zgrid.css'/>" type="text/css">
 <script type="text/javascript" src="<c:url value='/resources/js/zgrid/zgrid.js'/>"></script>
 <script>
+/** 
+	 화면이동이 필요할때, jsp를 따로 관리하고자 하면
+	 $j.documents 에 초기화 함수를 push 해야한다. 
+ */
 $j.documents.push(function(){
 	/** Form 단위로 스크립팅 한다. */
 	$j.documentReady('codeSelectForm', function($form,$uiPage){
@@ -39,12 +43,12 @@ $j.documents.push(function(){
 	    grid.boxForDom.$body.on('click','tr',function(e){
 	    	//클릭된 row 정보를 세
 	    	var dt = grid.data[this.id] ;
-	    	$m.pageMove( '#codeInsert' , dt );
+	    	$j.pageMove( '#codeInsert' , dt );
 	    });
 	});
 	
 	function addCode(){
-		$m.pageMove( '#codeInsert' );
+		$j.pageMove( '#codeInsert' );
 	}
 	
 	function selectCodeList( $form, grid ){

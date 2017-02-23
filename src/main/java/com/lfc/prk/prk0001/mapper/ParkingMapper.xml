@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PRK0001">
-	<select id="selectPrkplaceCell" parameterType="com.lfc.prk.vo.PrkplceCellMngVO" resultType="camelCaseMap">
+	<select id="selectPrkplaceCell" parameterType="PrkCellVO" resultType="camelCaseMap">
 		 select
 			PRKPLCE_CODE,
 			PRKPLCE_FLR_CODE,
@@ -46,7 +46,7 @@
 			 AND HEIGHT = #{height}
 		 </if>
 	</select>
-	<insert id="insertPrkplaceCell" parameterType="com.lfc.prk.vo.PrkplceCellMngVO" >
+	<insert id="insertPrkplaceCell" parameterType="PrkCellVO" >
 		 insert into PRKPLCE_CELL_MNG(
 			PRKPLCE_CODE,
 			PRKPLCE_FLR_CODE,
@@ -71,7 +71,7 @@
 			#{height}
 		)
 	</insert>
-	<update id="updatePrkplaceCell" parameterType="com.lfc.prk.vo.PrkplceCellMngVO" >
+	<update id="updatePrkplaceCell" parameterType="PrkCellVO" >
 		 update PRKPLCE_CELL_MNG
 		 set
 			PRKPLCE_CODE = #{prkplceCode},
@@ -96,7 +96,7 @@
 			 AND WIDTH = #{width}
 			 AND HEIGHT = #{height}
 	</update>
-	<delete id="deletePrkplaceCell" parameterType="com.lfc.prk.vo.PrkplceCellMngVO" >
+	<delete id="deletePrkplaceCell" parameterType="PrkCellVO" >
 		 delete from PRKPLCE_CELL_MNG
 		 where 
 			 PRKPLCE_CODE = #{prkplceCode}

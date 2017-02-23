@@ -22,7 +22,7 @@ public class UrlMapping {
 	 * */
 	public static final String TEST_URL="/test.do";
 
-	/** url  : */
+	/** url  :  */
 	public static final String LOGIN_URL="/cmm/login/login.do";
 	/** jsp  : */
 	public static final String LOGIN_JSP="/cmm/login/login";
@@ -39,6 +39,10 @@ public class UrlMapping {
 	/** url  : 공통코드 로드 */
 	public static final String GET_COMMON_CODE="/getCommonCode.do";
 	
+	
+	
+/***************************************************************************************************/
+	
 	/** url  : 메뉴관리 리스트조회*/
 	public static final String MGR0001_LIST_URL="/mgr/mgr0001/menuList.do";
 	/** jsp  : 메뉴관리 리스트조회*/
@@ -48,25 +52,35 @@ public class UrlMapping {
 	/** url  : 메뉴Id 자동채번 load */
 	public static final String MGR0001_GET_MAX_MENUID_URL="/mgr/mgr0001/getMaxMenuId.do";
 	
-	/** url  : 공통코드관리 */
+/***************************************************************************************************/
+	
+	/** url  : 공통코드관리 조회 */
 	public static final String MGR0002_LIST_URL="/mgr/mgr0002/codeList.do";
 	/** jsp  : 공통코드관리 */
 	public static final String MGR0002_LIST_JSP="/mgr/mgr0002/codeList";
 
-	/** url  : 공통코드관리 */
+	/** url  : 공통코드관리 등록 */
 	public static final String MGR0002_INSERT_URL="/mgr/mgr0002/codeInsert.do";
 	/** jsp  : 공통코드관리 */
 	public static final String MGR0002_INSERT_JSP="/mgr/mgr0002/codeInsert";
 	
-	
-	/** url  : 공통코드관리 */
+	/** url  : 공통코드관리 삭제 */
 	public static final String MGR0002_DELETE_URL="/mgr/mgr0002/codeDelete.do";
 	
 	/** url  : 공통코드관리 상세조회 */
 	public static final String MGR0002_DETAIL_SELECT_URL="/mgr/mgr0002/codeDetailSelect.do";
 	
+/***************************************************************************************************/	
 	
+	/** url  : 주차장관리 메인 */
+	public static final String PRK0001_MAIN_URL="/prk/prk0001/parkingListMain.do";
+	/** jsp  : 주차장관리 메인이동 */
+	public static final String PRK0001_MAIN_JSP="/prk/prk0001/parkingListMain";
 	
+	/** url  : 주차장관리 관리페이지이동 */
+	public static final String PRK0001_MANAGER_URL="/prk/prk0001/parkingListManager.do";
+	/** jsp  : 주차장관리 관리페이지이동 */
+	public static final String PRK0001_MANAGER_JSP="/prk/prk0001/parkingListManager";
 	/**
 	 * url : /prk/insertPrkData.do<br>
 	 * desc : 주차장데이터 입력
