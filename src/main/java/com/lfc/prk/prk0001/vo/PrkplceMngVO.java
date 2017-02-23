@@ -1,4 +1,4 @@
-package com.lfc.prk.vo;
+package com.lfc.prk.prk0001.vo;
 
 /**
  * 주차장관리테이블 VO

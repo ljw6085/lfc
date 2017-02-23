@@ -1,4 +1,4 @@
-package com.lfc.prk.service;
+package com.lfc.prk.prk0001;
 
 import java.util.List;
 
@@ -9,15 +9,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.common.CommonDAO;
 import com.common.SetLogger;
-import com.lfc.prk.vo.PrkplceCellMngVO;
+import com.lfc.prk.prk0001.vo.PrkplceCellMngVO;
 
 @Service
-public class ParkingServiceImpl extends SetLogger implements ParkingService{
+public class PRK0001$ServiceImpl extends SetLogger implements PRK0001$Service{
 	@Autowired
 	CommonDAO dao;
 	@Override
 	public int insertParkgingCellInfo(PrkplceCellMngVO cell) {
-		return dao.insert("Parking.insertPrkplaceCell", cell);
+		return dao.insert("PRK0001.insertPrkplaceCell", cell);
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class ParkingServiceImpl extends SetLogger implements ParkingService{
 
 	@Override
 	public List<PrkplceCellMngVO> selectParkgingFloorInfo(PrkplceCellMngVO vo) {
-		return dao.selectList("Parking.selectPrkplaceCell",vo);
+		return dao.selectList("PRK0001.selectPrkplaceCell",vo);
 	}
 	
 }

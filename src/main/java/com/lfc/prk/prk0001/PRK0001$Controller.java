@@ -1,4 +1,4 @@
-package com.lfc.prk.controller;
+package com.lfc.prk.prk0001;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,17 +14,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.common.SetLogger;
 import com.common.UrlMapping;
-import com.lfc.prk.service.ParkingService;
-import com.lfc.prk.vo.PrkplceCellMngVO;
+import com.lfc.prk.prk0001.vo.PrkplceCellMngVO;
 
 /**
  * Handles requests for the application home page.
  */
 @Controller
-public class ParkingController extends SetLogger {
+public class PRK0001$Controller extends SetLogger {
 	
 	@Autowired
-	ParkingService service;
+	PRK0001$Service service;
 	
 	@RequestMapping(value = UrlMapping.PARKING_INSERT_URL )
 	public @ResponseBody Map<String, Object> parkingInsert(Locale locale, Model model, @RequestBody List<PrkplceCellMngVO> list) {
