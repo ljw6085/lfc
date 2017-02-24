@@ -8,6 +8,7 @@
  화면이동이 필요할때, jsp를 따로 관리하고자 하면
  $j.documents 에 초기화 함수를 push 해야한다. 
  */
+ //translate형태로 하자!
  /////////////// zoom, selectable 호환 적용해야함.
  //https://github.com/d3/d3-drag/blob/master/README.md#drag
  //http://www.redblobgames.com/articles/curved-paths/making-of.html
@@ -51,7 +52,20 @@ $j.documents.push(function() {
 					.on("zoom", function(){
 						//zoom 이벤트 콜백함수
 					  	g.attr("transform", d3.event.transform );
+						g.selectAll('.box2')
+							.attr('transform',function(){
+								var mat  = $(this).data();
+								var t = $(this).offset().top;
+								var l = $(this).offset().left;
+								matrix[4] =  t;
+					    		matrix[5]  = l;
+					    		return 'matrix('+matrix.join(' ')+')';
+// 								console.log( d3.event.transform);
+// 								return d3.event.transform ; //####################!!!!!!!!!!!!! translate형태로 하자!
+							});
+							
 					}); 	// zoom 이벤트 바인드
+		;
 		g.call( zoom );
 					
 		var position = [0,0,0,0];  // internal variable
