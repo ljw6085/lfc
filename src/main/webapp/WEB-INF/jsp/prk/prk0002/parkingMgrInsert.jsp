@@ -234,7 +234,9 @@ $j.documents.push(function() {
 .axis path {
   display: none;
 }
-
+.axis text{
+	display: none;
+}
 .axis line {
 	stroke: #aaa;
 	stroke-opacity: 0.3;
