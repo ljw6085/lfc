@@ -86,11 +86,19 @@ public class UrlMapping {
 	public static final String PRK0002_MAIN_URL="/prk/prk0002/parkingMgrMain.do";
 	/** jsp  : 주차장관리 메인이동 */
 	public static final String PRK0002_MAIN_JSP="/prk/prk0002/parkingMgrMain";
+
+	/** url  : 주차장관리 메인 */
+	public static final String PRK0002_MAIN_URL2="/prk/prk0002/parkingMgrInsert_new.do";
+	/** jsp  : 주차장관리 메인이동 */
+	public static final String PRK0002_MAIN_JSP2="/prk/prk0002/parkingMgrInsert_new";
 	
 	/** url  : 주차장관리 관리페이지이동 */
 	public static final String PRK0002_INSERT_URL="/prk/prk0002/parkingMgrInsert.do";
 	/** jsp  : 주차장관리 관리페이지이동 */
 	public static final String PRK0002_INSERT_JSP="/prk/prk0002/parkingMgrInsert";
+
+	/** url  : svg object 정보 로드*/
+	public static final String PRK0002_SELECT_SVG_OBJECT_INFO_URL="/prk/prk0002/selectSvgObjectInfo.do";
 	
 	
 	

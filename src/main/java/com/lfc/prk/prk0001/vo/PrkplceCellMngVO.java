@@ -15,8 +15,23 @@ public class PrkplceCellMngVO extends PrkplceFlrMngVO{
 	private String saleCarInnb;
 	private String x;
 	private String y;
+	private String transform;
 	private String width;
 	private String height;
+	private String shape;
+	
+	public String getShape() {
+		return shape;
+	}
+	public void setShape(String shape) {
+		this.shape = shape;
+	}
+	public String getTransform() {
+		return transform;
+	}
+	public void setTransform(String transform) {
+		this.transform = transform;
+	}
 	@Override
 	public String getPrkplceCode() {
 		return prkplceCode;
@@ -85,6 +100,7 @@ public class PrkplceCellMngVO extends PrkplceFlrMngVO{
 	public String toString() {
 		return "PrkplceCellMngVO [prkplceCode=" + prkplceCode + ", prkplceFlrCode=" + prkplceFlrCode + ", cellMapngId="
 				+ cellMapngId + ", cellType=" + cellType + ", styleCls=" + styleCls + ", saleCarInnb=" + saleCarInnb
-				+ ", x=" + x + ", y=" + y + ", width=" + width + ", height=" + height + "]";
+				+ ", x=" + x + ", y=" + y + ", transform=" + transform + ", width=" + width + ", height=" + height
+				+ ", shape=" + shape + "]";
 	}
 }

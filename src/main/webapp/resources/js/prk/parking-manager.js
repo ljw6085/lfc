@@ -1,50 +1,89 @@
 /**
  * 주차장 관리관련 스크립트
  */
-var snapResolution =10
-	,snapGridWidth=0
-	,snapGridHeight=0
-	,svgUtils = {
-		chageTranslate : function( target , posArray ){
+var svgUtils = {
+		
+		loadedSvgObjectInfo :{}
+		,getSvgObjectInfo : function( cellType ){
+			var t = this;
+			if( t.loadedSvgObjectInfo[cellType] )  return t.loadedSvgObjectInfo[cellType];
+			
+			Common.ajaxJson(CONTEXT_PATH+"/prk/prk0002/selectSvgObjectInfo.do",{ cellType : cellType },function(data){
+				t.loadedSvgObjectInfo[cellType] = data;
+	    	},'post',false);
+			
+			return t.loadedSvgObjectInfo[cellType];
+		}
+		,chageTranslate : function( target , posArray ){
 			  d3.select( target ).attr('transform','translate('+posArray[0]+','+posArray[1]+')');
 			  $(target).data('trans',posArray);
 		}
+		,createShapeByType:function( pGroup, $option ){
+			var t = this;
+			switch ($option.cellType) {
+				case 'P0':case 'P1':case 'P2':case 'P3':
+					var option = t.getSvgObjectInfo( $option.cellType );
+					if( $option.transform ) option.transform = $option.transform;
+					return t.createRect( pGroup, option );
+				case 'P4': // 나중에 엘레베이터는 t.createRect 를 따로 콜할수도 있으므로,,
+					var option = t.getSvgObjectInfo( $option.cellType );
+					if( $option.transform ) option.transform = $option.transform;
+					return t.createRect( pGroup, option );
+					break;
+	
+				default:
+					break;
+			}
+		}
 		,createRect : function( pGroup , $option ){
+			var t = this;
 			var option = {
-					'class':'box2'
-					,'width':30	
-					,'height':50
+					'class':'box'
+					,'width':20
+					,'height':30
 					,'transform':'translate(0,0)'
 			}
 			if( typeof $option == 'object') $.extend( option , $option );
 		
-			var newG = pGroup.append('g');
-			var rect = newG.append('rect');
+			var newG = pGroup.append('g') , rect = newG.append('rect');
+			for( var k in option){ 
+				rect.attr( k , option[k] ); 
+				t.convertToJquery(rect).data(k,option[k]);
+			}
+			rect.call(
+				d3.drag()
+					.on("start", function(){
+						t.snapStart();
+					})
+					.on("drag", function(){
+						t.snapDrag( this );
+					})
+			);
 		
-			for( var k in option){ rect.attr(k,option[k]); }
-			rect.call(d3.drag().on("start", snapStart).on("drag", snapDrag));
-		
-			var trns = [ 0.0, 0.0 ];
-			if( $option.trans ){ trns = $option.trans ; }
-			$(rect._groups[0][0]).data({ trans: trns  });
 			return rect;
 		}
 		,round:function(p, n) {
 			  return p % n < n / 2 ? p - (p % n) : p + n - (p % n);
 		}
-		,snapTarget:null
-		,snapTargetList:$([])
 		/*
 		 target을 기준으로 rect를 생성한다.	
 		*/	
-		,withTargetCreate:function( target ){
+		,withTargetCreate:function( target , cellType){
 			var transform = $(target).attr('transform');
 			var trns = this.getTranslate( transform );
-			trns = [ trns[0] + snapResolution , trns[1] + snapResolution ];
-			return this.createRect( d3.select('.viewWrap') ,{
-				transform:'translate('+(trns[0])+','+(trns[1])+')'
-				,trans : trns
-			});
+			trns = [ trns[0] + this.snapResolution , trns[1] + this.snapResolution ];
+			
+			var option = {
+					transform:'translate('+(trns[0])+','+(trns[1])+')'
+			}
+			if( cellType ){
+				option.cellType = cellType;
+				return this.createShapeByType( d3.select('.viewWrap') , option );
+			}else{
+				return this.createRect( d3.select('.viewWrap') , option );
+			}
+			
+			
 		}	
 		/* d3 객체를 jquery 객체로 변환한다*/
 		,convertToJquery:function ( d3Object ){
@@ -61,74 +100,60 @@ var snapResolution =10
 			trns[1] = +trns[1];
 			return trns;
 		}
-}
-
-function snapStart(){
-	svgUtils.snapTarget = d3.event.sourceEvent.target;
-	if( !$(svgUtils.snapTarget).hasClass('ui-selected') ){
-		$(svgUtils.snapTarget).addClass('ui-selected');
-	}else{
-		if(d3.event.sourceEvent.ctrlKey){
-			$(svgUtils.snapTarget).removeClass('ui-selected');
+		,snapTarget		:	null
+		,snapTargetList	:	$([])
+		,snapResolution	:	10
+		,snapGridWidth	:	0
+		,snapGridHeight	:	0
+		,snapStart:function( ){
+			var utils = this;
+			utils.snapTarget = d3.event.sourceEvent.target;
+			if( !$(utils.snapTarget).hasClass('ui-selected') ){
+				$(utils.snapTarget).addClass('ui-selected');
+			}else{
+				if(d3.event.sourceEvent.ctrlKey){
+					$(utils.snapTarget).removeClass('ui-selected');
+				}
+			}	
+			utils.snapTargetList = $('.ui-selected');
 		}
-	}	
-	svgUtils.snapTargetList = $('.ui-selected');
+		,snapDrag: function ( target ) {
+			var utils = this;
+			var gp = utils.snapResolution / 2
+				, evt = d3.event 
+				, _t = target , t = $(_t)
+				,x = evt.x , y = evt.y
+				,w = +t.attr('width')
+				,h = +t.attr('height')
+				,gridX = utils.round(Math.min(utils.snapGridWidth, x), gp) - ( w / 2 )
+				,gridY = utils.round(Math.min(utils.snapGridHeight, y), gp) - ( h / 2) ;
+
+			  	gridX = Math.round( gridX / gp ) * gp ;
+			  	gridY = Math.round( gridY / gp) * gp ;
+			
+			  	//--------------------------------------------
+			  	if( 0 > gridX ) gridX = 0;
+			  	if( 0 > gridY) gridY = 0;
+			  	if( utils.snapGridWidth - w < gridX )gridX = utils.snapGridWidth-w;
+			  	if( utils.snapGridHeight - h < gridY )gridY = utils.snapGridHeight-h;
+			  	//-----------------------------------------------
+			  	
+			  	var tempTranslate 	= d3.select( target ).attr('transform') 
+			  		,tempTrans 		= utils.getTranslate( tempTranslate )
+			  		,newTrans 		= [ gridX , gridY ];
+			  	utils.chageTranslate( target , newTrans );
+				
+			  	var diffTrans = [ newTrans[0] - tempTrans[0] , newTrans[1] - tempTrans[1] ];
+				
+			  	utils.snapTargetList.not( _t ).each(function(){
+				  	var translate = d3.select( this ).attr('transform'); 
+					var tr = utils.getTranslate( translate );
+				  	tr[0] += diffTrans[0];
+				  	tr[1] += diffTrans[1];
+				  	utils.chageTranslate( this, tr );
+			  });
+		}
 }
-
-function snapDrag() {
-	 var gp = snapResolution/2
-		, evt = d3.event , _t = this , t = $(_t)
-		,x = evt.x , y = evt.y
-		,w = +t.attr('width')
-		,h = +t.attr('height')
-		,gridX = svgUtils.round(Math.min(snapGridWidth, x), gp) - (w/2)
-		,gridY = svgUtils.round(Math.min(snapGridHeight, y), gp) - (h/2) ;
-
-	  	gridX = Math.round( gridX /gp ) * gp ;
-	  	gridY = Math.round( gridY /gp) * gp ;
-	
-	  	//--------------------------------------------
-	  	if( 0 > gridX ) gridX = 0;
-	  	if( 0 > gridY) gridY = 0;
-	  	if( snapGridWidth - w < gridX )	gridX = snapGridWidth-w;
-	  	if( snapGridHeight - h < gridY )gridY = snapGridHeight-h;
-	  	//-----------------------------------------------
-	  	
-	  	var tempTranslate =d3.select(this).attr('transform'); 
-	  	var tempTrans = svgUtils.getTranslate( tempTranslate );
-	  	var newTrans = [gridX,gridY];
-	  	svgUtils.chageTranslate(_t, newTrans );
-		var diffTrans = [newTrans[0]-tempTrans[0], newTrans[1]-tempTrans[1]];
-		svgUtils.snapTargetList.not(_t).each(function(){
-		  	var translate = d3.select(this).attr('transform'); 
-			var tr = svgUtils.getTranslate( translate );
-		  	tr[0] += diffTrans[0];
-		  	tr[1] += diffTrans[1];
-		  	svgUtils.chageTranslate( this, tr );
-	  });
-}
-function getTouchType ( afterX , afterY , beforeX, beforeY ){
-	var moveType = -1;
-	var newX = Math.abs(beforeX - afterX);
-	var newY = Math.abs(beforeY - afterY);
-	var range = newX + newY;
-
-	// 일정범위 이하로 움직이면 무시함
-	if( range  < 25 ) return moveType;
-	//화면 기울기			
-	var hSlope = ((window.innerHeight/2) / window.innerWidth).toFixed(2)*2;
-
-	//사용자의 터치 기울기
-	var slope = parseFloat((newY/newX).toFixed(2),10);
-
-	if( slope > hSlope ){//수직이동
-		moveType = 1;	
-	}else{// 수평이동
-		moveType = 0;	
-	}
-	return moveType;
-}
-
 
 function ParkingManager( svg ){
 	var t = this;
@@ -138,21 +163,24 @@ function ParkingManager( svg ){
 	t.width = +t.svg.attr('width');
 	t.height = +t.svg.attr('height');
 	
-	snapGridWidth = t.width;
-	snapGridHeight = t.height;
-	
+	svgUtils.snapGridWidth = t.width;
+	svgUtils.snapGridHeight = t.height;
+	t.zoomMin = 0.5
+	t.zoomMax = 1;
 	t.zoom = d3.zoom()
-				.scaleExtent([0.5, 2])
-//				.translateExtent([[0, 0], [t.width, t.height]])
-				.on("zoom", zoomed)
-				.on('start',function(e){
+				.scaleExtent([t.zoomMin, t.zoomMax])
+				.translateExtent([[-50, -50], [t.width+50, t.height+50]])
+				.on("zoom", function(){
+					t.zoomed();
+				})
+				.on('start',function(){
 					if( !d3.event.sourceEvent ) return;
 					t.svgVar.isZoom = !d3.event.sourceEvent.ctrlKey 
 					if( !t.svgVar.isZoom ){
 						t.selectingDragStart();
 						t.orgTransform = d3.event.transform
 					}else{
-						$(".box2.ui-selected").removeClass('ui-selected');
+						$(".box.ui-selected").removeClass('ui-selected');
 					}
 				})
 				.on("end", function(){
@@ -221,38 +249,41 @@ function ParkingManager( svg ){
 			,ZOOM_MIN : 0.2
 			,ZOOM_MAX : 10
 			,curEvent:null
-			,resolution : 20
+			,resolution : 10
 			,currentZoom : 1
 	}
 	
 	t.orgTransForm = null;
-	function zoomed() {
-		if( t.svgVar.isZoom ){
-			if( t.orgTransform ){
-				t.svg.transition().duration(0).call(t.zoom.transform, t.orgTransform);
-				t.orgTransform = null
-			}else{
-				var transform = d3.event.transform;
-				t.viewGroup.attr("transform", transform);
-				t.gX.call( t.xAxis.scale(transform.rescaleX( t.x )));
-				t.gY.call( t.yAxis.scale(transform.rescaleY( t.y )));
-			}
-		}else{
-			t.selectingDragging();
-		}
-	}
+	/*function zoomed() {
+		
+	}*/
 	return t;
 }
-
+ParkingManager.prototype.zoomed = function(){
+	var t = this;
+	if( t.svgVar.isZoom ){
+		if( t.orgTransform ){
+			t.svg.transition().duration(0).call(t.zoom.transform, t.orgTransform);
+			t.orgTransform = null
+		}else{
+			var transform = d3.event.transform;
+			t.viewGroup.attr("transform", transform);
+			t.gX.call( t.xAxis.scale(transform.rescaleX( t.x )));
+			t.gY.call( t.yAxis.scale(transform.rescaleY( t.y )));
+		}
+	}else{
+		t.selectingDragging();
+	}
+}
 ParkingManager.prototype.selectingDragStart = function(){
 	var t = this;
 	var event = d3.event.sourceEvent;
 	var target = event.target;
 	if(event && !event.ctrlKey ){
-		$(".box2.ui-selected").removeClass('ui-selected');
+		$(".box.ui-selected").removeClass('ui-selected');
 		return;
 	}
-	$(".box2.ui-selected").removeClass('ui-selected');
+	$(".box.ui-selected").removeClass('ui-selected');
 	
 	t.svgSelectable.clicked = true;
 	
@@ -307,7 +338,7 @@ ParkingManager.prototype.selectingDragging = function(){
 		.attr('height', y2 - y1 );
 	t.svgSelectable.$helper.data('trans',curTrns);
 	t.svgSelectable.$helper.show();
-	var selectableItem = t.$svg.find(".box2");
+	var selectableItem = t.$svg.find(".box");
 	for(var i = 0 ; i<selectableItem.length;i++){
 		var $item 	= $( selectableItem[i] ) ,item = d3.select($item[0]);
 		var  curTrns = $item.data('trans');

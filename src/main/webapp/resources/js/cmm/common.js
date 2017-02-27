@@ -657,12 +657,17 @@ var COMPONENT ={
 		_radio_check:function(  type , option ,$form ){
 			var name 	 = option.name;
 			var cmmnCode = option.cmmnCode;
+			var appendTo = option.appendTo;
 			var target 	 = option.target;
 			var classes  = option.classes;
 			var defaultVal = option.defaultVal;
 			
 			var controllgroup = $("<div data-role='controlgroup' data-type='horizontal' data-mini='true'></div>");
-			target.append( controllgroup );
+			if( appendTo ){
+				target[appendTo](controllgroup)
+			}else{
+				target.append( controllgroup );
+			}
 			
 			controllgroup.controlgroup();
 			
@@ -705,7 +710,40 @@ var COMPONENT ={
 			return this._radio_check(  'radio' , option  , $form);
 		},
 		select:function(option){
+			var name 	 = option.name;
+			var appendTo = option.appendTo;
+			var cmmnCode = option.cmmnCode;
+			var target 	 = option.target;
+			var classes  = option.classes;
+			var defaultVal = option.defaultVal;
+			var codeMap;
+			if( typeof cmmnCode == 'string' ){
+				codeMap = Common.getCommonCode( cmmnCode );
+			}else{
+				codeMap = cmmnCode;
+			}
+			var select = $("<select name='"+name+"' data-native-menu='false' data-iconpos='left' data-mini='true'></select>");
+			if( appendTo ){
+				target[appendTo](select)
+			}else{
+				target.append( select );
+			}
 			
+			var i=0;
+			for( var code in codeMap ){
+				var value = codeMap[code];
+				var $el = $( "<option value='"+  code  +"'>"+value+"</option>" );
+				
+				if( (typeof defaultVal != 'undefined' && code == defaultVal) || (typeof defaultVal == 'undefined' && i++ == 0 ) ) {
+					$el[0].selected = true;
+				}
+				
+				if( classes ) $($el).addClass( classes );
+				
+				select.append( $el );
+			}
+			select.selectmenu();
+			$j.refreshPage();
 		},
 		/**
 		 * checkbox 버튼을 생성해준다.

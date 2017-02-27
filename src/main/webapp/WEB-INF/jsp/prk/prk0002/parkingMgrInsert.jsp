@@ -24,11 +24,31 @@ $j.documents.push(function() {
 		var svg = d3.select( "svg" );
 		var draw = new ParkingManager( svg );
 		
-		var selectedTargets = '.box2.ui-selected';
+		var selectedTargets = '.box.ui-selected';
 		$("#controlBox").on('click',function(e){
 			switch (e.target.id) {
+				case 'cellChange':
+					// cell attr change
+					var selectedCellType = frm.cellType.value;
+					var o = svgUtils.loadedSvgObjectInfo[selectedCellType];
+					if( !o ) o = svgUtils.getSvgObjectInfo( selectedCellType );
+					
+					$(".box.ui-selected").each(function(){
+						var t = $(this) ,curCellType = t.data('cellType');
+						t.removeClass(curCellType)
+							.addClass( selectedCellType )
+								.data('cellType' , selectedCellType)
+								.attr({
+									'width': o.width
+									,'height':o.height
+								})
+					});
+					break;
 				case 'cellAdd':
-					svgUtils.withTargetCreate( $('.box2:last') );
+					var selectedCellType = frm.cellType.value;
+					console.log( selectedCellType );
+					svgUtils.withTargetCreate(  $('.box:last') , selectedCellType  );
+					
 					break;
 				case 'cellDel':
 					$( selectedTargets ).remove();
@@ -164,8 +184,7 @@ $j.documents.push(function() {
 					.call(draw.zoom.scaleTo, draw.svgVar.currentZoom );
 					break;
 				case 'fullByCell':
-					
-					
+					var selectedCellType = frm.cellType.value;
 					var c = 0;
 					var r = 0;
 					
@@ -175,12 +194,11 @@ $j.documents.push(function() {
 					var trns = [0,0];
 					while(true){
 						while( true ){
-							var rect = svgUtils.createRect( d3.select( '.viewWrap' ) ,{
+							var rect = svgUtils.createShapeByType( d3.select( '.viewWrap' ) ,{
 								transform:'translate('+(trns[0])+','+(trns[1])+')'
-								,trans : trns
+								,cellType:selectedCellType
 							});
 							var $rect = svgUtils.convertToJquery(rect);
-							var cur =  $rect.data('trans');
 							var h = +rect.attr('height');
 							var w = +rect.attr('width');
 							trns[0] += w+gap;
@@ -196,6 +214,57 @@ $j.documents.push(function() {
 					}
 					console.log( '가로 ',c,'세로 ',r);
 					break;
+				case 'makeJson':
+					var parking = $("#parkingId").val();
+					var floor = $("#floorId").val();
+		    		var rects = $('.box');
+		    		var boxArray = [];
+		    		var minX = 999999;
+		    		var maxX = 0;
+		    		var minY = 999999;
+		    		var maxY = 0;
+		    		var maxH = 0;
+		    		var maxW = 0;
+					rects.each(function(i){
+						var t = $(this);
+						var shape = this.tagName;
+			    		var id = 'box_'+i;
+			    		var trans = t.attr('transform');
+			    		var cellType = t.attr('cellType');
+			    		var xy = svgUtils.getTranslate(trans);
+			    		var w = +t.attr('width');
+			    		var h = +t.attr('height');
+			    		var x = +xy[0] , y = +xy[1];
+			    		if( x < minX ) minX = x;
+			    		if( x > maxX ) maxX = x;
+			    		if( y < minY ) minY = y;
+			    		if( y > maxY ) maxY = y;
+			    		if( h > maxH ) maxH = h;
+			    		if( w > maxW ) maxW = w;
+							t.attr('id', id );
+							var o = {
+									width		:	w
+									,height		:	h
+									,transform	: 	trans 
+									,cellMapngId: 	id
+									,styleCls	: 	t.attr('class')
+									,style		: 	t.attr('style')
+									,cellType	:	cellType
+									,shape : shape
+									,prkplceCode :parking
+									,prkplceFlrCode : floor
+								}
+							boxArray.push( o );
+					});
+					console.log( minX+','+minY , maxX+maxW,',',maxY + maxH );
+					console.log( boxArray );
+					
+					var url = "<c:url value='/prk/prk0002/parkingMgrInsert.do'/>";
+					Common.ajaxJson( url , boxArray ,function(data){
+						console.log( data );
+			    	});
+					
+					break;
 			}
 			
 		});
@@ -207,7 +276,14 @@ $j.documents.push(function() {
 		}).trigger('change');
 		
 		
-		
+		var cellType = COMPONENT.radio({
+			target 		: $(".createTarget")
+// 			,appendTo 	: 'before'
+			,name		: "cellType"
+			,cmmnCode	: 'PRK_CELL_TYPE'
+			,classes 	: ''
+			,defaultVal : 'P0'
+		});
 	});
 });
 </script>
@@ -218,19 +294,33 @@ $j.documents.push(function() {
     fill: #000;
 	fill-opacity: 0.3;
 }
-.box2:hover{
+.box:hover{
 	cursor:move;
 	fill-opacity:0.5
 }
-.box2{
+.box{
 	fill-opacity: 0.8;
     stroke: none;
-    fill: darkcyan;
 }
-.box2.ui-selected { 
-	fill: #F39814; color: white;  
+.box.ui-selected { 
+	fill: #F39814; 
+	color: white;  
 }
-
+.P0{/* 기본 */
+	fill:darkgray;
+}
+.P1{/* 소유 */
+	fill: darkcyan;
+}
+.P2{/* 미소유 */
+	fill:#333;
+}
+.P3{/* 타겟 */
+	fill: crimson;	
+}
+.P4{/* 엘리베이터 */
+	fill: gold;	
+}
 .axis path {
   display: none;
 }
@@ -260,27 +350,50 @@ $j.documents.push(function() {
 			<h1>주차장정보 등록/수정</h1>
 		</div>
 		<div>
-			<div style='width:200px;' data-type="horizontal">
+			<div style='width:200px;display: inline-block;' data-type="horizontal" >
 				<label for="intervalValueChk">간격사용자정의</label>
 				<input type='checkbox' id='intervalValueChk'>
 				<input type='text' id='intervalValue' data-mini='true' placeholder='px'>
 			</div>
+			<div style='width:200px;display: inline-block;'>
+				<label for="parkingId">주차장</label>
+				<input type='text' id='parkingId' data-mini='true' placeholder='주차장' value='MAIN'>
+			</div>
+			<div style='width:200px;display: inline-block;'>
+				<label for="floorId">층</label>
+				<input type='text' id='floorId' data-mini='true' placeholder='층' value='5F'>
+			</div>
 		</div>
 		<div id='controlBox'>
-			<a href='#' id='cellAdd' class='btn' data-icon='plus'>셀추가</a>
-			<a href='#' id='cellDel' class='btn' data-icon='delete'>선택삭제</a>
-			<a href='#' id='cellCopy' class='btn' data-icon='delete'>선택복사</a>
-			<a href='#' id='cellAlignH' class='btn' data-icon='refresh'>가로정렬(T/C/B)</a>
-			<a href='#' id='cellAlign_H_interval' class='btn' data-icon='refresh'>가로간격정렬</a>
-			<a href='#' id='cellAlignV' class='btn' data-icon='refresh'>세로정렬(L/C/R)</a>
-			<a href='#' id='cellAlign_V_interval' class='btn' data-icon='refresh'>세로간격정렬</a>
-			<a href='#' id='zoomReset' class='btn' data-icon='search'>zoomReset</a>
-			<a href='#' id='zoomIn' class='btn' data-icon='search'>zoomIn</a>
-			<a href='#' id='zoomOut' class='btn' data-icon='search'>zoomOut</a>
-			<a href='#' id='fullByCell' class='btn' data-icon='search'>셀가득채우기</a>
+			<div class='createTarget' data-role="controlgroup" data-type="horizontal" data-mini="true">
+			</div>
+			<div class='controlBox1' data-role="controlgroup" data-type="horizontal" data-mini="true">
+				<a href='#' id='cellAdd' class='btn' data-icon='plus'>셀추가</a>
+				<a href='#' id='fullByCell' class='btn' data-icon='search'>셀가득채우기</a>
+				<a href='#' id='cellChange' class='btn' data-icon='refresh'>셀타입변경</a>
+			</div>
+			<div class='controlBox2' data-role="controlgroup" data-type="horizontal" data-mini="true">
+				<a href='#' id='cellDel' class='btn' data-icon='delete'>선택삭제</a>
+				<a href='#' id='cellCopy' class='btn' data-icon='delete'>선택복사</a>
+			</div>
+			<div class='controlBox3' data-role="controlgroup" data-type="horizontal" data-mini="true">
+				<a href='#' id='cellAlignH' class='btn' data-icon='refresh'>가로정렬(T/C/B)</a>
+				<a href='#' id='cellAlign_H_interval' class='btn' data-icon='refresh'>가로간격정렬</a>
+				<a href='#' id='cellAlignV' class='btn' data-icon='refresh'>세로정렬(L/C/R)</a>
+				<a href='#' id='cellAlign_V_interval' class='btn' data-icon='refresh'>세로간격정렬</a>
+			</div>
+			<div class='controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
+				<a href='#' id='zoomReset' class='btn' data-icon='search'>zoomReset</a>
+				<a href='#' id='zoomIn' class='btn' data-icon='search'>zoomIn</a>
+				<a href='#' id='zoomOut' class='btn' data-icon='search'>zoomOut</a>
+				<a href='#' id='makeJson' class='btn' data-icon='search'>Json데이터생성</a>
+			</div>
+			<div class='controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
+				<a href='#' id='makeJson' class='btn' data-icon='search'>Json데이터생성</a>
+			</div>
 		</div>
 		<div role='main' class='ui-content' style='max-width:2000px !important;max-height:500px; overflow: scroll;text-align: center;'>
-			<svg id='svg' width="1300" height="800" style='background: #eee;'></svg>
+			<svg id='svg' width="1800" height="480" style='background: #eee;'></svg>
 		</div>
 	</form>
 </div>

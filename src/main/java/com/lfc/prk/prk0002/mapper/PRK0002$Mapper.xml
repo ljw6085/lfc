@@ -11,6 +11,7 @@
 			SALE_CAR_INNB,
 			X,
 			Y,
+			TRANSFORM,
 			WIDTH,
 			HEIGHT
 		 from PRKPLCE_CELL_MNG
@@ -45,6 +46,12 @@
 		 <if test="height != null and height != '' ">
 			 AND HEIGHT = #{height}
 		 </if>
+		 <if test="transform != null and transform != '' ">
+			 AND TRANSFORM = #{transform}
+		 </if>
+		 <if test="shape != null and shape != '' ">
+			 AND SHAPE = #{shape}
+		 </if>
 	</select>
 	<insert id="insertPrkplaceCell" parameterType="PrkCellVO" >
 		 insert into PRKPLCE_CELL_MNG(
@@ -57,7 +64,9 @@
 			X,
 			Y,
 			WIDTH,
-			HEIGHT
+			HEIGHT,
+			SHAPE,
+			TRANSFORM
 		) values(
 			#{prkplceCode},
 			#{prkplceFlrCode},
@@ -68,33 +77,27 @@
 			#{x},
 			#{y},
 			#{width},
-			#{height}
+			#{height},
+			#{shape},
+			#{transform}
 		)
 	</insert>
 	<update id="updatePrkplaceCell" parameterType="PrkCellVO" >
 		 update PRKPLCE_CELL_MNG
 		 set
-			PRKPLCE_CODE = #{prkplceCode},
-			PRKPLCE_FLR_CODE = #{prkplceFlrCode},
-			CELL_MAPNG_ID = #{cellMapngId},
 			CELL_TYPE = #{cellType},
 			STYLE_CLS = #{styleCls},
 			SALE_CAR_INNB = #{saleCarInnb},
 			X = #{x},
 			Y = #{y},
 			WIDTH = #{width},
-			HEIGHT = #{height}
+			HEIGHT = #{height},
+			SHAPE = #{shape},
+			TRANSFORM = #{transform}
 		 where 
 			 PRKPLCE_CODE = #{prkplceCode}
 			 AND PRKPLCE_FLR_CODE = #{prkplceFlrCode}
 			 AND CELL_MAPNG_ID = #{cellMapngId}
-			 AND CELL_TYPE = #{cellType}
-			 AND STYLE_CLS = #{styleCls}
-			 AND SALE_CAR_INNB = #{saleCarInnb}
-			 AND X = #{x}
-			 AND Y = #{y}
-			 AND WIDTH = #{width}
-			 AND HEIGHT = #{height}
 	</update>
 	<delete id="deletePrkplaceCell" parameterType="PrkCellVO" >
 		 delete from PRKPLCE_CELL_MNG
@@ -102,12 +105,45 @@
 			 PRKPLCE_CODE = #{prkplceCode}
 			 AND PRKPLCE_FLR_CODE = #{prkplceFlrCode}
 			 AND CELL_MAPNG_ID = #{cellMapngId}
-			 AND CELL_TYPE = #{cellType}
-			 AND STYLE_CLS = #{styleCls}
-			 AND SALE_CAR_INNB = #{saleCarInnb}
-			 AND X = #{x}
-			 AND Y = #{y}
-			 AND WIDTH = #{width}
-			 AND HEIGHT = #{height}
 	</delete>
+	
+	<select id="selectSvgObjectInfo" parameterType="com.lfc.prk.prk0002.vo.SvgObjectInfoVO" resultType="camelCaseMap">
+		 select
+			CELL_TYPE,
+			CELL_NM,
+			SHAPE,
+			STYLE,
+			STYLE_CLS as class,
+			FILL,
+			STROKE,
+			STROKE_WIDTH,
+			STROKE_DASHARRAY,
+			STROKE_LINECAP,
+			FILL_OPACITY,
+			STROKE_OPACITY,
+			CX,
+			CY,
+			RX,
+			RY,
+			R,
+			X,
+			Y,
+			X1,
+			Y1,
+			X2,
+			Y2,
+			D,
+			DX,
+			DY,
+			POINTS,
+			TRANSFORM,
+			WIDTH,
+			HEIGHT
+		 from SVG_OBJECT_INFO
+		 where 1=1
+		 <if test="cellType != null and cellType != '' ">
+			 AND CELL_TYPE = #{cellType}
+		 </if>
+	</select>
+	
 </mapper>

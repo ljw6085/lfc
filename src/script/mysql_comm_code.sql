@@ -46,6 +46,8 @@ CREATE TABLE PRKPLCE_CELL_MNG
 	SALE_CAR_INNB		VARCHAR(10)		NULL	,
 	X					VARCHAR(15)		NOT NULL,
 	Y					VARCHAR(15)		NOT NULL,
+	TRANSFORM			VARCHAR(200)	NULL,
+	SHAPE				VARCHAR(50)		NULL,
 	WIDTH				VARCHAR(10)		NOT NULL,
 	HEIGHT				VARCHAR(10)		NOT NULL
 	
@@ -59,6 +61,56 @@ CREATE UNIQUE INDEX PRKPLCE_CELL_MNG_PK ON PRKPLCE_CELL_MNG
 	PRKPLCE_CODE, PRKPLCE_FLR_CODE , CELL_MAPNG_ID
 )
 ;
+
+-- svg 객체 관리 테이블
+CREATE TABLE SVG_OBJECT_INFO
+(
+	CELL_TYPE			VARCHAR(15)		NOT NULL,
+	CELL_NM				VARCHAR(15)		NULL,
+	SHAPE				VARCHAR(20)		NULL,
+	STYLE				VARCHAR(200)	NULL,
+	STYLE_CLS			VARCHAR(200)	NULL,
+	FILL				VARCHAR(20)		NULL,
+	STROKE				VARCHAR(5)		NULL,
+	STROKE_WIDTH		VARCHAR(5)		NULL,
+	STROKE_DASHARRAY	VARCHAR(20)		NULL,
+	STROKE_LINECAP		VARCHAR(20)		NULL,
+	FILL_OPACITY		VARCHAR(5)		NULL,
+	STROKE_OPACITY		VARCHAR(5)		NULL,
+	CX					VARCHAR(15)		NULL,
+	CY					VARCHAR(15)		NULL,
+	RX					VARCHAR(15)		NULL,
+	RY					VARCHAR(15)		NULL,
+	R					VARCHAR(15)		NULL,
+	X					VARCHAR(15)		NULL,
+	Y					VARCHAR(15)		NULL,
+	X1					VARCHAR(15)		NULL,
+	Y1					VARCHAR(15)		NULL,
+	X2					VARCHAR(15)		NULL,
+	Y2					VARCHAR(15)		NULL,
+	D					VARCHAR(500)	NULL,
+	DX					VARCHAR(15)		NULL,
+	DY					VARCHAR(15)		NULL,
+	POINTS				VARCHAR(200)	NULL,
+	TRANSFORM			VARCHAR(200)	NULL,
+	WIDTH				VARCHAR(10)		NULL,
+	HEIGHT				VARCHAR(10)		NULL,
+	
+	PRIMARY KEY ( CELL_TYPE )
+);
+
+CREATE UNIQUE INDEX SVG_OBJECT_INFO_PK ON SVG_OBJECT_INFO
+(
+	CELL_TYPE
+)
+;
+
+INSERT INTO `lfc`.`svg_object_info` (`CELL_TYPE`, `CELL_NM`, `SHAPE`, `STYLE_CLS`, `TRANSFORM`, `WIDTH`, `HEIGHT`) VALUES ('P0', '', 'rect', 'box P0', 'translate(0,0)', '20', '30');
+INSERT INTO `lfc`.`svg_object_info` (`CELL_TYPE`, `CELL_NM`, `SHAPE`, `STYLE_CLS`, `TRANSFORM`, `WIDTH`, `HEIGHT`) VALUES ('P1', '', 'rect', 'box P1', 'translate(0,0)', '20', '30');
+INSERT INTO `lfc`.`svg_object_info` (`CELL_TYPE`, `CELL_NM`, `SHAPE`, `STYLE_CLS`, `TRANSFORM`, `WIDTH`, `HEIGHT`) VALUES ('P2', '', 'rect', 'box P2', 'translate(0,0)', '20', '30');
+INSERT INTO `lfc`.`svg_object_info` (`CELL_TYPE`, `CELL_NM`, `SHAPE`, `STYLE_CLS`, `TRANSFORM`, `WIDTH`, `HEIGHT`) VALUES ('P3', '', 'rect', 'box P3', 'translate(0,0)', '20', '30');
+INSERT INTO `lfc`.`svg_object_info` (`CELL_TYPE`, `CELL_NM`, `SHAPE`, `STYLE_CLS`, `TRANSFORM`, `WIDTH`, `HEIGHT`) VALUES ('P4', '', 'rect', 'box P4', 'translate(0,0)', '40', '40');
+
 
 -- 공통코드테이블 하나로 관리
 
@@ -89,6 +141,18 @@ CREATE UNIQUE INDEX CMMN_CODE_PK ON CMMN_CODE
 	CODE
 )
 ;
+
+-- 'PRK_CELL_TYPE', 'P0', '기본', '기본영역(주차장)', 'Y', '0', NULL, NULL, NULL, NULL
+-- 'PRK_CELL_TYPE', 'P1', '소유', '소유하고있는영역(주차장)', 'Y', '1', NULL, NULL, NULL, NULL
+-- 'PRK_CELL_TYPE', 'P2', '미소유', '소유하지않은영역(주차장)', 'Y', '2', NULL, NULL, NULL, NULL
+-- 'PRK_CELL_TYPE', 'P3', '타겟영역', '조회타겟영역(주차장)', 'Y', '3', NULL, NULL, NULL, NULL
+-- 'PRK_CELL_TYPE', 'P4', '엘리베이터', '엘리베이터영역(주차장)', 'Y', '4', NULL, NULL, NULL, NULL
+-- 'PRK_CELL_TYPE', 'P5', '기타', '기타영역(주차장)', 'Y', '5', NULL, NULL, NULL, NULL
+-- 'ROOT', 'PRK_CELL_TYPE', '주차장 CELL 타입', '주차장 도면에서 CELL 타입을 구분한다.', 'Y', '0', NULL, NULL, NULL, NULL
+
+
+
+
 
 -- 사용자정보테이블
 
