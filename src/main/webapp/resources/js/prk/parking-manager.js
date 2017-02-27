@@ -165,11 +165,11 @@ function ParkingManager( svg ){
 	
 	svgUtils.snapGridWidth = t.width;
 	svgUtils.snapGridHeight = t.height;
-	t.zoomMin = 0.5
+	t.zoomMin = 0.2
 	t.zoomMax = 1;
 	t.zoom = d3.zoom()
 				.scaleExtent([t.zoomMin, t.zoomMax])
-				.translateExtent([[-50, -50], [t.width+50, t.height+50]])
+//				.translateExtent([[-50, -50], [t.width+50, t.height+50]])
 				.on("zoom", function(){
 					t.zoomed();
 				})
@@ -189,11 +189,11 @@ function ParkingManager( svg ){
 				});
 	
 	t.x = d3.scaleLinear()
-			.domain([-1, t.width + 1])
+//			.domain([-1, t.width + 1])
 			.range([-1, t.width + 1]);
 
 	t.y = d3.scaleLinear()
-			.domain([-1, t.height + 1])
+//			.domain([-1, t.height + 1])
 			.range([-1, t.height + 1]);
 
 	var tickCnt = 50;
@@ -223,8 +223,10 @@ function ParkingManager( svg ){
 						.attr('transform','translate(0,0)')
 						.attr("x", 0.5)
 						.attr("y", 0.5)
-						.attr("width", t.width - 1)
-						.attr("height", t.height - 1);
+						.attr("width", 1800 )
+						.attr("height", 500 );
+//	.attr("width", t.width - 1)
+//	.attr("height", t.height - 1);
 
 	
 	
@@ -259,6 +261,9 @@ function ParkingManager( svg ){
 	}*/
 	return t;
 }
+
+var MIN = {x: -900, y: -6},     //top-left corner
+		MAX = {x: 0, y: 0};   //bottom-right corner
 ParkingManager.prototype.zoomed = function(){
 	var t = this;
 	if( t.svgVar.isZoom ){
@@ -267,9 +272,18 @@ ParkingManager.prototype.zoomed = function(){
 			t.orgTransform = null
 		}else{
 			var transform = d3.event.transform;
+			/*var widthGap = t.svg.attr('width') - t.$view[0].getBoundingClientRect().width;
+			var heightGap = t.svg.attr('height') - t.$view[0].getBoundingClientRect().height;
+			MIN.x = widthGap;
+			MIN.y = heightGap;
+			  transform.x = d3.max([transform.x, MIN.x]);
+	          transform.y = d3.max([transform.y, MIN.y]);
+	          transform.x = d3.min([transform.x, MAX.x]);
+	          transform.y = d3.min([transform.y, MAX.y]);*/
+	          
 			t.viewGroup.attr("transform", transform);
-			t.gX.call( t.xAxis.scale(transform.rescaleX( t.x )));
-			t.gY.call( t.yAxis.scale(transform.rescaleY( t.y )));
+//			t.gX.call( t.xAxis.scale(transform.rescaleX( t.x )));
+//			t.gY.call( t.yAxis.scale(transform.rescaleY( t.y )));
 		}
 	}else{
 		t.selectingDragging();

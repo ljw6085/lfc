@@ -349,51 +349,53 @@ $j.documents.push(function() {
 		<div class='header' data-role='header'>
 			<h1>주차장정보 등록/수정</h1>
 		</div>
-		<div>
-			<div style='width:200px;display: inline-block;' data-type="horizontal" >
-				<label for="intervalValueChk">간격사용자정의</label>
-				<input type='checkbox' id='intervalValueChk'>
-				<input type='text' id='intervalValue' data-mini='true' placeholder='px'>
+		<div role='main' class='ui-content'>
+			<div>
+				<div style='width:200px;display: inline-block;' data-type="horizontal" >
+					<label for="intervalValueChk">간격사용자정의</label>
+					<input type='checkbox' id='intervalValueChk'>
+					<input type='text' id='intervalValue' data-mini='true' placeholder='px'>
+				</div>
+				<div style='width:200px;display: inline-block;'>
+					<label for="parkingId">주차장</label>
+					<input type='text' id='parkingId' data-mini='true' placeholder='주차장' value='MAIN'>
+				</div>
+				<div style='width:200px;display: inline-block;'>
+					<label for="floorId">층</label>
+					<input type='text' id='floorId' data-mini='true' placeholder='층' value='5F'>
+				</div>
 			</div>
-			<div style='width:200px;display: inline-block;'>
-				<label for="parkingId">주차장</label>
-				<input type='text' id='parkingId' data-mini='true' placeholder='주차장' value='MAIN'>
+			<div id='controlBox'>
+				<div class='createTarget' data-role="controlgroup" data-type="horizontal" data-mini="true">
+				</div>
+				<div class='controlBox1' data-role="controlgroup" data-type="horizontal" data-mini="true">
+					<a href='#' id='cellAdd' class='btn' data-icon='plus'>셀추가</a>
+					<a href='#' id='fullByCell' class='btn' data-icon='search'>셀가득채우기</a>
+					<a href='#' id='cellChange' class='btn' data-icon='refresh'>셀타입변경</a>
+				</div>
+				<div class='controlBox2' data-role="controlgroup" data-type="horizontal" data-mini="true">
+					<a href='#' id='cellDel' class='btn' data-icon='delete'>선택삭제</a>
+					<a href='#' id='cellCopy' class='btn' data-icon='delete'>선택복사</a>
+				</div>
+				<div class='controlBox3' data-role="controlgroup" data-type="horizontal" data-mini="true">
+					<a href='#' id='cellAlignH' class='btn' data-icon='refresh'>가로정렬(T/C/B)</a>
+					<a href='#' id='cellAlign_H_interval' class='btn' data-icon='refresh'>가로간격정렬</a>
+					<a href='#' id='cellAlignV' class='btn' data-icon='refresh'>세로정렬(L/C/R)</a>
+					<a href='#' id='cellAlign_V_interval' class='btn' data-icon='refresh'>세로간격정렬</a>
+				</div>
+				<div class='controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
+					<a href='#' id='zoomReset' class='btn' data-icon='search'>zoomReset</a>
+					<a href='#' id='zoomIn' class='btn' data-icon='search'>zoomIn</a>
+					<a href='#' id='zoomOut' class='btn' data-icon='search'>zoomOut</a>
+					<a href='#' id='makeJson' class='btn' data-icon='search'>Json데이터생성</a>
+				</div>
+				<div class='controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
+					<a href='#' id='makeJson' class='btn' data-icon='search'>Json데이터생성</a>
+				</div>
 			</div>
-			<div style='width:200px;display: inline-block;'>
-				<label for="floorId">층</label>
-				<input type='text' id='floorId' data-mini='true' placeholder='층' value='5F'>
+			<div style='width:100%;text-align: center;'>
+				<svg id='svg' width="800" height="500" style='background: #eee;border:1px solid #aaa;'></svg>
 			</div>
-		</div>
-		<div id='controlBox'>
-			<div class='createTarget' data-role="controlgroup" data-type="horizontal" data-mini="true">
-			</div>
-			<div class='controlBox1' data-role="controlgroup" data-type="horizontal" data-mini="true">
-				<a href='#' id='cellAdd' class='btn' data-icon='plus'>셀추가</a>
-				<a href='#' id='fullByCell' class='btn' data-icon='search'>셀가득채우기</a>
-				<a href='#' id='cellChange' class='btn' data-icon='refresh'>셀타입변경</a>
-			</div>
-			<div class='controlBox2' data-role="controlgroup" data-type="horizontal" data-mini="true">
-				<a href='#' id='cellDel' class='btn' data-icon='delete'>선택삭제</a>
-				<a href='#' id='cellCopy' class='btn' data-icon='delete'>선택복사</a>
-			</div>
-			<div class='controlBox3' data-role="controlgroup" data-type="horizontal" data-mini="true">
-				<a href='#' id='cellAlignH' class='btn' data-icon='refresh'>가로정렬(T/C/B)</a>
-				<a href='#' id='cellAlign_H_interval' class='btn' data-icon='refresh'>가로간격정렬</a>
-				<a href='#' id='cellAlignV' class='btn' data-icon='refresh'>세로정렬(L/C/R)</a>
-				<a href='#' id='cellAlign_V_interval' class='btn' data-icon='refresh'>세로간격정렬</a>
-			</div>
-			<div class='controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
-				<a href='#' id='zoomReset' class='btn' data-icon='search'>zoomReset</a>
-				<a href='#' id='zoomIn' class='btn' data-icon='search'>zoomIn</a>
-				<a href='#' id='zoomOut' class='btn' data-icon='search'>zoomOut</a>
-				<a href='#' id='makeJson' class='btn' data-icon='search'>Json데이터생성</a>
-			</div>
-			<div class='controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
-				<a href='#' id='makeJson' class='btn' data-icon='search'>Json데이터생성</a>
-			</div>
-		</div>
-		<div role='main' class='ui-content' style='max-width:2000px !important;max-height:500px; overflow: scroll;text-align: center;'>
-			<svg id='svg' width="1800" height="480" style='background: #eee;'></svg>
 		</div>
 	</form>
 </div>
