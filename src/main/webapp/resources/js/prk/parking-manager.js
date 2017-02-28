@@ -95,7 +95,7 @@ var svgUtils = {
 		}
 		,getTranslate:function( transform ){
 			var trns= [0.0,0.0];
-			if( transform ) trns = transform.match(/[0-9.]+/g);
+			if( transform ) trns = transform.match(/[-]?[0-9.]+/g);
 			trns[0] = +trns[0]; 
 			trns[1] = +trns[1];
 			return trns;
@@ -108,17 +108,20 @@ var svgUtils = {
 		,snapStart:function( ){
 			var utils = this;
 			utils.snapTarget = d3.event.sourceEvent.target;
+			var curselectedcnt = $('.ui-selected').length;
+			var pressedCtrl = d3.event.sourceEvent.ctrlKey;
 			if( !$(utils.snapTarget).hasClass('ui-selected') ){
-				$(utils.snapTarget).addClass('ui-selected');
+				if( curselectedcnt == 0 ||  curselectedcnt > 0 && pressedCtrl) $(utils.snapTarget).addClass('ui-selected');
 			}else{
-				if(d3.event.sourceEvent.ctrlKey){
+				if(pressedCtrl){
 					$(utils.snapTarget).removeClass('ui-selected');
 				}
-			}	
+			}
 			utils.snapTargetList = $('.ui-selected');
 		}
 		,snapDrag: function ( target ) {
 			var utils = this;
+			if( !$(target).hasClass('ui-selected') ) return;
 			var gp = utils.snapResolution / 2
 				, evt = d3.event 
 				, _t = target , t = $(_t)
@@ -131,13 +134,6 @@ var svgUtils = {
 			  	gridX = Math.round( gridX / gp ) * gp ;
 			  	gridY = Math.round( gridY / gp) * gp ;
 			
-			  	//--------------------------------------------
-			  	if( 0 > gridX ) gridX = 0;
-			  	if( 0 > gridY) gridY = 0;
-			  	if( utils.snapGridWidth - w < gridX )gridX = utils.snapGridWidth-w;
-			  	if( utils.snapGridHeight - h < gridY )gridY = utils.snapGridHeight-h;
-			  	//-----------------------------------------------
-			  	
 			  	var tempTranslate 	= d3.select( target ).attr('transform') 
 			  		,tempTrans 		= utils.getTranslate( tempTranslate )
 			  		,newTrans 		= [ gridX , gridY ];
@@ -160,13 +156,17 @@ function ParkingManager( svg ){
 	t.svg = svg;
 	t.$svg = svgUtils.convertToJquery(svg);
 	t.$wrap = t.$svg.parent();
+	
 	t.width = +t.svg.attr('width');
 	t.height = +t.svg.attr('height');
 	
+	
 	svgUtils.snapGridWidth = t.width;
 	svgUtils.snapGridHeight = t.height;
-	t.zoomMin = 0.2
+	t.zoomMin = 0.5
 	t.zoomMax = 1;
+	
+	t.tempTransform = null;
 	t.zoom = d3.zoom()
 				.scaleExtent([t.zoomMin, t.zoomMax])
 //				.translateExtent([[-50, -50], [t.width+50, t.height+50]])
@@ -175,10 +175,21 @@ function ParkingManager( svg ){
 				})
 				.on('start',function(){
 					if( !d3.event.sourceEvent ) return;
+//					d3.event.sourceEvent.stopPropagation();
 					t.svgVar.isZoom = !d3.event.sourceEvent.ctrlKey 
 					if( !t.svgVar.isZoom ){
 						t.selectingDragStart();
-						t.orgTransform = d3.event.transform
+						
+						//zoom 이 아닐땐 현재위치를 기준으로 transform 세팅
+						t.orgTransform = d3.event.transform;
+						var trf = t.viewGroup.attr('transform');
+						if( trf ){ 
+							transform = trf.match(/[-]?[0-9.]+/g);
+							t.orgTransform.x = transform[0]; 
+							t.orgTransform.y = transform[1];
+							t.orgTransform.k = transform[2];
+						}
+						
 					}else{
 						$(".box.ui-selected").removeClass('ui-selected');
 					}
@@ -216,15 +227,17 @@ function ParkingManager( svg ){
 			.call(t.yAxis);
 
 	t.viewGroup = t.svg.append('g')
-					.attr('class','viewWrap');
+					.attr('class','viewWrap')
+					.attr('transform','translate(0,0) scale(1)');
 	
+	t.viewSize = {width:1800, height:500}
 	t.view = t.viewGroup.append("rect")
 						.attr("class", "view")
 						.attr('transform','translate(0,0)')
 						.attr("x", 0.5)
 						.attr("y", 0.5)
-						.attr("width", 1800 )
-						.attr("height", 500 );
+						.attr("width", t.viewSize.width )
+						.attr("height", t.viewSize.height );
 //	.attr("width", t.width - 1)
 //	.attr("height", t.height - 1);
 
@@ -256,15 +269,15 @@ function ParkingManager( svg ){
 	}
 	
 	t.orgTransForm = null;
-	/*function zoomed() {
-		
-	}*/
+	
+	t.minimap = new Minimap( t ).render( true );
+	
 	return t;
 }
 
 var MIN = {x: -900, y: -6},     //top-left corner
 		MAX = {x: 0, y: 0};   //bottom-right corner
-ParkingManager.prototype.zoomed = function(){
+ParkingManager.prototype.zoomed = function( newScale ){
 	var t = this;
 	if( t.svgVar.isZoom ){
 		if( t.orgTransform ){
@@ -272,6 +285,12 @@ ParkingManager.prototype.zoomed = function(){
 			t.orgTransform = null
 		}else{
 			var transform = d3.event.transform;
+			
+			if (d3.event) {
+                scale = d3.event.transform.k;
+            } else {
+                scale = newScale;
+            }
 			/*var widthGap = t.svg.attr('width') - t.$view[0].getBoundingClientRect().width;
 			var heightGap = t.svg.attr('height') - t.$view[0].getBoundingClientRect().height;
 			MIN.x = widthGap;
@@ -281,7 +300,8 @@ ParkingManager.prototype.zoomed = function(){
 	          transform.x = d3.min([transform.x, MAX.x]);
 	          transform.y = d3.min([transform.y, MAX.y]);*/
 	          
-			t.viewGroup.attr("transform", transform);
+			t.viewGroup.attr("transform", transform); //real
+			t.minimap.setScale( scale ).render();
 //			t.gX.call( t.xAxis.scale(transform.rescaleX( t.x )));
 //			t.gY.call( t.yAxis.scale(transform.rescaleY( t.y )));
 		}
@@ -297,12 +317,12 @@ ParkingManager.prototype.selectingDragStart = function(){
 		$(".box.ui-selected").removeClass('ui-selected');
 		return;
 	}
-	$(".box.ui-selected").removeClass('ui-selected');
+	if(!event.ctrlKey && !event.shiftKey) $(".box.ui-selected").removeClass('ui-selected');
 	
 	t.svgSelectable.clicked = true;
 	
-	t.svgSelectable.opos[0] = event.pageX - t.$svg.offset().left 
-	t.svgSelectable.opos[1] = event.pageY - t.$svg.offset().top
+	t.svgSelectable.opos[0] = event.pageX - t.$svg.offset().left;
+	t.svgSelectable.opos[1] = event.pageY - t.$svg.offset().top;
 	if( !t.svgSelectable.helper ){
 		t.svgSelectable.helper = d3.select(".selectHelper");
 		t.svgSelectable.$helper = $(".selectHelper");
@@ -313,6 +333,7 @@ ParkingManager.prototype.selectingDragStart = function(){
 	var trns = "translate(" + trn[0]+","+trn[1] + ")";
 	t.svgSelectable.helper.attr('transform',trns);
 	t.svgSelectable.$helper.data('trans',trn);
+	t.svg.style('cursor','crosshair');
 }
 ParkingManager.prototype.selectingDragging = function(){
 	var t = this;
@@ -324,6 +345,8 @@ ParkingManager.prototype.selectingDragging = function(){
 		return;
 	}
 	if (!t.svgSelectable.clicked ) return;
+	
+	var dragable  = event.ctrlKey && event.shiftKey;
 	
 	var scale = t.viewGroup.attr('transform');
 	if( scale ){
@@ -355,7 +378,6 @@ ParkingManager.prototype.selectingDragging = function(){
 	var selectableItem = t.$svg.find(".box");
 	for(var i = 0 ; i<selectableItem.length;i++){
 		var $item 	= $( selectableItem[i] ) ,item = d3.select($item[0]);
-		var  curTrns = $item.data('trans');
 		
 		var	left 	= $( selectableItem[i] ).offset().left - t.$svg.offset().left//+curTrns[0] 
 			,top 	= $( selectableItem[i] ).offset().top - t.$svg.offset().top//+curTrns[1] 
@@ -368,12 +390,8 @@ ParkingManager.prototype.selectingDragging = function(){
 		
 		if( hit ) {
 			$item.addClass('ui-selected');
-			$item.data('selected',true);
 		}else{
-			if ( $item.data('selected') ) {
-				$item.removeClass("ui-selected");
-				$item.data('selected', false);
-			}
+			if( !dragable && $item.hasClass('ui-selected') ) $item.removeClass("ui-selected");
 		}
 	}
 }
@@ -382,4 +400,89 @@ ParkingManager.prototype.selectingDragEnd = function(){
 	var t = this;
 	if( t.svgSelectable.dragging && t.svgSelectable.clicked ) t.svgSelectable.$helper.hide();
 	t.svgSelectable.dragging = t.svgSelectable.clicked = false;
+	t.svg.style('cursor','move');
 }
+
+//###################################################  새로운 svg에 append 하거나 다른 방법을 찾아보자.
+function Minimap( parkingManager ){
+	
+	var t = this;
+	t.svg 	= parkingManager.svg;
+	t.target 	= parkingManager.viewGroup;
+	
+	t.minimapScale    = 0.15;
+	t.scale           = 1;
+	t.width           = parkingManager.width; // view 의 rect 과 크기가 같아야함 ( 아니면 svg wrap 크기)
+	t.height          = parkingManager.height; // view 의 rect 과 크기가 같아야함(아니면 svg wrap 크기)
+	t.x               = 0;
+	t.y               = 0;
+	t.frameX          = 0;
+	t.frameY          = 0;
+	
+	
+	var content = t.target.node().cloneNode(true);
+	t.container = t.svg.append('g').attr("class", "minimap")
+//								.call(parkingManager.zoom);
+	
+	parkingManager.zoom.on("zoom.minimap", function() {
+		t.scale = d3.event.transform.k;
+    });
+	
+	t.container.node().appendChild( content );
+	
+	t.frame = t.container
+					.append("g")
+					.attr("class", "frame")
+			
+	t.frame.append("rect")
+	    .attr("class", "background")
+	    .attr("width", t.width)
+	    .attr("height", t.height)
+//	    .attr("filter", "url(#minimapDropShadow_qwpyza)");
+	
+	t.drag = d3.drag()
+        .on("start.minimap", function() {
+            var frameTranslate = svgUtils.getTranslate( t.frame.attr("transform") );
+            t.frameX = frameTranslate[0];
+            t.frameY = frameTranslate[1];
+        })
+        .on("drag.minimap", function() {
+            d3.event.sourceEvent.stopImmediatePropagation();
+            t.frameX += d3.event.dx;
+            t.frameY += d3.event.dy;
+            t.frame.attr("transform", "translate(" + t.frameX + "," + t.frameY + ")");
+            var translate =  [(-t.frameX*t.scale),(-t.frameY*t.scale)];
+            t.target.attr("transform", "translate(" + translate + ")scale(" + t.scale + ")");
+            var z = d3.zoomIdentity.translate(translate[0], translate[1]).scale(t.scale);
+            t.svg.call(parkingManager.zoom.transform , z );
+        });
+
+	t.frame.call(t.drag);
+	return this;
+}
+Minimap.prototype.render = function( isInit ){
+	var t = this;
+	var targetTransform = svgUtils.getTranslate( t.target.attr("transform"));
+	
+	t.scale = targetTransform[2];
+	t.container.attr("transform", "translate(" + t.x + "," + t.y + ")scale(" + t.minimapScale + ")");
+//    if ( isInit ){
+	    var node = t.target.node().cloneNode(true);
+	    t.container.select('.viewWrap').remove();
+	    t.container.node().appendChild( node );
+	    t.container.select('.viewWrap').attr("transform", "translate(1,1)");
+//    }
+    t.frame.attr("transform", "translate(" + (-targetTransform[0]/t.scale) + "," + (-targetTransform[1]/t.scale) + ")")
+        .select(".background")
+        .attr("width", t.width/t.scale)
+        .attr("height", t.height/t.scale);
+    
+    t.frame.node().parentNode.appendChild( t.frame.node());
+    d3.select(node).attr("transform", "translate(1,1)");
+    return t;
+}
+Minimap.prototype.setScale = function(value) {
+    if (!arguments.length) { return this.scale; }
+    this.scale = value;
+    return this;
+};

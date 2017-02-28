@@ -21,15 +21,19 @@ $j.documents.push(function() {
 			console.log(initParams);
 		});
 		
-		var svg = d3.select( "svg" );
+		var svg = d3.select("#svgArea")
+						.append("svg")
+						.attr('width',1000)
+						.attr('height',500)
+// 		var svg = d3.select( "svg" );
 		var draw = new ParkingManager( svg );
-		
+		var minimap;
 		var selectedTargets = '.box.ui-selected';
 		$("#controlBox").on('click',function(e){
 			switch (e.target.id) {
 				case 'cellChange':
 					// cell attr change
-					var selectedCellType = frm.cellType.value;
+					var selectedCellType = $("[name='cellType']:checked").val();;
 					var o = svgUtils.loadedSvgObjectInfo[selectedCellType];
 					if( !o ) o = svgUtils.getSvgObjectInfo( selectedCellType );
 					
@@ -45,10 +49,8 @@ $j.documents.push(function() {
 					});
 					break;
 				case 'cellAdd':
-					var selectedCellType = frm.cellType.value;
-					console.log( selectedCellType );
+					var selectedCellType = $("[name='cellType']:checked").val();
 					svgUtils.withTargetCreate(  $('.box:last') , selectedCellType  );
-					
 					break;
 				case 'cellDel':
 					$( selectedTargets ).remove();
@@ -184,7 +186,7 @@ $j.documents.push(function() {
 					.call(draw.zoom.scaleTo, draw.svgVar.currentZoom );
 					break;
 				case 'fullByCell':
-					var selectedCellType = frm.cellType.value;
+					var selectedCellType = $("[name='cellType']:checked").val();;
 					var c = 0;
 					var r = 0;
 					
@@ -265,6 +267,11 @@ $j.documents.push(function() {
 			    	});
 					
 					break;
+				case 'minimap':
+// 					minimap = new Minimap( svg , svg.select('.viewWrap'));
+// 					minimap = new Minimap( draw );
+// 					minimap.render(true);
+					break;
 			}
 			
 		});
@@ -295,12 +302,15 @@ $j.documents.push(function() {
 	fill-opacity: 0.3;
 }
 .box:hover{
-	cursor:move;
+	cursor:pointer;
 	fill-opacity:0.5
 }
 .box{
 	fill-opacity: 0.8;
     stroke: none;
+}
+#svg {
+	cursor:move;
 }
 .box.ui-selected { 
 	fill: #F39814; 
@@ -339,8 +349,18 @@ $j.documents.push(function() {
   stroke: #bbb;
   stroke-width:10;
 }
-.cursorMove{
-	cursor:move;
+.minimap .view {
+	fill: #aaa;
+	fill-opacity:0.7;
+	stroke-width:2;
+	stroke:#888;
+}
+.minimap .frame .background{
+	stroke: #111111;
+	stroke-width: 10;
+	fill-opacity: 0.4;
+	fill: #000000;
+	cursor: move;
 }
 </style>
 <div data-role="page" id='parkingMgrInsert'>
@@ -390,11 +410,13 @@ $j.documents.push(function() {
 					<a href='#' id='makeJson' class='btn' data-icon='search'>Json데이터생성</a>
 				</div>
 				<div class='controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
-					<a href='#' id='makeJson' class='btn' data-icon='search'>Json데이터생성</a>
+					<a href='#' id='minimap' class='btn' data-icon='search'>minimap</a>
 				</div>
 			</div>
-			<div style='width:100%;text-align: center;'>
-				<svg id='svg' width="800" height="500" style='background: #eee;border:1px solid #aaa;'></svg>
+			<div style='width:100%;text-align: center;' id='svgArea'>
+				<svg id='minimapsvg' width="300" height="100" style='background: #eee;border:1px solid #aaa;'>
+					<g></g>
+				</svg>
 			</div>
 		</div>
 	</form>
