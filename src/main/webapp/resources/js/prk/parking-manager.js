@@ -94,10 +94,15 @@ var svgUtils = {
 			return d3.select( $(jqueryObject)[0] );
 		}
 		,getTranslate:function( transform ){
-			var trns= [0.0,0.0];
-			if( transform ) trns = transform.match(/[-]?[0-9.]+/g);
-			trns[0] = +trns[0]; 
-			trns[1] = +trns[1];
+			var trns= [0.0,0.0,1];
+			if( /translate\(\s*0\s*\)/g.test(transform)){ // ie 
+				var tmp=[0,0];
+				trns = transform.match(/[-]?[0-9.]+/g);
+				if( typeof trns[1] != 'undefined') tmp.push( trns[1] );
+				trns = tmp;
+			}else if( transform ) {
+				trns = transform.match(/[-]?[0-9.]+/g);
+			}
 			return trns;
 		}
 		,snapTarget		:	null

@@ -8,6 +8,8 @@
 	<%@ include file="./cmm/resources.jsp" %>
 	<script src="<%=request.getContextPath() %>/resources/js/d3.min.js"></script>
 	<script>
+	
+	
 // 		var svgFileUrl = "http://localhost:8080/lfc/resources/svg/top1f.svg";
 		var svgFileUrl = "http://localhost:8080/lfc/resources/svg/b2f.svg";
 		var areaCode = "P0001";
@@ -60,15 +62,132 @@
 				var svg = d3.select("#wrap_svg").attr('width','100%');
 				$(window).trigger('resize');
 				
-				g = svg.select("#wrap_g"); // 실질적으로 zoom 될 객체인 g 에  객체할당
+				g = svg.select("#wrap_g").attr('transform','translate(0,0) scale(1)'); // 실질적으로 zoom 될 객체인 g 에  객체할당
 				svg.call( zoom ); // svg객체에 대해 zoom 설정
 				
 				// test --- BOX_21_ 를 NULL 박스로 생성하는 테스트기
-				
+				new Minimap( svg, g ).render();
 				loadData( areaCode,floorCode );
 // 				makeNullBox(d3.select( "#box1_33" ));
 				
 		    });
+			
+			var svgUtils = {
+				getTranslate:function( transform ){
+					var trns= [0.0,0.0,1];
+					if( /translate\(\s*0\s*\)/g.test(transform)){
+						var tmp=[0,0];
+						trns = transform.match(/[-]?[0-9.]+/g);
+						if( typeof trns[1] != 'undefined') {
+							tmp.push( trns[1] );
+						}
+						trns = tmp;
+					}else if( transform ) {
+						trns = transform.match(/[-]?[0-9.]+/g);
+					}
+					trns[0] = +trns[0]; 
+					trns[1] = +trns[1];
+					trns[2] = +trns[2];
+					return trns;
+				}
+			}
+			
+			
+			function Minimap( svg , target ){
+				
+				var t = this;
+				t.svg 	= svg;
+				t.target 	= target;
+				
+				t.minimapScale    = 0.15;
+				t.scale           = 1;
+				t.width           = 500; // view 의 rect 과 크기가 같아야함 ( 아니면 svg wrap 크기)
+				t.height          = 500; // view 의 rect 과 크기가 같아야함(아니면 svg wrap 크기)
+				t.x               = 0;
+				t.y               = 0;
+				t.frameX          = 0;
+				t.frameY          = 0;
+				
+				
+				var content = t.target.node().cloneNode(true);
+				t.container = t.svg.append('g').attr("class", "minimap")
+//											.call(parkingManager.zoom);
+				
+				zoom.on("zoom.minimap", function() {
+					t.scale = d3.event.transform.k;
+			    });
+				
+				t.container.node().appendChild( content );
+				
+				t.frame = t.container
+								.append("g")
+								.attr("class", "frame")
+						
+				t.frame.append("rect")
+				    .attr("class", "background")
+				    .attr("width", t.width)
+				    .attr("height", t.height)
+//				    .attr("filter", "url(#minimapDropShadow_qwpyza)");
+				
+				t.drag = d3.drag()
+			        .on("start.minimap", function() {
+			            var frameTranslate = svgUtils.getTranslate( t.frame.attr("transform") );
+			            t.frameX = frameTranslate[0];
+			            t.frameY = frameTranslate[1];
+			        })
+			        .on("drag.minimap", function() {
+			            d3.event.sourceEvent.stopImmediatePropagation();
+			            t.frameX += d3.event.dx;
+			            t.frameY += d3.event.dy;
+			            t.frame.attr("transform", "translate(" + t.frameX + "," + t.frameY + ")");
+			            var translate =  [(-t.frameX*t.scale),(-t.frameY*t.scale)];
+			            t.target.attr("transform", "translate(" + translate + ")scale(" + t.scale + ")");
+			            var z = d3.zoomIdentity.translate(translate[0], translate[1]).scale(t.scale);
+			            t.svg.call(zoom.transform , z );
+			        });
+
+				t.frame.call(t.drag);
+				return this;
+			}
+			Minimap.prototype.render = function( isInit ){
+				var t = this;
+				var targetTransform = svgUtils.getTranslate( t.target.attr("transform"));
+				console.log( targetTransform );
+				t.scale = targetTransform[2];
+				t.container.attr("transform", "translate(" + t.x + "," + t.y + ")scale(" + t.minimapScale + ")");
+//			    if ( isInit ){
+				    var node = t.target.node().cloneNode(true);
+				    t.container.select('#wrap_g').remove();
+				    t.container.node().appendChild( node );
+				    t.container.select('#wrap_g').attr("transform", "translate(1,1)");
+//			    }
+			
+			console.log( t.width ,t.height, t.scale );
+			    t.frame.attr("transform", "translate(" + (-targetTransform[0]/t.scale) + "," + (-targetTransform[1]/t.scale) + ")")
+			        .select(".background")
+			        .attr("width", t.width / t.scale)
+			        .attr("height", t.width / t.scale);
+			    
+			    t.frame.node().parentNode.appendChild( t.frame.node());
+			    d3.select(node).attr("transform", "translate(1,1)");
+			    return t;
+			}
+			Minimap.prototype.setScale = function(value) {
+			    if (!arguments.length) { return this.scale; }
+			    this.scale = value;
+			    return this;
+			};			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			
 			function loadData( areaCode, floorCode ){
 				var url = "/lfc/prk/selectPrkData.do";
