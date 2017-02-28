@@ -103,6 +103,7 @@ var svgUtils = {
 			}else if( transform ) {
 				trns = transform.match(/[-]?[0-9.]+/g);
 			}
+			for( var i in trns) trns[i] = +trns[i];
 			return trns;
 		}
 		,snapTarget		:	null
@@ -477,6 +478,7 @@ Minimap.prototype.render = function( isInit ){
 	    t.container.node().appendChild( node );
 	    t.container.select('.viewWrap').attr("transform", "translate(1,1)");
 //    }
+	    console.log( targetTransform , t.scale );
     t.frame.attr("transform", "translate(" + (-targetTransform[0]/t.scale) + "," + (-targetTransform[1]/t.scale) + ")")
         .select(".background")
         .attr("width", t.width/t.scale)
