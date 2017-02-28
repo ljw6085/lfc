@@ -18,7 +18,7 @@
 		
 		var targetId = "box15_32";
 		
-		var ZOOM_MIN = 0.2 ,ZOOM_MAX = 5;
+		var ZOOM_MIN = 1 ,ZOOM_MAX = 5;
 		var g;
 		var zoom = d3.zoom()
 					.scaleExtent([ZOOM_MIN, ZOOM_MAX])	// x0.2 ~ x2  ZOOM 범위 설정 
@@ -30,7 +30,8 @@
 					
 		$(window).resize(function(){
 			var $svg = $("svg");
-			$svg.css('height', ($svg.width()/1.6));
+// 			$svg.css('height', ($svg.width()/1.6));
+			$svg.css('height', $("body").height()-50);
 		});
 		
 		var svg;
@@ -99,7 +100,7 @@
 				t.svg 	= svg;
 				t.target 	= target;
 				
-				t.minimapScale    = 0.15;
+				t.minimapScale    = 0.3;
 				t.scale           = 1;
 				t.width           = 500; // view 의 rect 과 크기가 같아야함 ( 아니면 svg wrap 크기)
 				t.height          = 500; // view 의 rect 과 크기가 같아야함(아니면 svg wrap 크기)
