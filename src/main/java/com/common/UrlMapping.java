@@ -86,22 +86,28 @@ public class UrlMapping {
 	public static final String PRK0002_MAIN_URL="/prk/prk0002/parkingMgrMain.do";
 	/** jsp  : 주차장관리 메인이동 */
 	public static final String PRK0002_MAIN_JSP="/prk/prk0002/parkingMgrMain";
-
-	/** url  : 주차장관리 메인 */
-	public static final String PRK0002_MAIN_URL2="/prk/prk0002/parkingMgrInsert_new.do";
-	/** jsp  : 주차장관리 메인이동 */
-	public static final String PRK0002_MAIN_JSP2="/prk/prk0002/parkingMgrInsert_new";
 	
 	/** url  : 주차장관리 관리페이지이동 */
 	public static final String PRK0002_INSERT_URL="/prk/prk0002/parkingMgrInsert.do";
 	/** jsp  : 주차장관리 관리페이지이동 */
 	public static final String PRK0002_INSERT_JSP="/prk/prk0002/parkingMgrInsert";
-
+	
+	
 	/** url  : svg object 정보 로드*/
 	public static final String PRK0002_SELECT_SVG_OBJECT_INFO_URL="/prk/prk0002/selectSvgObjectInfo.do";
 	
 	
 	
+	/**
+	 * url : /prk/deletePrkData.do<br>
+	 * desc : 주차장데이터 삭제
+	 */
+	public static final String PARKING_DELETE_URL="/prk/deletePrkData.do";
+	/**
+	 * url : /prk/updatePrkData.do<br>
+	 * desc : 주차장데이터 수정
+	 */
+	public static final String PARKING_UPDATE_URL="/prk/updatePrkData.do";
 	/**
 	 * url : /prk/insertPrkData.do<br>
 	 * desc : 주차장데이터 입력
@@ -109,7 +115,29 @@ public class UrlMapping {
 	public static final String PARKING_INSERT_URL="/prk/insertPrkData.do";
 	/**
 	 * url : /prk/selectPrkData.do<br>
-	 * desc : 주차장데이터 로드
+	 * desc : 주차장 도면 데이터 로드
 	 */
 	public static final String PARKING_SELECT_URL="/prk/selectPrkData.do";
+	
+	
+	/**
+	 * url : /prk/deletePrkFlrData.do<br>
+	 * desc : 주차장데이터 삭제
+	 */
+	public static final String PARKING_FLR_DELETE_URL="/prk/deletePrkFlrData.do";
+	/**
+	 * url : /prk/updatePrkFlrData.do<br>
+	 * desc : 주차장데이터 수정
+	 */
+	public static final String PARKING_FLR_UPDATE_URL="/prk/updatePrkFlrData.do";
+	/**
+	 * url : /prk/insertPrkFlrData.do<br>
+	 * desc : 주차장데이터 입력
+	 */
+	public static final String PARKING_FLR_INSERT_URL="/prk/insertPrkFlrData.do";
+	/**
+	 * url : /prk/selectPrkFlrData.do<br>
+	 * desc : 주차장 도면 데이터 로드
+	 */
+	public static final String PARKING_FLR_SELECT_URL="/prk/selectPrkFlrData.do";
 }

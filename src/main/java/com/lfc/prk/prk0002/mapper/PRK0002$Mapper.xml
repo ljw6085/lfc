@@ -12,6 +12,7 @@
 			X,
 			Y,
 			TRANSFORM,
+			SHAPE,
 			WIDTH,
 			HEIGHT
 		 from PRKPLCE_CELL_MNG
@@ -101,10 +102,17 @@
 	</update>
 	<delete id="deletePrkplaceCell" parameterType="PrkCellVO" >
 		 delete from PRKPLCE_CELL_MNG
-		 where 
-			 PRKPLCE_CODE = #{prkplceCode}
-			 AND PRKPLCE_FLR_CODE = #{prkplceFlrCode}
-			 AND CELL_MAPNG_ID = #{cellMapngId}
+		 where
+		 1=1 
+			 <if test="prkplceCode != null and prkplceCode != '' ">
+				 AND PRKPLCE_CODE = #{prkplceCode}
+			 </if>
+			 <if test="prkplceFlrCode != null and prkplceFlrCode != '' ">
+				 AND PRKPLCE_FLR_CODE = #{prkplceFlrCode}
+			 </if>
+			 <if test="cellMapngId != null and cellMapngId != '' ">
+				 AND CELL_MAPNG_ID = #{cellMapngId}
+			 </if>
 	</delete>
 	
 	<select id="selectSvgObjectInfo" parameterType="com.lfc.prk.prk0002.vo.SvgObjectInfoVO" resultType="camelCaseMap">
@@ -145,5 +153,104 @@
 			 AND CELL_TYPE = #{cellType}
 		 </if>
 	</select>
+	
+	
+	
+	
+	<select id="selectPrkplaceFlr" parameterType="PrkFlrVO" resultType="camelCaseMap">
+		 select
+			PRKPLCE_CODE,
+			PRKPLCE_FLR_CODE,
+			PRKPLCE_FLR_NM,
+			DRW_PATH,
+			DRW_SIZE_WIDTH,
+			DRW_SIZE_HEIGHT,
+			SORT,
+			RM
+		 from PRKPLCE_FLR_MNG
+		 where 1=1
+		 <if test="prkplceCode != null and prkplceCode != '' ">
+			 AND PRKPLCE_CODE = #{prkplceCode}
+		 </if>
+		 <if test="prkplceFlrCode != null and prkplceFlrCode != '' ">
+			 AND PRKPLCE_FLR_CODE = #{prkplceFlrCode}
+		 </if>
+		 <if test="prkplceFlrNm != null and prkplceFlrNm != '' ">
+			 AND PRKPLCE_FLR_NM = #{prkplceFlrNm}
+		 </if>
+		 <if test="drwPath != null and drwPath != '' ">
+			 AND DRW_PATH = #{drwPath}
+		 </if>
+		 <if test="drwSizeWidth != null and drwSizeWidth != '' ">
+			 AND DRW_SIZE_WIDTH = #{drwSizeWidth}
+		 </if>
+		 <if test="drwSizeHeight != null and drwSizeHeight != '' ">
+			 AND DRW_SIZE_HEIGHT = #{drwSizeHeight}
+		 </if>
+		 <if test="sort != null and sort != '' ">
+			 AND SORT = #{sort}
+		 </if>
+		 <if test="rm != null and rm != '' ">
+			 AND RM = #{rm}
+		 </if>
+	</select>
+	<insert id="insertPrkplaceFlr" parameterType="PrkFlrVO" >
+		 insert into PRKPLCE_FLR_MNG(
+			PRKPLCE_CODE,
+			PRKPLCE_FLR_CODE,
+			PRKPLCE_FLR_NM,
+			DRW_PATH,
+			DRW_SIZE_WIDTH,
+			DRW_SIZE_HEIGHT,
+			SORT,
+			RM
+		) values(
+			#{prkplceCode},
+			#{prkplceFlrCode},
+			#{prkplceFlrNm},
+			#{drwPath},
+			#{drwSizeWidth},
+			#{drwSizeHeight},
+			#{sort},
+			#{rm}
+		)
+	</insert>
+	<update id="updatePrkplaceFlr" parameterType="PrkFlrVO" >
+		 update PRKPLCE_FLR_MNG
+		 set
+		 	RM = ''
+			 <if test="drwPath != null and drwPath != '' ">
+				 ,DRW_PATH = #{drwPath}
+			 </if>
+			 <if test="drwSizeWidth != null and drwSizeWidth != '' ">
+				 ,DRW_SIZE_WIDTH = #{drwSizeWidth}
+			 </if>
+			 <if test="drwSizeHeight != null and drwSizeHeight != '' ">
+				 ,DRW_SIZE_HEIGHT = #{drwSizeHeight}
+			 </if>
+			 <if test="sort != null and sort != '' ">
+				 ,SORT = #{sort}
+			 </if>
+			 <if test="rm != null and rm != '' ">
+				 ,RM = #{rm}
+			 </if>
+		 where 
+			 PRKPLCE_CODE = #{prkplceCode}
+			 AND PRKPLCE_FLR_CODE = #{prkplceFlrCode}
+	</update>
+	<delete id="deletePrkplaceFlr" parameterType="PrkFlrVO" >
+		 delete from PRKPLCE_FLR_MNG
+		 where 
+			 PRKPLCE_CODE = #{prkplceCode}
+			 AND PRKPLCE_FLR_CODE = #{prkplceFlrCode}
+	</delete>
+	
+	
+	
+	
+	
+	
+	
+	
 	
 </mapper>
