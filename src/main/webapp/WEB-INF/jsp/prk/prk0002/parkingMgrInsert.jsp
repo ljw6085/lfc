@@ -23,12 +23,13 @@ $j.documents.push(function() {
 		
 		var svg = d3.select("#svgArea")
 						.append("svg")
+						.attr("id",'drawableArea')
 						.attr('width',1000)
 						.attr('height',500)
 // 		var svg = d3.select( "svg" );
 		var draw = new ParkingManager( svg );
 		var minimap;
-		var selectedTargets = '.box.ui-selected';
+		var selectedTargets = '#drawableArea > .viewWrap .box.ui-selected';
 		$("#controlBox").on('click',function(e){
 			switch (e.target.id) {
 				case 'cellChange':
@@ -37,20 +38,21 @@ $j.documents.push(function() {
 					var o = svgUtils.loadedSvgObjectInfo[selectedCellType];
 					if( !o ) o = svgUtils.getSvgObjectInfo( selectedCellType );
 					
-					$(".box.ui-selected").each(function(){
-						var t = $(this) ,curCellType = t.data('cellType');
-						t.removeClass(curCellType)
-							.addClass( selectedCellType )
-								.data('cellType' , selectedCellType)
-								.attr({
+					$( selectedTargets ).each(function(){
+						var _t = d3.select(this) 
+							, curCellType = _t.attr('cellType');
+						_t.attr('cellType', selectedCellType )
+							.classed(curCellType  , false)
+							.classed(selectedCellType , true)
+							.attr({
 									'width': o.width
 									,'height':o.height
-								})
+							});
 					});
 					break;
 				case 'cellAdd':
 					var selectedCellType = $("[name='cellType']:checked").val();
-					svgUtils.withTargetCreate(  $('.box:last') , selectedCellType  );
+					svgUtils.withTargetCreate(  $('#drawableArea > .viewWrap .box:last') , selectedCellType  );
 					break;
 				case 'cellDel':
 					$( selectedTargets ).remove();
@@ -58,7 +60,7 @@ $j.documents.push(function() {
 				case 'cellCopy':
 					var targets = $( selectedTargets );
 					targets.each(function(){
-						var rect = svgUtils.withTargetCreate( $(this) );
+						var rect = svgUtils.withTargetCreate( $(this) , d3.select(this).attr('cellType') );
 						$(this).removeClass('ui-selected');
 						svgUtils.convertToJquery(rect).addClass('ui-selected');
 					});
@@ -74,12 +76,14 @@ $j.documents.push(function() {
 					// y축 가운데정렬
 					var avg = [];
 					targets.each(function(){
-						var curTop = $(this).data('trans')[1];	
+// 						var curTop = $(this).data('trans')[1];	
+						var curTop = svgUtils.getTranslate( d3.select(this).attr('transform') )[1];	
 						avg.push( curTop );
 					});
 					var avgTop = numLib.getAvg( avg );
 					targets.each(function(){
-						var x = $(this).data('trans')[0];
+// 						var x = $(this).data('trans')[0];
+						var x = svgUtils.getTranslate( d3.select(this).attr('transform') )[0];
 						var y = avgTop;
 						svgUtils.chageTranslate( this , [x,y]);
 					});
@@ -90,12 +94,14 @@ $j.documents.push(function() {
 					/* x축 가운데정렬*/
 					var avg = [];
 					targets.each(function(){
-						var curLeft  = $(this).data('trans')[0];	
+// 						var curLeft  = $(this).data('trans')[0];	
+						var curLeft  = svgUtils.getTranslate( d3.select(this).attr('transform') )[0];	
 						avg.push( curLeft );
 					});
 					var avgLeft = numLib.getAvg( avg );
 					targets.each(function(){
-						var y = $(this).data('trans')[1];
+// 						var y = $(this).data('trans')[1];
+						var y = svgUtils.getTranslate( d3.select(this).attr('transform') )[1];
 						var x = avgLeft;
 						svgUtils.chageTranslate( this , [x,y]);
 					});
@@ -108,7 +114,8 @@ $j.documents.push(function() {
 					var maxRange = 0, targetCnt = targets.length-1; 
 					var minLeft = 9999999 , maxLeft = 0;
 					targets.each(function(){
-						var x =  $(this).data('trans')[0];
+// 						var x =  $(this).data('trans')[0];
+						var x =  svgUtils.getTranslate( d3.select(this).attr('transform') )[0];
 						if( minLeft > x ) minLeft = x;
 						if( maxLeft < x ) maxLeft = x;
 					});
@@ -120,7 +127,8 @@ $j.documents.push(function() {
 											
 					var cursorX = 0;
 					targets.each(function(i){
-						var tr = $(this).data('trans');
+// 						var tr = $(this).data('trans');
+						var tr = svgUtils.getTranslate( d3.select(this).attr('transform') );
 						if( i > 0 ){
 							tr[0] = cursorX + gap;
 						}
@@ -140,7 +148,8 @@ $j.documents.push(function() {
 					var maxRange = 0, targetCnt = targets.length-1; 
 					var minTop = 9999999 , maxTop = 0;
 					targets.each(function(){
-						var y =  $(this).data('trans')[1];
+// 						var y =  $(this).data('trans')[1];
+						var y =  svgUtils.getTranslate( d3.select(this).attr('transform') )[1];
 						if( minTop > y ) minTop = y;
 						if( maxTop < y ) maxTop = y;
 					});
@@ -152,7 +161,8 @@ $j.documents.push(function() {
 
 					var cursorY = 0;
 					targets.each(function(i){
-						var tr = $(this).data('trans');
+// 						var tr = $(this).data('trans');
+						var tr = svgUtils.getTranslate( d3.select(this).attr('transform') );
 						if( i > 0 ){
 							tr[1] = cursorY + gap;	
 						}
@@ -219,7 +229,7 @@ $j.documents.push(function() {
 				case 'makeJson':
 					var parking = $("#parkingId").val();
 					var floor = $("#floorId").val();
-		    		var rects = $('.box');
+		    		var rects = $('#drawableArea > .viewWrap .box');
 		    		var boxArray = [];
 		    		var minX = 999999;
 		    		var maxX = 0;
@@ -227,8 +237,10 @@ $j.documents.push(function() {
 		    		var maxY = 0;
 		    		var maxH = 0;
 		    		var maxW = 0;
+		    		var minW = 999999;
+		    		console.log( rects.lenth );
 					rects.each(function(i){
-						var t = $(this);
+						var t = d3.select(this);
 						var shape = this.tagName;
 			    		var id = 'box_'+i;
 			    		var trans = t.attr('transform');
@@ -242,8 +254,13 @@ $j.documents.push(function() {
 			    		if( y < minY ) minY = y;
 			    		if( y > maxY ) maxY = y;
 			    		if( h > maxH ) maxH = h;
+			    		if( w < minW ) minW = w;
 			    		if( w > maxW ) maxW = w;
-							t.attr('id', id );
+			    			if( t.attr('id') ){
+			    				id = t.attr('id'); 
+			    			}else{
+			    				t.attr('id', id );
+			    			}
 							var o = {
 									width		:	w
 									,height		:	h
@@ -260,6 +277,18 @@ $j.documents.push(function() {
 					});
 					console.log( minX+','+minY , maxX+maxW,',',maxY + maxH );
 					console.log( boxArray );
+					var w = maxX+maxW;
+					var h = maxY+maxH ;
+					console.log( w, h );
+					var url = "<c:url value='/prk/updatePrkFlrData.do'/>";
+					Common.ajaxJson( url , {
+						prkplceCode : 		parking
+						,prkplceFlrCode : 	floor
+						,drwSizeWidth :		w
+						,drwSizeHeight : 	h
+					} ,function(data){
+						console.log( data );
+			    	});
 					
 					var url = "<c:url value='/prk/prk0002/parkingMgrInsert.do'/>";
 					Common.ajaxJson( url , boxArray ,function(data){
@@ -267,10 +296,48 @@ $j.documents.push(function() {
 			    	});
 					
 					break;
-				case 'minimap':
-// 					minimap = new Minimap( svg , svg.select('.viewWrap'));
-// 					minimap = new Minimap( draw );
-// 					minimap.render(true);
+				case 'loadMap':
+					var placeId , floorId;
+					var param = {
+							prkplceCode : $("#parkingId").val()
+							,prkplceFlrCode :$("#floorId").val()
+					}
+					var url = "<c:url value='/prk/selectPrkData.do'/>";
+					Common.ajaxJson( url , param ,function(res){
+						var target = d3.select('#drawableArea > .viewWrap');
+						console.log( res );
+						var sizeInfo = res.sizeInfo;
+						if( sizeInfo ){
+							target.select('.view')
+									.attr("width",sizeInfo.drwSizeWidth)
+									.attr("height",sizeInfo.drwSizeHeight);
+						}
+						
+						var data = res.list;
+						for( var i =0, len = data.length; i < len ; i ++ ){
+							var d  = data[i]  , applied = {}
+							for( var k in d ){
+								switch (k) {
+								case 'height':
+								case 'width':
+								case 'transform':
+								case 'cellType':
+									applied[k] = d[k];
+									break;
+								case 'styleCls':
+									applied['class'] = d[k];
+									break;
+								case 'cellMapngId':
+									applied['id'] = d[k];
+									break;
+									break;
+								default:
+									break;
+								}
+							}
+							svgUtils.createShapeByType( target , applied );
+						}
+			    	});
 					break;
 			}
 			
@@ -410,13 +477,10 @@ $j.documents.push(function() {
 					<a href='#' id='makeJson' class='btn' data-icon='search'>Json데이터생성</a>
 				</div>
 				<div class='controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
-					<a href='#' id='minimap' class='btn' data-icon='search'>minimap</a>
+					<a href='#' id='loadMap' class='btn' data-icon='search'>loadMap</a>
 				</div>
 			</div>
 			<div style='width:100%;text-align: center;' id='svgArea'>
-				<svg id='minimapsvg' width="300" height="100" style='background: #eee;border:1px solid #aaa;'>
-					<g></g>
-				</svg>
 			</div>
 		</div>
 	</form>

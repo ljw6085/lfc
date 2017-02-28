@@ -23,11 +23,11 @@ var svgUtils = {
 			switch ($option.cellType) {
 				case 'P0':case 'P1':case 'P2':case 'P3':
 					var option = t.getSvgObjectInfo( $option.cellType );
-					if( $option.transform ) option.transform = $option.transform;
+					$.extend(option, $option);
 					return t.createRect( pGroup, option );
 				case 'P4': // 나중에 엘레베이터는 t.createRect 를 따로 콜할수도 있으므로,,
 					var option = t.getSvgObjectInfo( $option.cellType );
-					if( $option.transform ) option.transform = $option.transform;
+					$.extend(option, $option);
 					return t.createRect( pGroup, option );
 					break;
 	
@@ -44,7 +44,6 @@ var svgUtils = {
 					,'transform':'translate(0,0)'
 			}
 			if( typeof $option == 'object') $.extend( option , $option );
-		
 			var newG = pGroup.append('g') , rect = newG.append('rect');
 			for( var k in option){ 
 				rect.attr( k , option[k] ); 
@@ -53,7 +52,7 @@ var svgUtils = {
 			rect.call(
 				d3.drag()
 					.on("start", function(){
-						t.snapStart();
+						t.snapStart( pGroup );
 					})
 					.on("drag", function(){
 						t.snapDrag( this );
@@ -68,7 +67,7 @@ var svgUtils = {
 		/*
 		 target을 기준으로 rect를 생성한다.	
 		*/	
-		,withTargetCreate:function( target , cellType){
+		,withTargetCreate:function( target , cellType ){
 			var transform = $(target).attr('transform');
 			var trns = this.getTranslate( transform );
 			trns = [ trns[0] + this.snapResolution , trns[1] + this.snapResolution ];
@@ -111,19 +110,20 @@ var svgUtils = {
 		,snapResolution	:	10
 		,snapGridWidth	:	0
 		,snapGridHeight	:	0
-		,snapStart:function( ){
-			var utils = this;
-			utils.snapTarget = d3.event.sourceEvent.target;
-			var curselectedcnt = $('.ui-selected').length;
-			var pressedCtrl = d3.event.sourceEvent.ctrlKey;
-			if( !$(utils.snapTarget).hasClass('ui-selected') ){
-				if( curselectedcnt == 0 ||  curselectedcnt > 0 && pressedCtrl) $(utils.snapTarget).addClass('ui-selected');
+		,snapStart:function( pGroup ){
+			var utils = this,
+				e = d3.event.sourceEvent,
+				pressedCtrl = e.ctrlKey,
+				$target = $(e.target);
+			
+			if( $target.hasClass('ui-selected') && pressedCtrl ){
+				$target.removeClass('ui-selected');
 			}else{
-				if(pressedCtrl){
-					$(utils.snapTarget).removeClass('ui-selected');
-				}
+				$target.addClass('ui-selected');
 			}
-			utils.snapTargetList = $('.ui-selected');
+
+			utils.snapTarget = $target[0];
+			utils.snapTargetList = utils.convertToJquery( pGroup ).find('.ui-selected');
 		}
 		,snapDrag: function ( target ) {
 			var utils = this;
@@ -197,7 +197,7 @@ function ParkingManager( svg ){
 						}
 						
 					}else{
-						$(".box.ui-selected").removeClass('ui-selected');
+						t.$viewGroup.find(".box.ui-selected").removeClass('ui-selected');
 					}
 				})
 				.on("end", function(){
@@ -320,10 +320,10 @@ ParkingManager.prototype.selectingDragStart = function(){
 	var event = d3.event.sourceEvent;
 	var target = event.target;
 	if(event && !event.ctrlKey ){
-		$(".box.ui-selected").removeClass('ui-selected');
+		t.$viewGroup.find(".box.ui-selected").removeClass('ui-selected');
 		return;
 	}
-	if(!event.ctrlKey && !event.shiftKey) $(".box.ui-selected").removeClass('ui-selected');
+	if(!event.ctrlKey && !event.shiftKey) t.$viewGroup.find(".box.ui-selected").removeClass('ui-selected');
 	
 	t.svgSelectable.clicked = true;
 	
@@ -381,7 +381,7 @@ ParkingManager.prototype.selectingDragging = function(){
 		.attr('height', y2 - y1 );
 	t.svgSelectable.$helper.data('trans',curTrns);
 	t.svgSelectable.$helper.show();
-	var selectableItem = t.$svg.find(".box");
+	var selectableItem = t.$viewGroup.find(".box");
 	for(var i = 0 ; i<selectableItem.length;i++){
 		var $item 	= $( selectableItem[i] ) ,item = d3.select($item[0]);
 		
@@ -478,7 +478,6 @@ Minimap.prototype.render = function( isInit ){
 	    t.container.node().appendChild( node );
 	    t.container.select('.viewWrap').attr("transform", "translate(1,1)");
 //    }
-	    console.log( targetTransform , t.scale );
     t.frame.attr("transform", "translate(" + (-targetTransform[0]/t.scale) + "," + (-targetTransform[1]/t.scale) + ")")
         .select(".background")
         .attr("width", t.width/t.scale)
