@@ -11,8 +11,24 @@ public class PrkplceFlrMngVO extends PrkplceMngVO{
 	private String prkplceFlrCode;
 	private String prkplceFlrNm;
 	private String drwPath;
+	private String drwSizeWidth;
+	private String drwSizeHeight;
 	private int sort;
 	private String rm;
+	
+	
+	public String getDrwSizeWidth() {
+		return drwSizeWidth;
+	}
+	public void setDrwSizeWidth(String drwSizeWidth) {
+		this.drwSizeWidth = drwSizeWidth;
+	}
+	public String getDrwSizeHeight() {
+		return drwSizeHeight;
+	}
+	public void setDrwSizeHeight(String drwSizeHeight) {
+		this.drwSizeHeight = drwSizeHeight;
+	}
 	@Override
 	public String getPrkplceCode() {
 		return prkplceCode;
@@ -56,7 +72,8 @@ public class PrkplceFlrMngVO extends PrkplceMngVO{
 	@Override
 	public String toString() {
 		return "PrkplceFlrMngVO [prkplceCode=" + prkplceCode + ", prkplceFlrCode=" + prkplceFlrCode + ", prkplceFlrNm="
-				+ prkplceFlrNm + ", drwPath=" + drwPath + ", sort=" + sort + ", rm=" + rm + "]";
+				+ prkplceFlrNm + ", drwPath=" + drwPath + ", drwSizeWidth=" + drwSizeWidth + ", drwSizeHeight="
+				+ drwSizeHeight + ", sort=" + sort + ", rm=" + rm + "]";
 	}
 	
 }
