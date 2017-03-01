@@ -91,7 +91,7 @@ public class PRK0002$Controller extends SetLogger {
 	@RequestMapping(value = UrlMapping.PARKING_FLR_UPDATE_URL, method=RequestMethod.POST)
 	@ResponseBody PrkplceFlrMngVO parkingFlrUpdate(@RequestBody PrkplceFlrMngVO param) {
 		List<Map<String,String>> selected = service.selectPrkplaceFlr(param);
-		if( selected .size() == 0 ){
+		if( selected.size() == 0 ){
 			service.insertPrkplaceFlr(param);
 		}else{
 			service.updatePrkplaceFlr(param);

@@ -231,14 +231,10 @@ $j.documents.push(function() {
 					var floor = $("#floorId").val();
 		    		var rects = $('#drawableArea > .viewWrap .box');
 		    		var boxArray = [];
-		    		var minX = 999999;
 		    		var maxX = 0;
-		    		var minY = 999999;
 		    		var maxY = 0;
 		    		var maxH = 0;
 		    		var maxW = 0;
-		    		var minW = 999999;
-		    		console.log( rects.lenth );
 					rects.each(function(i){
 						var t = d3.select(this);
 						var shape = this.tagName;
@@ -249,18 +245,11 @@ $j.documents.push(function() {
 			    		var w = +t.attr('width');
 			    		var h = +t.attr('height');
 			    		var x = +xy[0] , y = +xy[1];
-			    		if( x < minX ) minX = x;
 			    		if( x > maxX ) maxX = x;
-			    		if( y < minY ) minY = y;
 			    		if( y > maxY ) maxY = y;
 			    		if( h > maxH ) maxH = h;
-			    		if( w < minW ) minW = w;
 			    		if( w > maxW ) maxW = w;
-			    			if( t.attr('id') ){
-			    				id = t.attr('id'); 
-			    			}else{
-			    				t.attr('id', id );
-			    			}
+		    				t.attr('id', id );
 							var o = {
 									width		:	w
 									,height		:	h
@@ -275,18 +264,17 @@ $j.documents.push(function() {
 								}
 							boxArray.push( o );
 					});
-					console.log( minX+','+minY , maxX+maxW,',',maxY + maxH );
-					console.log( boxArray );
 					var w = maxX+maxW;
 					var h = maxY+maxH ;
-					console.log( w, h );
-					var url = "<c:url value='/prk/updatePrkFlrData.do'/>";
-					Common.ajaxJson( url , {
+					var param ={
 						prkplceCode : 		parking
 						,prkplceFlrCode : 	floor
 						,drwSizeWidth :		w
 						,drwSizeHeight : 	h
-					} ,function(data){
+					}
+					console.log( param  );
+					var url = "<c:url value='/prk/updatePrkFlrData.do'/>";
+					Common.ajaxJson( url ,  param ,function(data){
 						console.log( data );
 			    	});
 					
@@ -314,6 +302,7 @@ $j.documents.push(function() {
 						}
 						
 						var data = res.list;
+						var targetObject;
 						for( var i =0, len = data.length; i < len ; i ++ ){
 							var d  = data[i]  , applied = {}
 							for( var k in d ){
@@ -335,14 +324,65 @@ $j.documents.push(function() {
 									break;
 								}
 							}
-							svgUtils.createShapeByType( target , applied );
+							// target인경우 마지막에 append 하자
+							if( applied.cellType == 'P3' ){
+								targetObject = applied;
+							}else{
+								svgUtils.createShapeByType( target , applied );
+							}
 						}
+						//마지막에 target create;
+						svgUtils.createShapeByType( target , targetObject );
 			    	});
+					break;
+				case 'currentTarget': // 타겟 애니메이션
+					var target = d3.select(".box.P3");
+					var loopCount = 0;
+					var order = [1, -1];
+					var range = 20;
+					var delay = 500;
+					setInterval(function(){
+						var w = +target.attr('width') 
+							, h = +target.attr('height')
+							, tr = svgUtils.getTranslate( target.attr('transform') ) 
+							, num = ( order[ loopCount++%2 ] )
+							, newW = w + ( num * range )
+							, newH = h + ( num * range )
+						target.transition()
+						        .duration(delay)
+						        .ease(d3.easeLinear)
+						        .attr('width', newW )
+						        .attr('height', newH )
+						        .attr('transform','translate('+(tr[0] + (-num *(range/2)))+','+(tr[1] + (-num *(range/2))) +')' )
+					}, delay+5 );
+					
+					break;
+				case 'currentTargetFocused':
+					var w = d3.select('svg').attr('width')
+						,h = d3.select('svg').attr('height')
+						,curTrans = svgUtils.getTranslate( draw.viewGroup.attr('transform') )
+						,scale = curTrans[2]
+						,targetTrans = svgUtils.getTranslate(d3.select(".box.P3").attr('transform') )
+						,tW = targetTrans[0] * scale
+						,tH = targetTrans[1] * scale
+						,resultW = w / 2 - tW
+						,resultH = h / 2 - tH;
+					
+					var z = d3.zoomIdentity.translate(resultW, resultH).scale( scale );
+		            draw.svg
+				            .transition()
+							.duration(500)
+							.ease(d3.easeLinear)
+							.call(draw.zoom.transform , z );
+		            
 					break;
 			}
 			
 		});
-
+		//---------------------------- moving
+		
+		//----------------- moving;
+		
 		$("#intervalValue").val( draw.svgVar.resolution );
 		$("#intervalValueChk").on("change",function(){
 			var chk = this.checked;
@@ -478,6 +518,12 @@ $j.documents.push(function() {
 				</div>
 				<div class='controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
 					<a href='#' id='loadMap' class='btn' data-icon='search'>loadMap</a>
+				</div>
+				<div class='controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
+					<a href='#' id='currentTarget' class='btn' data-icon='search'>currentTarget</a>
+				</div>
+				<div class='controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
+					<a href='#' id='currentTargetFocused' class='btn' data-icon='search'>currentTargetFocused</a>
 				</div>
 			</div>
 			<div style='width:100%;text-align: center;' id='svgArea'>

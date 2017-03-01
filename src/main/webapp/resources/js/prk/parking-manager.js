@@ -45,8 +45,9 @@ var svgUtils = {
 			}
 			if( typeof $option == 'object') $.extend( option , $option );
 			var newG = pGroup.append('g') , rect = newG.append('rect');
+			
 			for( var k in option){ 
-				rect.attr( k , option[k] ); 
+				rect.attr( k , option[k] );
 				t.convertToJquery(rect).data(k,option[k]);
 			}
 			rect.call(
@@ -58,7 +59,6 @@ var svgUtils = {
 						t.snapDrag( this );
 					})
 			);
-		
 			return rect;
 		}
 		,round:function(p, n) {

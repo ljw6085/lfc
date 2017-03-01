@@ -178,21 +178,6 @@
 		 <if test="prkplceFlrNm != null and prkplceFlrNm != '' ">
 			 AND PRKPLCE_FLR_NM = #{prkplceFlrNm}
 		 </if>
-		 <if test="drwPath != null and drwPath != '' ">
-			 AND DRW_PATH = #{drwPath}
-		 </if>
-		 <if test="drwSizeWidth != null and drwSizeWidth != '' ">
-			 AND DRW_SIZE_WIDTH = #{drwSizeWidth}
-		 </if>
-		 <if test="drwSizeHeight != null and drwSizeHeight != '' ">
-			 AND DRW_SIZE_HEIGHT = #{drwSizeHeight}
-		 </if>
-		 <if test="sort != null and sort != '' ">
-			 AND SORT = #{sort}
-		 </if>
-		 <if test="rm != null and rm != '' ">
-			 AND RM = #{rm}
-		 </if>
 	</select>
 	<insert id="insertPrkplaceFlr" parameterType="PrkFlrVO" >
 		 insert into PRKPLCE_FLR_MNG(
