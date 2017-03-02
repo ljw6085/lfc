@@ -86,7 +86,7 @@ var svgUtils = {
 		}	
 		/* d3 객체를 jquery 객체로 변환한다*/
 		,convertToJquery:function ( d3Object ){
-			return $(d3Object._groups[0][0])
+			return $(d3Object.node())
 		}	
 		/* jquery 객체를 d3객체로 변환한다 */
 		,convertToD3:function( jqueryObejct ){
@@ -253,12 +253,12 @@ function ParkingManager( svg ){
 	t.helper = t.svg.append('rect')
 					.attr('class','selectHelper')
 					.attr('transform',"translate(0,0)");
-	$(t.helper._groups[0][0]).data({trans:[0.0,0.0]});
+	$(t.helper.node()).data({trans:[0.0,0.0]});
 	
 	t.$view = svgUtils.convertToJquery(t.view);
 	t.$viewGroup = svgUtils.convertToJquery(t.viewGroup);
 	
-	t.svgSelectable={
+	t.svgSelectable = {
 			opos : []
 			,helper: null
 			,$helper:null
