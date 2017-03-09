@@ -107,5 +107,9 @@ public class HomeController extends SetLogger{
 	public String testhtml7(Locale locale, Model model, HttpServletResponse response) {
 		return "mapTest7";
 	}
+	@RequestMapping(value = "/listTest.do", method = RequestMethod.GET)
+	public String listTest(Locale locale, Model model, HttpServletResponse response) {
+		return "listTest";
+	}
 	
 }

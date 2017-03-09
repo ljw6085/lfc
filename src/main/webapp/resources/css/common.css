@@ -1,7 +1,7 @@
 @CHARSET "utf-8";
 
 /******************************************************************************************** COMMON css */
-@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+/* @import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css); */
 
 * { text-shadow: 0 0 0 !important; font-family: 'Nanum Gothic', "Myriad Pro", "Consolas"; }
 .main_content { margin: 0.2em auto; min-height: 25em; }
@@ -42,6 +42,9 @@
 #menuPanel li.currentMenu>a { background: #3388cc !important; color: #fff !important; }
 #menuNavigator { font-size: 0.7em; }
 
+.main_content .ui-listview.dataList{
+ 	margin:0em; 
+}
 
 /* ****************************************************************************************** MGR0001 : 메뉴관리 페이지  */
 	.menuListTable th { background: #044363; color:#fff; border:1px solid #044363; font-size: .9em;}

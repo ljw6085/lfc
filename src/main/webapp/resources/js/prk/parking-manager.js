@@ -157,31 +157,54 @@ var svgUtils = {
 		}
 }
 
-function ParkingManager( svg ){
+/**
+ * 공통부분
+ * @param t
+ * @param initViewSize
+ */
+function CommonParkingMap( svg, initViewSize ){
 	var t = this;
 	t.svg = svg;
-	t.$svg = svgUtils.convertToJquery(svg);
-	t.$wrap = t.$svg.parent();
 	
-	t.width = +t.svg.attr('width');
-	t.height = +t.svg.attr('height');
-	
-	
-	svgUtils.snapGridWidth = t.width;
-	svgUtils.snapGridHeight = t.height;
 	t.zoomMin = 0.5
 	t.zoomMax = 1;
 	
-	t.tempTransform = null;
+	t.viewGroup = t.svg.append('g')
+						.attr('class','viewWrap')
+						.attr('transform','translate(0,0) scale(1)');
+
+	t.viewSize = {width:1200, height:500}
+	if( initViewSize ) t.viewSize= initViewSize;
+	
+	t.view = t.viewGroup.append("rect")
+							.attr("class", "view")
+							.attr('transform','translate(0,0)')
+							.attr("x", 0.5)
+							.attr("y", 0.5)
+							.attr("width", t.viewSize.width )
+							.attr("height", t.viewSize.height );
+	//.attr("width", t.width - 1)
+	//.attr("height", t.height - 1);
+}
+
+function ParkingManager( svg ){
+	var t = this;
+	//공통세팅
+	CommonParkingMap.call(t , svg);
+	
+	t.$svg = svgUtils.convertToJquery(svg);
+	t.$wrap = t.$svg.parent();
+	
+	t.setSvgSize();
+	
+	
 	t.zoom = d3.zoom()
 				.scaleExtent([t.zoomMin, t.zoomMax])
-//				.translateExtent([[-50, -50], [t.width+50, t.height+50]])
 				.on("zoom", function(){
 					t.zoomed();
 				})
 				.on('start',function(){
 					if( !d3.event.sourceEvent ) return;
-//					d3.event.sourceEvent.stopPropagation();
 					t.svgVar.isZoom = !d3.event.sourceEvent.ctrlKey 
 					if( !t.svgVar.isZoom ){
 						t.selectingDragStart();
@@ -205,48 +228,8 @@ function ParkingManager( svg ){
 					t.selectingDragEnd();
 				});
 	
-	t.x = d3.scaleLinear()
-//			.domain([-1, t.width + 1])
-			.range([-1, t.width + 1]);
-
-	t.y = d3.scaleLinear()
-//			.domain([-1, t.height + 1])
-			.range([-1, t.height + 1]);
-
-	var tickCnt = 50;
-	t.xAxis = d3.axisBottom(t.x)
-				.ticks((t.width + 2) / (t.height + 2) * tickCnt)
-				.tickSize(t.height)
-//	 			.tickPadding(8 - t.height);
-
-	t.yAxis = d3.axisRight(t.y)
-				.ticks(tickCnt)
-				.tickSize(t.width)
-//	 			.tickPadding(8 - t.width);
+//	t.setBackgroundGrid();
 	
-	t.gX = t.svg.append("g")
-			.attr("class", "axis axis--x")
-			.call(t.xAxis);
-
-	t.gY = t.svg.append("g")
-			.attr("class", "axis axis--y")
-			.call(t.yAxis);
-
-	t.viewGroup = t.svg.append('g')
-					.attr('class','viewWrap')
-					.attr('transform','translate(0,0) scale(1)');
-	
-	t.viewSize = {width:1800, height:500}
-	t.view = t.viewGroup.append("rect")
-						.attr("class", "view")
-						.attr('transform','translate(0,0)')
-						.attr("x", 0.5)
-						.attr("y", 0.5)
-						.attr("width", t.viewSize.width )
-						.attr("height", t.viewSize.height );
-//	.attr("width", t.width - 1)
-//	.attr("height", t.height - 1);
-
 	
 	
 	t.svg.call(t.zoom);
@@ -276,11 +259,53 @@ function ParkingManager( svg ){
 	
 	t.orgTransForm = null;
 	
-	t.minimap = new Minimap( t ).render( true );
+	//미니맵 사용시 아래 주석해제
+//	t.minimap = new Minimap( t ).render( true );
 	
 	return t;
 }
 
+ParkingManager.prototype.setSvgSize = function(){
+	var t = this;
+	t.width = +t.svg.attr('width');
+	t.height = +t.svg.attr('height');
+	
+	svgUtils.snapGridWidth = t.width;
+	svgUtils.snapGridHeight = t.height;
+	
+	return t;
+}
+ParkingManager.prototype.setBackgroundGrid = function(){
+	var t = this;
+	t.svg.selectAll('.axis').remove();
+	t.x = d3.scaleLinear() .range([-1, t.width + 1]);
+
+	t.y = d3.scaleLinear() .range([-1, t.height + 1]);
+	
+	var tickCnt = t.width / 10;
+	t.xAxis = d3.axisBottom(t.x)
+				.ticks((t.width + 2) / (t.height + 2) * tickCnt)
+				.tickSize(t.height)
+	
+	t.yAxis = d3.axisRight(t.y)
+				.ticks(tickCnt)
+				.tickSize(t.width)
+	
+	if( t.viewGroup ){
+		t.gX = t.svg.insert('g').attr("class", "axis axis--x").call(t.xAxis);
+		t.gY = t.svg.insert("g").attr("class", "axis axis--y").call(t.yAxis);
+	}else{
+		t.gX = t.svg.append("g")
+		.attr("class", "axis axis--x")
+		.call(t.xAxis);
+		
+		t.gY = t.svg.append("g")
+		.attr("class", "axis axis--y")
+		.call(t.yAxis);
+	}
+	t.svg.order();
+	return t;
+}
 var MIN = {x: -900, y: -6},     //top-left corner
 		MAX = {x: 0, y: 0};   //bottom-right corner
 ParkingManager.prototype.zoomed = function( newScale ){
@@ -307,7 +332,9 @@ ParkingManager.prototype.zoomed = function( newScale ){
 	          transform.y = d3.min([transform.y, MAX.y]);*/
 	          
 			t.viewGroup.attr("transform", transform); //real
-			t.minimap.setScale( scale ).render();
+			
+			if( t.minimap ) t.minimap.setScale( scale ).render();
+			
 //			t.gX.call( t.xAxis.scale(transform.rescaleX( t.x )));
 //			t.gY.call( t.yAxis.scale(transform.rescaleY( t.y )));
 		}
@@ -492,3 +519,36 @@ Minimap.prototype.setScale = function(value) {
     this.scale = value;
     return this;
 };
+
+/** readonly 용*/
+function LoadParkingMap(option){
+	var t = this;
+	t.option = {
+			svg:null
+			,viewSize :{
+				width:0
+				,height:0
+			}
+	}
+	$.extend(t.option, option);
+	CommonParkingMap.call(t , t.option.svg , t.option.viewSize );
+
+	t.zoom = d3.zoom()
+				.scaleExtent([t.zoomMin, t.zoomMax])
+				.on("zoom", function(){
+					t.zoomed();
+				});
+
+	t.svg.call(t.zoom);
+	
+}
+LoadParkingMap.prototype.zoomed = function( newScale ){
+	var t = this;
+	var transform = d3.event.transform;
+	if (d3.event) {
+        scale = d3.event.transform.k;
+    } else {
+        scale = newScale;
+    }
+	t.viewGroup.attr("transform", transform); //real
+}

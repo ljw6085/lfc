@@ -73,6 +73,20 @@ public class PRK0002$ServiceImpl extends SetLogger implements PRK0002$Service{
 		return result;
 	}
 
+	@Override
+	public List<PrkplceFlrMngVO> selectPrkFlrList(PrkplceFlrMngVO param) {
+		List<PrkplceFlrMngVO> result = dao.selectList("MGR0003.selectPrkFlrList", param);
+		if( null == result )result = new ArrayList<PrkplceFlrMngVO>();
+		return result;
+	}
+
+	@Override
+	public Map<String, Object> selectPrkFlrInfo(PrkplceFlrMngVO param) {
+		Map<String,Object> result = dao.selectOne("MGR0003.selectPrkInfo", param);
+		if( null == result) result = new HashMap<String,Object>();
+		return result;
+	}
+
 
 	
 

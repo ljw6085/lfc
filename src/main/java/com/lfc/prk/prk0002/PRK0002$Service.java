@@ -8,6 +8,9 @@ import com.lfc.prk.prk0001.vo.PrkplceFlrMngVO;
 import com.lfc.prk.prk0002.vo.SvgObjectInfoVO;
 
 public interface PRK0002$Service {
+	public List<PrkplceFlrMngVO> selectPrkFlrList(PrkplceFlrMngVO param);
+	public Map<String,Object> selectPrkFlrInfo(PrkplceFlrMngVO param);
+	
 	public int insertPrkplaceFlr(PrkplceFlrMngVO param);
 	public int deletePrkplaceFlr(PrkplceFlrMngVO param);
 	public int updatePrkplaceFlr(PrkplceFlrMngVO param);

@@ -1,35 +1,67 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<script src="<%=request.getContextPath()%>/resources/js/d3.min.js"></script>
-<script src="<%=request.getContextPath()%>/resources/js/prk/parking-manager.js"></script>
-<%-- <script src="<%=request.getContextPath()%>/resources/js/d3.v3.min.js"></script> --%>
-<script>
-/** 
- 화면이동이 필요할때, jsp를 따로 관리하고자 하면
- $j.documents 에 초기화 함수를 push 해야한다. 
- */
-$j.documents.push(function() {
-	/** Form 단위로 스크립팅 한다. */
-	$j.documentReady('prkMgrInsertFrm', function($form, $uiPage) {
-		var frm = $form[0];
-		MENU.createHeaderBackButton($form.find('.header'));
-		var backBtn = $form.find('.header').find('a');
-		var initParams;
-		$j.pageMoveCallback(function(params) {
-			initParams = params;
-			console.log(initParams);
-		});
-		
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+	<title>Insert title here</title>
+	<script>var CONTEXT_PATH="<%=request.getContextPath() %>"</script>
+	<script src="<%=request.getContextPath() %>/resources/js/jquery-1.12.0.min.js"></script>
+	<script src="<%=request.getContextPath() %>/resources/js/jquery-ui.min.js"></script>
+	<script src="<%=request.getContextPath() %>/resources/js/jquery.ui.touch-punch.js"></script>
+	
+	<script src="<%=request.getContextPath() %>/resources/js/lib/uc-com-lib.js"></script>
+	<script src="<%=request.getContextPath() %>/resources/js/lib/uc-data-lib.js"></script>
+	<script src="<%=request.getContextPath() %>/resources/js/lib/uc-date-lib.js"></script>
+	<script src="<%=request.getContextPath() %>/resources/js/lib/uc-num-lib.js"></script>
+	<script src="<%=request.getContextPath() %>/resources/js/lib/uc-str-lib.js"></script>
+	<script src="<%=request.getContextPath() %>/resources/js/lib/uc-form-lib.js"></script>
+	<script src="<%=request.getContextPath() %>/resources/js/cmm/common.js"></script>
+	<link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/jquery-ui.css">
+	<link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/jquery.mobile-1.4.5.css">
+	<link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/common.css">
+	<script src="<%=request.getContextPath() %>/resources/js/jquery.mobile-1.4.5.min.js"></script>
+	
+	<%-- <script src="<%=request.getContextPath()%>/resources/js/d3.min.js"></script> --%>
+	<script src="<%=request.getContextPath()%>/resources/js/d3.js"></script>
+	<script src="<%=request.getContextPath()%>/resources/js/prk/parking-manager.js"></script>
+	<link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/parking-css.css">
+	<script>
+	$(document).ready(function(){
 		var svg = d3.select("#svgArea")
-						.append("svg")
-						.attr("id",'drawableArea')
-						.attr('width',1000)
-						.attr('height',500)
-// 		var svg = d3.select( "svg" );
-		var draw = new ParkingManager( svg );
-		var minimap;
-		var selectedTargets = '#drawableArea > .viewWrap .box.ui-selected';
+					.append("svg")
+					.attr("id",'drawableArea')
+					.attr('class','parkplaceSVG')
+					.attr('width',1000)
+					.attr('height',500);
+			
+			//var svg = d3.select( "svg" );
+			var draw = new ParkingManager( svg );
+			var minimap;
+			var selectedTargets = '#drawableArea > .viewWrap .box.ui-selected';
+		
+		$(window).bind('resize',function(){
+			var body = $('body').height();
+			var header = $('#headerBox').outerHeight();
+			var info = $('#infoBox').outerHeight();
+			var control = $('#controlBox').outerHeight();
+			var diff =  body - ( header + info + control);
+			
+			var width = $('body').width();
+			$("#svgArea")
+				.height( diff - 100 )
+				.width( width - 50 );
+			d3.select( $("#drawableArea")[0] )
+					.attr('height', diff - 100 )
+					.attr('width', width - 60 );
+			
+			draw.setSvgSize()
+// 				.setBackgroundGrid();
+			
+		}).trigger('resize');
+		
 		$("#controlBox").on('click',function(e){
 			switch (e.target.id) {
 				case 'cellChange':
@@ -37,34 +69,34 @@ $j.documents.push(function() {
 					var selectedCellType = $("[name='cellType']:checked").val();;
 					var o = svgUtils.loadedSvgObjectInfo[selectedCellType];
 					if( !o ) o = svgUtils.getSvgObjectInfo( selectedCellType );
-					
+					console.log( o );	
 					$( selectedTargets ).each(function(){
-						var _t = d3.select(this) 
-							, curCellType = _t.attr('cellType');
+						var _t = d3.select(this) , curCellType = _t.attr('cellType');
 						_t.attr('cellType', selectedCellType )
 							.classed(curCellType  , false)
 							.classed(selectedCellType , true)
-							.attr({
-									'width': o.width
-									,'height':o.height
-							});
+							.attr('width',o.width)
+							.attr('height',o.height);
 					});
-					break;
+				break;
 				case 'cellAdd':
 					var selectedCellType = $("[name='cellType']:checked").val();
 					svgUtils.withTargetCreate(  $('#drawableArea > .viewWrap .box:last') , selectedCellType  );
-					break;
+				break;
 				case 'cellDel':
 					$( selectedTargets ).remove();
-					break;
+				break;
 				case 'cellCopy':
 					var targets = $( selectedTargets );
 					targets.each(function(){
 						var rect = svgUtils.withTargetCreate( $(this) , d3.select(this).attr('cellType') );
+						
+						if( rect.attr('id') )  rect.attr('id', rect.attr('id')+"_cp" );
+						
 						$(this).removeClass('ui-selected');
 						svgUtils.convertToJquery(rect).addClass('ui-selected');
 					});
-					break;
+				break;
 				case 'cellAlignH': 
 					var targets = $( selectedTargets );
 					/*
@@ -76,45 +108,45 @@ $j.documents.push(function() {
 					// y축 가운데정렬
 					var avg = [];
 					targets.each(function(){
-// 						var curTop = $(this).data('trans')[1];	
+					//		var curTop = $(this).data('trans')[1];	
 						var curTop = svgUtils.getTranslate( d3.select(this).attr('transform') )[1];	
 						avg.push( curTop );
 					});
 					var avgTop = numLib.getAvg( avg );
 					targets.each(function(){
-// 						var x = $(this).data('trans')[0];
+					//		var x = $(this).data('trans')[0];
 						var x = svgUtils.getTranslate( d3.select(this).attr('transform') )[0];
 						var y = avgTop;
 						svgUtils.chageTranslate( this , [x,y]);
 					});
-					break;
+				break;
 				case 'cellAlignV':
 					var targets = $( selectedTargets );
 					/* x축 좌측정렬*/
 					/* x축 가운데정렬*/
 					var avg = [];
 					targets.each(function(){
-// 						var curLeft  = $(this).data('trans')[0];	
+					//		var curLeft  = $(this).data('trans')[0];	
 						var curLeft  = svgUtils.getTranslate( d3.select(this).attr('transform') )[0];	
 						avg.push( curLeft );
 					});
 					var avgLeft = numLib.getAvg( avg );
 					targets.each(function(){
-// 						var y = $(this).data('trans')[1];
+					//		var y = $(this).data('trans')[1];
 						var y = svgUtils.getTranslate( d3.select(this).attr('transform') )[1];
 						var x = avgLeft;
 						svgUtils.chageTranslate( this , [x,y]);
 					});
 					/* x축 우측정렬*/
 					
-					break;
+				break;
 				case 'cellAlign_H_interval':
 					/* Y축 간격정렬 */
 					var targets = $( selectedTargets );
 					var maxRange = 0, targetCnt = targets.length-1; 
 					var minLeft = 9999999 , maxLeft = 0;
 					targets.each(function(){
-// 						var x =  $(this).data('trans')[0];
+					//		var x =  $(this).data('trans')[0];
 						var x =  svgUtils.getTranslate( d3.select(this).attr('transform') )[0];
 						if( minLeft > x ) minLeft = x;
 						if( maxLeft < x ) maxLeft = x;
@@ -127,7 +159,7 @@ $j.documents.push(function() {
 											
 					var cursorX = 0;
 					targets.each(function(i){
-// 						var tr = $(this).data('trans');
+					//		var tr = $(this).data('trans');
 						var tr = svgUtils.getTranslate( d3.select(this).attr('transform') );
 						if( i > 0 ){
 							tr[0] = cursorX + gap;
@@ -140,15 +172,15 @@ $j.documents.push(function() {
 						svgUtils.chageTranslate( this, tr );
 					});
 					//chageTranslate
-					
-					break;
+				
+				break;
 				case 'cellAlign_V_interval':
 					/* x축 간격정렬*/
 						var targets = $( selectedTargets );
 					var maxRange = 0, targetCnt = targets.length-1; 
 					var minTop = 9999999 , maxTop = 0;
 					targets.each(function(){
-// 						var y =  $(this).data('trans')[1];
+					//		var y =  $(this).data('trans')[1];
 						var y =  svgUtils.getTranslate( d3.select(this).attr('transform') )[1];
 						if( minTop > y ) minTop = y;
 						if( maxTop < y ) maxTop = y;
@@ -158,10 +190,10 @@ $j.documents.push(function() {
 					// 사용자정의 간격 세팅
 					var isCustomGap = $("#intervalValueChk").prop('checked');
 					if( isCustomGap ) gap = +$("#intervalValue").val();
-
+					
 					var cursorY = 0;
 					targets.each(function(i){
-// 						var tr = $(this).data('trans');
+					//		var tr = $(this).data('trans');
 						var tr = svgUtils.getTranslate( d3.select(this).attr('transform') );
 						if( i > 0 ){
 							tr[1] = cursorY + gap;	
@@ -174,7 +206,7 @@ $j.documents.push(function() {
 						}
 						svgUtils.chageTranslate( this, tr );
 					})	;
-					break;
+				break;
 				case 'zoomIn':
 					draw.svgVar.currentZoom += 0.1;
 					svg
@@ -182,19 +214,19 @@ $j.documents.push(function() {
 						.duration(500)
 						.call(draw.zoom.scaleTo, draw.svgVar.currentZoom );
 					break;
-				case 'zoomReset':
+					case 'zoomReset':
 					draw.svgVar.currentZoom = 1;
 					svg.transition()
-				      .duration(500)
-				      .call(draw.zoom.transform, d3.zoomIdentity);
-					break;
+					  .duration(500)
+					  .call(draw.zoom.transform, d3.zoomIdentity);
+				break;
 				case 'zoomOut':
 					draw.svgVar.currentZoom -= 0.1;
 					svg
 					.transition()
 					.duration(500)
 					.call(draw.zoom.scaleTo, draw.svgVar.currentZoom );
-					break;
+				break;
 				case 'fullByCell':
 					var selectedCellType = $("[name='cellType']:checked").val();;
 					var c = 0;
@@ -225,31 +257,36 @@ $j.documents.push(function() {
 						if( maxHeight < trns[1] ) break;
 					}
 					console.log( '가로 ',c,'세로 ',r);
-					break;
+				break;
 				case 'makeJson':
 					var parking = $("#parkingId").val();
 					var floor = $("#floorId").val();
-		    		var rects = $('#drawableArea > .viewWrap .box');
-		    		var boxArray = [];
-		    		var maxX = 0;
-		    		var maxY = 0;
-		    		var maxH = 0;
-		    		var maxW = 0;
+					var rects = $('#drawableArea > .viewWrap .box');
+					var boxArray = [];
+					var maxX = 0;
+					var maxY = 0;
+					var maxH = 0;
+					var maxW = 0;
 					rects.each(function(i){
 						var t = d3.select(this);
 						var shape = this.tagName;
-			    		var id = 'box_'+i;
-			    		var trans = t.attr('transform');
-			    		var cellType = t.attr('cellType');
-			    		var xy = svgUtils.getTranslate(trans);
-			    		var w = +t.attr('width');
-			    		var h = +t.attr('height');
-			    		var x = +xy[0] , y = +xy[1];
-			    		if( x > maxX ) maxX = x;
-			    		if( y > maxY ) maxY = y;
-			    		if( h > maxH ) maxH = h;
-			    		if( w > maxW ) maxW = w;
-		    				t.attr('id', id );
+						var id = 'box_'+i;
+						var trans = t.attr('transform');
+						var originalTransform = $(this).data('originalTransform');
+						if( originalTransform ) trans = originalTransform;
+						var cellType = t.attr('cellType');
+						var xy = svgUtils.getTranslate(trans);
+					//		var w = +t.attr('width');
+					//		var h = +t.attr('height');
+						var o = svgUtils.getSvgObjectInfo(cellType);
+						var w = +o.width;
+						var h = +o.height;
+						var x = +xy[0] , y = +xy[1];
+						if( x > maxX ) maxX = x;
+						if( y > maxY ) maxY = y;
+						if( h > maxH ) maxH = h;
+						if( w > maxW ) maxW = w;
+							t.attr('id', id );
 							var o = {
 									width		:	w
 									,height		:	h
@@ -264,8 +301,8 @@ $j.documents.push(function() {
 								}
 							boxArray.push( o );
 					});
-					var w = maxX+maxW;
-					var h = maxY+maxH ;
+					var w = Math.ceil( maxX+maxW );
+					var h = Math.ceil( maxY+maxH );
 					var param ={
 						prkplceCode : 		parking
 						,prkplceFlrCode : 	floor
@@ -276,14 +313,14 @@ $j.documents.push(function() {
 					var url = "<c:url value='/prk/updatePrkFlrData.do'/>";
 					Common.ajaxJson( url ,  param ,function(data){
 						console.log( data );
-			    	});
+					});
 					
 					var url = "<c:url value='/prk/prk0002/parkingMgrInsert.do'/>";
 					Common.ajaxJson( url , boxArray ,function(data){
 						console.log( data );
-			    	});
+					});
 					
-					break;
+				break;
 				case 'loadMap':
 					var placeId , floorId;
 					var param = {
@@ -319,7 +356,6 @@ $j.documents.push(function() {
 								case 'cellMapngId':
 									applied['id'] = d[k];
 									break;
-									break;
 								default:
 									break;
 								}
@@ -333,14 +369,16 @@ $j.documents.push(function() {
 						}
 						//마지막에 target create;
 						svgUtils.createShapeByType( target , targetObject );
-			    	});
-					break;
+					});
+				break;
 				case 'currentTarget': // 타겟 애니메이션
 					var target = d3.select(".box.P3");
 					var loopCount = 0;
 					var order = [1, -1];
 					var range = 20;
 					var delay = 500;
+					// original transform setting
+					$( target.node() ).data('originalTransform', target.attr('transform') );
 					setInterval(function(){
 						var w = +target.attr('width') 
 							, h = +target.attr('height')
@@ -356,7 +394,7 @@ $j.documents.push(function() {
 						        .attr('transform','translate('+(tr[0] + (-num *(range/2)))+','+(tr[1] + (-num *(range/2))) +')' )
 					}, delay+5 );
 					
-					break;
+				break;
 				case 'currentTargetFocused':
 					var w = d3.select('svg').attr('width')
 						,h = d3.select('svg').attr('height')
@@ -369,165 +407,118 @@ $j.documents.push(function() {
 						,resultH = h / 2 - tH;
 					
 					var z = d3.zoomIdentity.translate(resultW, resultH).scale( scale );
-		            draw.svg
-				            .transition()
+					draw.svg
+					        .transition()
 							.duration(500)
 							.ease(d3.easeLinear)
 							.call(draw.zoom.transform , z );
-		            
-					break;
+					
+				break;
 			}
-			
+		
 		});
 		//---------------------------- moving
 		
 		//----------------- moving;
-		
-		$("#intervalValue").val( draw.svgVar.resolution );
-		$("#intervalValueChk").on("change",function(){
-			var chk = this.checked;
-			$("#intervalValue").prop('disabled',!chk);
-		}).trigger('change');
+		$("#intervalValue")
+			.val( draw.svgVar.resolution )
+			.on("change",function(){
+				var chk = this.checked;
+				$("#intervalValue").prop('disabled',!chk);
+			}).trigger('change');
 		
 		
 		var cellType = COMPONENT.radio({
 			target 		: $(".createTarget")
-// 			,appendTo 	: 'before'
+			//,appendTo 	: 'before'
 			,name		: "cellType"
 			,cmmnCode	: 'PRK_CELL_TYPE'
 			,classes 	: ''
 			,defaultVal : 'P0'
 		});
 	});
-});
-</script>
-<style type="text/css">
-.selectHelper{
-	stroke-width: 0;
-    stroke: #aaa;
-    fill: #000;
-	fill-opacity: 0.3;
-}
-.box:hover{
-	cursor:pointer;
-	fill-opacity:0.5
-}
-.box{
-	fill-opacity: 0.8;
-    stroke: none;
-}
-#svg {
-	cursor:move;
-}
-.box.ui-selected { 
-	fill: #F39814; 
-	color: white;  
-}
-.P0{/* 기본 */
-	fill:darkgray;
-}
-.P1{/* 소유 */
-	fill: darkcyan;
-}
-.P2{/* 미소유 */
-	fill:#333;
-}
-.P3{/* 타겟 */
-	fill: crimson;	
-}
-.P4{/* 엘리베이터 */
-	fill: gold;	
-}
-.axis path {
-  display: none;
-}
-.axis text{
-	display: none;
-}
-.axis line {
-	stroke: #aaa;
-	stroke-opacity: 0.3;
-	shape-rendering: crispEdges;
-}
-
-.view {
-  fill:#eee;
-  fill-opacity:0.2;
-  stroke: #bbb;
-  stroke-width:10;
-}
-.minimap .view {
-	fill: #aaa;
-	fill-opacity:0.7;
-	stroke-width:2;
-	stroke:#888;
-}
-.minimap .frame .background{
-	stroke: #111111;
-	stroke-width: 10;
-	fill-opacity: 0.4;
-	fill: #000000;
-	cursor: move;
-}
-</style>
-<div data-role="page" id='parkingMgrInsert'>
-	<!-- second page start -->
-	<form name='prkMgrInsertFrm'>
-		<div class='header' data-role='header'>
-			<h1>주차장정보 등록/수정</h1>
-		</div>
-		<div role='main' class='ui-content'>
-			<div>
-				<div style='width:200px;display: inline-block;' data-type="horizontal" >
-					<label for="intervalValueChk">간격사용자정의</label>
-					<input type='checkbox' id='intervalValueChk'>
-					<input type='text' id='intervalValue' data-mini='true' placeholder='px'>
-				</div>
-				<div style='width:200px;display: inline-block;'>
-					<label for="parkingId">주차장</label>
-					<input type='text' id='parkingId' data-mini='true' placeholder='주차장' value='MAIN'>
-				</div>
-				<div style='width:200px;display: inline-block;'>
-					<label for="floorId">층</label>
-					<input type='text' id='floorId' data-mini='true' placeholder='층' value='5F'>
-				</div>
+		
+	</script>
+</head>
+<body>
+	<div data-role="page" id='parkingMgrInsert'>
+		<!-- second page start -->
+		<form name='prkMgrInsertFrm'>
+			<div id='headerBox' data-role='header'>
+				<h1>주차장정보 등록/수정</h1>
 			</div>
-			<div id='controlBox'>
-				<div class='createTarget' data-role="controlgroup" data-type="horizontal" data-mini="true">
+			<div role='main' >
+				<div id='infoBox'>
+					<table class='defaultTable'>
+						<colgroup>
+							<col style='width:20%;'/>
+							<col style='width:30%;'/>
+							<col style='width:20%;'/>
+							<col style='width:30%;'/>
+						</colgroup>
+						<tbody>
+							<tr>
+								<th class='insertTh'>주차장</th>
+								<td class='insertTd'><input type='text' id='parkingId' name='parkingId' data-mini="true"  placeholder='주차장' value='MAIN' ></td>
+								<th class='insertTh'>층</th>
+								<td class='insertTd'><input type='text' id='floorId' name='floorId' data-mini="true"  placeholder='층' value='5F' ></td>
+							</tr>
+							<tr>
+								<th class='insertTh'>
+									<div style='width:200px;display: inline-block; vertical-align: middle;'>
+										<label for="intervalValueChk">간격사용자정의</label>
+										<input type='checkbox' id='intervalValueChk' >
+									</div>
+								</th>
+								<td class='insertTd' >
+									<div  style='width:100px;display: inline-block;vertical-align: middle;'>
+										<input type='text' id='intervalValue' data-mini='true' placeholder='px'>
+									</div>
+								</td>
+								<th class='insertTh'></th>
+								<td class='insertTd' >
+								</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
-				<div class='controlBox1' data-role="controlgroup" data-type="horizontal" data-mini="true">
-					<a href='#' id='cellAdd' class='btn' data-icon='plus'>셀추가</a>
-					<a href='#' id='fullByCell' class='btn' data-icon='search'>셀가득채우기</a>
-					<a href='#' id='cellChange' class='btn' data-icon='refresh'>셀타입변경</a>
+				<div id='controlBox'>
+					<div class='controlBox createTarget' data-role="controlgroup" data-type="horizontal" data-mini="true"></div>
+					<div class='controlBox controlBox1' data-role="controlgroup" data-type="horizontal" data-mini="true">
+						<a href='#' id='cellAdd' class='btn' data-icon='plus'>셀추가</a>
+						<a href='#' id='fullByCell' class='btn' data-icon='search'>셀가득채우기</a>
+						<a href='#' id='cellChange' class='btn' data-icon='refresh'>셀타입변경</a>
+					</div>
+					<div class='controlBox controlBox2' data-role="controlgroup" data-type="horizontal" data-mini="true">
+						<a href='#' id='cellDel' class='btn' data-icon='delete'>선택삭제</a>
+						<a href='#' id='cellCopy' class='btn' data-icon='delete'>선택복사</a>
+					</div>
+					<div class='controlBox controlBox3' data-role="controlgroup" data-type="horizontal" data-mini="true">
+						<a href='#' id='cellAlignH' class='btn' data-icon='refresh'>가로정렬</a>
+						<a href='#' id='cellAlign_H_interval' class='btn' data-icon='refresh'>가로간격정렬</a>
+						<a href='#' id='cellAlignV' class='btn' data-icon='refresh'>세로정렬</a>
+						<a href='#' id='cellAlign_V_interval' class='btn' data-icon='refresh'>세로간격정렬</a>
+					</div>
+					<div class='controlBox controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
+						<a href='#' id='zoomReset' class='btn' data-icon='search'>zoomReset</a>
+						<a href='#' id='zoomIn' class='btn' data-icon='search'>zoomIn</a>
+						<a href='#' id='zoomOut' class='btn' data-icon='search'>zoomOut</a>
+						<a href='#' id='makeJson' class='btn' data-icon='search'>Json데이터생성</a>
+					</div>
+					<div class='controlBox controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
+						<a href='#' id='loadMap' class='btn' data-icon='search'>loadMap</a>
+					</div>
+					<div class='controlBox controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
+						<a href='#' id='currentTarget' class='btn' data-icon='search'>currentTarget</a>
+					</div>
+					<div class=' controlBox controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
+						<a href='#' id='currentTargetFocused' class='btn' data-icon='search'>currentTargetFocused</a>
+					</div>
 				</div>
-				<div class='controlBox2' data-role="controlgroup" data-type="horizontal" data-mini="true">
-					<a href='#' id='cellDel' class='btn' data-icon='delete'>선택삭제</a>
-					<a href='#' id='cellCopy' class='btn' data-icon='delete'>선택복사</a>
-				</div>
-				<div class='controlBox3' data-role="controlgroup" data-type="horizontal" data-mini="true">
-					<a href='#' id='cellAlignH' class='btn' data-icon='refresh'>가로정렬(T/C/B)</a>
-					<a href='#' id='cellAlign_H_interval' class='btn' data-icon='refresh'>가로간격정렬</a>
-					<a href='#' id='cellAlignV' class='btn' data-icon='refresh'>세로정렬(L/C/R)</a>
-					<a href='#' id='cellAlign_V_interval' class='btn' data-icon='refresh'>세로간격정렬</a>
-				</div>
-				<div class='controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
-					<a href='#' id='zoomReset' class='btn' data-icon='search'>zoomReset</a>
-					<a href='#' id='zoomIn' class='btn' data-icon='search'>zoomIn</a>
-					<a href='#' id='zoomOut' class='btn' data-icon='search'>zoomOut</a>
-					<a href='#' id='makeJson' class='btn' data-icon='search'>Json데이터생성</a>
-				</div>
-				<div class='controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
-					<a href='#' id='loadMap' class='btn' data-icon='search'>loadMap</a>
-				</div>
-				<div class='controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
-					<a href='#' id='currentTarget' class='btn' data-icon='search'>currentTarget</a>
-				</div>
-				<div class='controlBox4' data-role="controlgroup" data-type="horizontal" data-mini="true">
-					<a href='#' id='currentTargetFocused' class='btn' data-icon='search'>currentTargetFocused</a>
-				</div>
+				<div style='clear: both;'></div>
+				<div style='width:100%;text-align: center;margin:10px auto;' id='svgArea'></div>
 			</div>
-			<div style='width:100%;text-align: center;' id='svgArea'>
-			</div>
-		</div>
-	</form>
-</div>
+		</form>
+	</div>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package com.lfc.prk.prk0002;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -37,6 +38,16 @@ public class PRK0002$Controller extends SetLogger {
 	@RequestMapping(value = UrlMapping.PRK0002_MAIN_URL , method=RequestMethod.GET)
 	public String parkingMain(Locale locale, Model model) {
 		return UrlMapping.PRK0002_MAIN_JSP;
+	}
+	/**
+	 * 주차장관리 메인페이지이동
+	 * @param locale
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = UrlMapping.PRK0002_DETAIL_URL , method=RequestMethod.GET)
+	public String parkingDetail(Locale locale, Model model) {
+		return UrlMapping.PRK0002_DETAIL_JSP;
 	}
 	/**
 	 * 주차장관리 메인페이지이동
@@ -121,6 +132,23 @@ public class PRK0002$Controller extends SetLogger {
 		//귀찮으니,,, 걍 삭제후 입력으로 하자...ㅎㅎ
 		return service.selectPrkplaceFlr(param);
 	}
+	
+	@RequestMapping(value = UrlMapping.PRK0002_SELECT_URL )
+	public @ResponseBody List<Map<String, Object>> prk0002SelectUrl(@RequestBody PrkplceFlrMngVO param) {
+		List<Map<String, Object>> returnList = new ArrayList<Map<String,Object>>();
+		List<PrkplceFlrMngVO> result = service.selectPrkFlrList(param);
+		for( PrkplceFlrMngVO vo : result ){
+			Map<String,Object> flr = new HashMap<String, Object>();
+			Map<String,Object> info = service.selectPrkFlrInfo(vo);
+			flr.put("vo", vo);
+			flr.put("info", info);
+			returnList.add(flr);
+		}
+		
+		return returnList;
+	}
+	
+	
 	
 	/**
 	 * svg 객체 정보를 가져온다.

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MGR0003">
+	<select id="selectPrkFlrList" parameterType="PrkFlrVO" resultType="PrkFlrVO">
+		SELECT 
+			A.PRKPLCE_CODE 		as prkplceCode
+		    ,B.PRKPLCE_NM 		as prkplceNm
+		    , A.PRKPLCE_FLR_CODE as prkplceFlrCode
+		    , A.PRKPLCE_FLR_NM 	as prkplceFlrNm
+		    , A.SORT 			as sort
+		    , A.RM 				as rm
+		FROM PRKPLCE_FLR_MNG A, PRKPLCE_MNG B
+		WHERE 
+			1=1 
+		<if test="prkplceCode != null and prkplceCode != '' ">
+			 AND B.PRKPLCE_CODE = #{prkplceCode}
+		</if>
+		<if test="prkplceNm != null and prkplceNm != '' ">
+			 AND B.PRKPLCE_NM LIKE CONCAT('%', #{prkplceNm},'%')
+		</if>
+		<if test="prkplceFlrCode != null and prkplceFlrCode != '' ">
+			 AND PRKPLCE_FLR_CODE = #{prkplceFlrCode}
+		 </if>
+		 <if test="prkplceFlrNm != null and prkplceFlrNm != '' ">
+		 	AND PRKPLCE_FLR_NM LIKE CONCAT('%', #{prkplceFlrNm},'%')
+		 </if>
+			AND A.PRKPLCE_CODE = B.PRKPLCE_CODE
+		ORDER BY B.PRKPLCE_CODE , A.SORT
+	</select>
+	<select id="selectPrkInfo" parameterType="PrkFlrVO" resultType="camelCaseMap">
+		SELECT 
+			 SUM( IF( AA.CODE = 'P0', AA.COUNT, '') ) AS P0
+			,SUM( IF( AA.CODE = 'P1', AA.COUNT, ''))  AS P1
+			,SUM( IF( AA.CODE = 'P2', AA.COUNT, ''))  AS P2
+			,SUM( IF( AA.CODE = 'P3', AA.COUNT, ''))  AS P3
+			,SUM( IF( AA.CODE = 'P4', AA.COUNT, ''))  AS P4
+			,SUM( IF( AA.CODE = 'P5', AA.COUNT, ''))  AS P5
+			,SUM( IF( AA.CODE = 'USE_AT_N', AA.COUNT, ''))  AS USE_AT_N
+			,SUM( IF( AA.CODE = 'USE_AT_Y', AA.COUNT, ''))  AS USE_AT_Y
+		FROM (
+			SELECT 
+				A.CODE, B.COUNT 
+			FROM 
+				( SELECT 
+					CODE
+				    FROM CMMN_CODE A 
+				    WHERE A.PARENT_CODE = 'PRK_CELL_TYPE' 
+				) A
+				LEFT JOIN ( 
+					SELECT CELL_TYPE, COUNT(*) AS COUNT 
+				    FROM PRKPLCE_CELL_MNG 
+				    WHERE PRKPLCE_FLR_CODE = #{prkplceFlrCode}
+				    GROUP BY  CELL_TYPE 
+				) B ON A.CODE = B.CELL_TYPE
+			
+			UNION
+			
+			SELECT 
+				IF(SALE_CAR_INNB IS NULL ,'USE_AT_N','USE_AT_Y') AS CODE
+			    , COUNT(*) AS COUNT 
+			FROM PRKPLCE_CELL_MNG
+			WHERE PRKPLCE_FLR_CODE = #{prkplceFlrCode}
+			AND CELL_TYPE = 'P1'
+			GROUP BY SALE_CAR_INNB
+		) AA
+	</select>
+	<select id="selectPrkCodeList" parameterType="PrkVO" resultType="PrkVO">
+		SELECT 
+			PRKPLCE_CODE as prkplceCode,
+			PRKPLCE_NM as prkplceNm,
+			RM as rm
+		FROM 
+			PRKPLCE_MNG 
+		WHERE 
+			1=1
+		 <if test="prkplceCode != null and prkplceCode != '' ">
+			 AND PRKPLCE_CODE = #{prkplceCode}
+		 </if>
+		 <if test="prkplceNm != null and prkplceNm != '' ">
+			 AND PRKPLCE_NM LIKE CONCAT('%', #{prkplceNm},'%')
+		 </if>
+	</select>
+	<select id="selectPrkplaceFlr" parameterType="PrkFlrVO" resultType="PrkFlrVO">
+		 select
+			PRKPLCE_CODE 		as prkplceCode,
+			PRKPLCE_FLR_CODE 	as prkplceFlrCode,
+			PRKPLCE_FLR_NM		as prkplceFlrNm,
+			SORT				as sort,
+			RM					as rm
+		 from PRKPLCE_FLR_MNG
+		 where 1=1
+		 <if test="prkplceCode != null and prkplceCode != '' ">
+			 AND PRKPLCE_CODE = #{prkplceCode}
+		 </if>
+		 <if test="prkplceFlrCode != null and prkplceFlrCode != '' ">
+			 AND PRKPLCE_FLR_CODE = #{prkplceFlrCode}
+		 </if>
+		 <if test="prkplceFlrNm != null and prkplceFlrNm != '' ">
+		 	AND PRKPLCE_FLR_NM LIKE CONCAT('%', #{prkplceFlrNm},'%')
+		 </if>
+	</select>
+	
+	<insert id="insertPrkplace" parameterType="PrkVO" >
+		 insert into PRKPLCE_MNG(
+			PRKPLCE_CODE,
+			PRKPLCE_NM,
+			RM
+		) values(
+			#{prkplceCode},
+			#{prkplceNm},
+			#{rm}
+		)
+	</insert>
+	<update id="updatePrkplace" parameterType="PrkVO" >
+		 update PRKPLCE_MNG
+		 set
+		 	RM = ''
+			 <if test="prkplceNm != null and prkplceNm != '' ">
+				 ,PRKPLCE_NM = #{prkplceNm}
+			 </if>
+			 <if test="rm != null and rm != '' ">
+				 ,RM = #{rm}
+			 </if>
+		 where 
+			 PRKPLCE_CODE = #{prkplceCode}
+	</update>
+	<delete id="deletePrkplace" parameterType="PrkVO" >
+		DELETE FROM PRKPLCE_MNG
+		where 
+			 PRKPLCE_CODE = #{prkplceCode}
+	</delete>
+	<delete id="deletePrkplaceFlr" parameterType="PrkVO" >
+		 delete from PRKPLCE_FLR_MNG
+		 where 
+			 PRKPLCE_CODE = #{prkplceCode}
+	</delete>
+</mapper>

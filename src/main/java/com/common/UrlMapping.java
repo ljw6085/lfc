@@ -72,6 +72,24 @@ public class UrlMapping {
 	
 /***************************************************************************************************/	
 	
+	/** url  : 주차장코드관리 조회 */
+	public static final String MGR0003_LIST_URL="/mgr/mgr0003/codeList.do";
+	/** jsp  : 주차장코드관리 */
+	public static final String MGR0003_LIST_JSP="/mgr/mgr0003/codeList";
+	
+	/** url  : 주차장코드관리 등록 */
+	public static final String MGR0003_INSERT_URL="/mgr/mgr0003/codeInsert.do";
+	/** jsp  : 주차장코드관리 */
+	public static final String MGR0003_INSERT_JSP="/mgr/mgr0003/codeInsert";
+	
+	/** url  : 주차장코드관리 삭제 */
+	public static final String MGR0003_DELETE_URL="/mgr/mgr0003/codeDelete.do";
+	
+	/** url  : 주차장코드관리 상세조회 */
+	public static final String MGR0003_DETAIL_SELECT_URL="/mgr/mgr0003/codeDetailSelect.do";
+	
+/***************************************************************************************************/	
+	
 	/** url  : 주차장관리 메인 */
 	public static final String PRK0001_MAIN_URL="/prk/prk0001/parkingListMain.do";
 	/** jsp  : 주차장관리 메인이동 */
@@ -86,6 +104,17 @@ public class UrlMapping {
 	public static final String PRK0002_MAIN_URL="/prk/prk0002/parkingMgrMain.do";
 	/** jsp  : 주차장관리 메인이동 */
 	public static final String PRK0002_MAIN_JSP="/prk/prk0002/parkingMgrMain";
+	
+	/** url  : 주차장관리 층정보 상세조회*/
+	public static final String PRK0002_DETAIL_URL="/prk/prk0002/parkingMgrDetail.do";
+	/** jsp  : 주차장관리 메인이동 */
+	public static final String PRK0002_DETAIL_JSP="/prk/prk0002/parkingMgrDetail";
+	
+	
+	
+	/** url  : 주차장관리 층정보 조회메인 */
+	public static final String PRK0002_SELECT_URL="/prk/prk0002/parkingMgrSelect.do";
+	
 	
 	/** url  : 주차장관리 관리페이지이동 */
 	public static final String PRK0002_INSERT_URL="/prk/prk0002/parkingMgrInsert.do";
