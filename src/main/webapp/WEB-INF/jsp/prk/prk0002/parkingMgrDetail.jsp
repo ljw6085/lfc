@@ -55,7 +55,7 @@ $j.documents.push(function(){
 				var data = res.list;
 				var targetObject;
 				for( var i =0, len = data.length; i < len ; i ++ ){
-					var d  = data[i]  , applied = {}
+					var d  = data[i]  , applied = { readonly:true }
 					for( var k in d ){
 						switch (k) {
 						case 'height':
@@ -84,6 +84,7 @@ $j.documents.push(function(){
 				//마지막에 target create;
 				svgUtils.createShapeByType( target , targetObject );
 				
+				targetAnimation();
 				focusedCurrent();
 			});
 			
@@ -106,6 +107,30 @@ $j.documents.push(function(){
 						.duration(500)
 						.ease(d3.easeLinear)
 						.call(draw.zoom.transform , z );
+		}
+		
+		function targetAnimation(){
+			var target = d3.select(".box.P3");
+			var loopCount = 0;
+			var order = [1, -1];
+			var range = 20;
+			var delay = 500;
+			// original transform setting
+			$( target.node() ).data('originalTransform', target.attr('transform') );
+			setInterval(function(){
+				var w = +target.attr('width') 
+					, h = +target.attr('height')
+					, tr = svgUtils.getTranslate( target.attr('transform') ) 
+					, num = ( order[ loopCount++%2 ] )
+					, newW = w + ( num * range )
+					, newH = h + ( num * range )
+				target.transition()
+				        .duration(delay)
+				        .ease(d3.easeLinear)
+				        .attr('width', newW )
+				        .attr('height', newH )
+				        .attr('transform','translate('+(tr[0] + (-num *(range/2)))+','+(tr[1] + (-num *(range/2))) +')' )
+			}, delay+5 );
 		}
 	});
 });

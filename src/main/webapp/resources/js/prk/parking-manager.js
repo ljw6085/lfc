@@ -50,15 +50,18 @@ var svgUtils = {
 				rect.attr( k , option[k] );
 				t.convertToJquery(rect).data(k,option[k]);
 			}
-			rect.call(
-				d3.drag()
-					.on("start", function(){
-						t.snapStart( pGroup );
-					})
-					.on("drag", function(){
-						t.snapDrag( this );
-					})
-			);
+			
+			if( !option.readonly ){
+				rect.call(
+						d3.drag()
+						.on("start", function(){
+							t.snapStart( pGroup );
+						})
+						.on("drag", function(){
+							t.snapDrag( this );
+						})
+				);
+			}
 			return rect;
 		}
 		,round:function(p, n) {
