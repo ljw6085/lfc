@@ -39,7 +39,12 @@
 #menuPanel ul.depth1 a { background: #fff !important; }
 #menuPanel a.topMenu { border-color: #0c2c3c !important; background: #044363 !important; color: #fff !important; font-weight: normal; text-shadow: 0 0 0 !important; }
 #menuPanel ul.depth0>li>a { }
-#menuPanel li.currentMenu>a { background: #3388cc !important; color: #fff !important; }
+#menuPanel li.currentMenu>a { 
+	background: #3388cc !important; 
+	color: #fff !important; 
+	border:0 !important;
+	box-shadow: inset 5px  5px 5px rgba(0,0,0,.15) !important;
+}
 #menuNavigator { font-size: 0.7em; }
 
 .main_content .ui-listview.dataList{
@@ -72,7 +77,24 @@
 
 
 /******************************************************************************************* jquery ui custom */
-
+.ui-icon-car-comp-0:after {
+	background-image: url("http://static.naver.net/m/auto/img/emblem/mnfco_16.png");
+	width:22px;
+	height:22px;
+	background-size: cover;
+}
+.ui-icon-car-comp-1:after {
+	background-image: url("http://static.naver.net/m/auto/img/emblem/mnfco_12.png");
+	width:22px;
+	height:22px;
+	background-size: cover;
+}
+.ui-icon-car-comp-4:after {
+	background-image: url("http://static.naver.net/m/auto/img/emblem/mnfco_13.png");
+	width:22px;
+	height:22px;
+	background-size: cover;
+}
 
 
 
@@ -176,3 +198,13 @@
 }
 
 .ui-checkbox input.txtC, .ui-radio input.txtC{ left:50%; margin:-11px; }
+
+.ui-bar-c {
+		    border-width: 1px;
+    		border-style: solid;
+		    background-color: #044363 /*{c-bar-background-color}*/;
+		    border-color: #02283c /*{c-bar-border}*/;
+		    color: #fff /*{c-bar-color}*/;
+		    text-shadow: 0 /*{c-bar-shadow-x}*/ 1px /*{c-bar-shadow-y}*/ 0 /*{c-bar-shadow-radius}*/ #111 /*{c-bar-shadow-color}*/;
+		    font-weight: bold;
+}

@@ -22,6 +22,7 @@ $j.documents.push(function(){
 				$(window).trigger('resize');
 				
 				initLoadMap( params );
+				$.mobile.loading( 'hide' );
 			}
 		});
 		

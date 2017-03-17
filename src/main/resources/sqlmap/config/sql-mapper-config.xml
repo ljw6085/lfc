@@ -13,6 +13,8 @@
 		<typeAlias alias="PrkFlrVO" type="com.lfc.prk.prk0001.vo.PrkplceFlrMngVO"/>
 		<typeAlias alias="PrkVO" type="com.lfc.prk.prk0001.vo.PrkplceMngVO"/>
 		
+		<typeAlias alias="SellCarInfoVO" type="com.lfc.mgr.mgr0004.vo.SellCarInfoVO"/>
+		
 		<typeAlias alias="hashMap" type="java.util.HashMap"/>
 		<typeAlias alias="camelCaseMap" type="com.common.utils.CamelCaseMap"/>
 		<typeAlias alias="linkedHashMap" type="java.util.LinkedHashMap"/>

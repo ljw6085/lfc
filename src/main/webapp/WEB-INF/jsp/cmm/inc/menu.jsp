@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- 메뉴 판넬 -->
-<div id="menuPanel" data-role='panel' data-position='left' data-display='push' data-position-fixed="true" >
+<div id="menuPanel" data-role='panel' data-position='left' data-display='overlay' data-position-fixed="true" >
 <!-- <div id='menuNavigator'></div> -->
 </div>
 <script>

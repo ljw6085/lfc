@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MGR0004">
+
+	<select id="selectSampleMapper" parameterType="SellCarInfoVO" resultType="hashMap">
+		 select
+			SELL_CAR_INNB,
+			CAR_DIV,
+			BRAND,
+			SERIES,
+			MODEL,
+			LEVEL,
+			MISSION,
+			FURE,
+			COLOR,
+			REGION,
+			SPOT,
+			COMPANY,
+			CC,
+			USED_YEAR,
+			USED_DIS,
+			CAR_NUM,
+			OWNER,
+			OWNER_PHONE,
+			SALE_YN,
+			PRKPLCE_CODE,
+			PRKPLCE_FLR_CODE,
+			CELL_MAPNG_ID,
+			HOLD_YN
+		 from SELL_CAR_INFO
+		 where 1=1
+		 <if test="sellCarInnb != null and sellCarInnb != '' ">
+			 AND SELL_CAR_INNB = #{sellCarInnb}
+		 </if>
+		 <if test="carDiv != null and carDiv != '' ">
+			 AND CAR_DIV = #{carDiv}
+		 </if>
+		 <if test="brand != null and brand != '' ">
+			 AND BRAND = #{brand}
+		 </if>
+		 <if test="series != null and series != '' ">
+			 AND SERIES = #{series}
+		 </if>
+		 <if test="model != null and model != '' ">
+			 AND MODEL = #{model}
+		 </if>
+		 <if test="level != null and level != '' ">
+			 AND LEVEL = #{level}
+		 </if>
+		 <if test="mission != null and mission != '' ">
+			 AND MISSION = #{mission}
+		 </if>
+		 <if test="fure != null and fure != '' ">
+			 AND FURE = #{fure}
+		 </if>
+		 <if test="color != null and color != '' ">
+			 AND COLOR = #{color}
+		 </if>
+		 <if test="region != null and region != '' ">
+			 AND REGION = #{region}
+		 </if>
+		 <if test="spot != null and spot != '' ">
+			 AND SPOT = #{spot}
+		 </if>
+		 <if test="company != null and company != '' ">
+			 AND COMPANY = #{company}
+		 </if>
+		 <if test="cc != null and cc != '' ">
+			 AND CC = #{cc}
+		 </if>
+		 <if test="usedYear != null and usedYear != '' ">
+			 AND USED_YEAR = #{usedYear}
+		 </if>
+		 <if test="usedDis != null and usedDis != '' ">
+			 AND USED_DIS = #{usedDis}
+		 </if>
+		 <if test="carNum != null and carNum != '' ">
+			 AND CAR_NUM = #{carNum}
+		 </if>
+		 <if test="owner != null and owner != '' ">
+			 AND OWNER = #{owner}
+		 </if>
+		 <if test="ownerPhone != null and ownerPhone != '' ">
+			 AND OWNER_PHONE = #{ownerPhone}
+		 </if>
+		 <if test="saleYn != null and saleYn != '' ">
+			 AND SALE_YN = #{saleYn}
+		 </if>
+		 <if test="prkplceCode != null and prkplceCode != '' ">
+			 AND PRKPLCE_CODE = #{prkplceCode}
+		 </if>
+		 <if test="prkplceFlrCode != null and prkplceFlrCode != '' ">
+			 AND PRKPLCE_FLR_CODE = #{prkplceFlrCode}
+		 </if>
+		 <if test="cellMapngId != null and cellMapngId != '' ">
+			 AND CELL_MAPNG_ID = #{cellMapngId}
+		 </if>
+		 <if test="holdYn != null and holdYn != '' ">
+			 AND HOLD_YN = #{holdYn}
+		 </if>
+	</select>
+	<insert id="insertSampleMapper" parameterType="SellCarInfoVO" >
+		 insert into SELL_CAR_INFO(
+			SELL_CAR_INNB,
+			CAR_DIV,
+			BRAND,
+			SERIES,
+			MODEL,
+			LEVEL,
+			MISSION,
+			FURE,
+			COLOR,
+			REGION,
+			SPOT,
+			COMPANY,
+			CC,
+			USED_YEAR,
+			USED_DIS,
+			CAR_NUM,
+			OWNER,
+			OWNER_PHONE,
+			SALE_YN,
+			PRKPLCE_CODE,
+			PRKPLCE_FLR_CODE,
+			CELL_MAPNG_ID,
+			HOLD_YN
+		) values(
+			#{sellCarInnb},
+			#{carDiv},
+			#{brand},
+			#{series},
+			#{model},
+			#{level},
+			#{mission},
+			#{fure},
+			#{color},
+			#{region},
+			#{spot},
+			#{company},
+			#{cc},
+			#{usedYear},
+			#{usedDis},
+			#{carNum},
+			#{owner},
+			#{ownerPhone},
+			#{saleYn},
+			#{prkplceCode},
+			#{prkplceFlrCode},
+			#{cellMapngId},
+			#{holdYn}
+		)
+	</insert>
+	<update id="updateSampleMapper" parameterType="SellCarInfoVO" >
+		 update SELL_CAR_INFO
+		 set
+			SELL_CAR_INNB = #{sellCarInnb},
+			CAR_DIV = #{carDiv},
+			BRAND = #{brand},
+			SERIES = #{series},
+			MODEL = #{model},
+			LEVEL = #{level},
+			MISSION = #{mission},
+			FURE = #{fure},
+			COLOR = #{color},
+			REGION = #{region},
+			SPOT = #{spot},
+			COMPANY = #{company},
+			CC = #{cc},
+			USED_YEAR = #{usedYear},
+			USED_DIS = #{usedDis},
+			CAR_NUM = #{carNum},
+			OWNER = #{owner},
+			OWNER_PHONE = #{ownerPhone},
+			SALE_YN = #{saleYn},
+			PRKPLCE_CODE = #{prkplceCode},
+			PRKPLCE_FLR_CODE = #{prkplceFlrCode},
+			CELL_MAPNG_ID = #{cellMapngId},
+			HOLD_YN = #{holdYn}
+		 where 
+			 SELL_CAR_INNB = #{sellCarInnb}
+			 AND CAR_DIV = #{carDiv}
+			 AND BRAND = #{brand}
+			 AND SERIES = #{series}
+			 AND MODEL = #{model}
+			 AND LEVEL = #{level}
+			 AND MISSION = #{mission}
+			 AND FURE = #{fure}
+			 AND COLOR = #{color}
+			 AND REGION = #{region}
+			 AND SPOT = #{spot}
+			 AND COMPANY = #{company}
+			 AND CC = #{cc}
+			 AND USED_YEAR = #{usedYear}
+			 AND USED_DIS = #{usedDis}
+			 AND CAR_NUM = #{carNum}
+			 AND OWNER = #{owner}
+			 AND OWNER_PHONE = #{ownerPhone}
+			 AND SALE_YN = #{saleYn}
+			 AND PRKPLCE_CODE = #{prkplceCode}
+			 AND PRKPLCE_FLR_CODE = #{prkplceFlrCode}
+			 AND CELL_MAPNG_ID = #{cellMapngId}
+			 AND HOLD_YN = #{holdYn}
+	</update>
+	<delete id="deleteSampleMapper" parameterType="SellCarInfoVO" >
+		 delete from SELL_CAR_INFO
+		 where 
+			 SELL_CAR_INNB = #{sellCarInnb}
+			 AND CAR_DIV = #{carDiv}
+			 AND BRAND = #{brand}
+			 AND SERIES = #{series}
+			 AND MODEL = #{model}
+			 AND LEVEL = #{level}
+			 AND MISSION = #{mission}
+			 AND FURE = #{fure}
+			 AND COLOR = #{color}
+			 AND REGION = #{region}
+			 AND SPOT = #{spot}
+			 AND COMPANY = #{company}
+			 AND CC = #{cc}
+			 AND USED_YEAR = #{usedYear}
+			 AND USED_DIS = #{usedDis}
+			 AND CAR_NUM = #{carNum}
+			 AND OWNER = #{owner}
+			 AND OWNER_PHONE = #{ownerPhone}
+			 AND SALE_YN = #{saleYn}
+			 AND PRKPLCE_CODE = #{prkplceCode}
+			 AND PRKPLCE_FLR_CODE = #{prkplceFlrCode}
+			 AND CELL_MAPNG_ID = #{cellMapngId}
+			 AND HOLD_YN = #{holdYn}
+	</delete>
+</mapper>

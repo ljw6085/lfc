@@ -88,6 +88,21 @@ public class UrlMapping {
 	/** url  : 주차장코드관리 상세조회 */
 	public static final String MGR0003_DETAIL_SELECT_URL="/mgr/mgr0003/codeDetailSelect.do";
 	
+/***************************************************************************************************/
+	/** url  : 판매차량 조회 */
+	public static final String MGR0004_LIST_URL="/mgr/mgr0004/MGR0004$List.do";
+	/** jsp  : 판매차량관리 */
+	public static final String MGR0004_LIST_JSP="/mgr/mgr0004/MGR0004$List";
+	
+	/** url  : 판매차량 등록 */
+	public static final String MGR0004_INSERT_URL="/mgr/mgr0004/MGR0004$Insert.do";
+	/** jsp  : 판매차량관리 */
+	public static final String MGR0004_INSERT_JSP="/mgr/mgr0004/MGR0004$Insert";
+	
+	/** url  : 판매차량 등록 */
+	public static final String MGR0004_DETAIL_SEARCH_URL="/mgr/mgr0004/MGR0004$DetailSearch.do";
+	/** jsp  : 판매차량관리 */
+	public static final String MGR0004_DETAIL_SEARCH_JSP="/mgr/mgr0004/MGR0004$DetailSearch";
 /***************************************************************************************************/	
 	
 	/** url  : 주차장관리 메인 */

@@ -770,3 +770,17 @@ $.fn.setAttr = function(key , value){
 		}
 	}
 }
+$.fn.toggleCls = function( cls1 , cls2  ){
+	var $t = $(this);
+	if( $t.hasClass( cls1 ) ){
+		
+		$t.removeClass( cls1 );
+		if( cls2 ) $t.addClass( cls2 );
+		
+	}else{
+		
+		if( cls2 && $t.hasClass( cls2 ) ) $t.removeClass( cls2 );
+		$t.addClass( cls1 );
+	}
+	return $t;
+}

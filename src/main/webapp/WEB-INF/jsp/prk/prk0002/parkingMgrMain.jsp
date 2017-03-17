@@ -281,6 +281,7 @@ $j.documents.push(function(){
 		var managerPage = '#parkingMgrDetail';
 		$(".dataList").on('click','li',function(){
 			var param = Common.getDataFromDoms( $(this) );
+			$.mobile.loading( 'show' );
 			$j.pageMove( managerPage , param );
 		});
 		

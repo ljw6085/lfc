@@ -12,59 +12,44 @@ $j.documents.push(function(){
 	/** Form 단위로 스크립팅 한다. */
 	$j.documentReady('prkMainFrm', function($form,$uiPage){
 		var managerPage = '#parkingManager';
-		
 		$m.openMenuFromSwipe($uiPage);
 		
-		$('#tester').on('click',function(e){
-			$j.pageMove( managerPage , {
-				test:'moving!'
-			});
-		})
 	});
 });
 </script>
 <style>
-	.parkFloorList a { padding-top:0; padding-bottom:0; padding-left:0; border-bottom: .5em solid #ddd !important;}
-	.parkFloorList a.lastFloor { padding-top:0; padding-bottom:0; padding-left:0; border-bottom: 1px solid #ddd !important;}
-	.parkFloorList div { border-right:1px solid #ddd;}
 </style>
 <!-- form 단위로 이루어진 content -->
 <form name='prkMainFrm'>
 	<!-- 실제 구성될 화면페이지  영역 -->
 	<div class='main_content'>
-		<span id='tester'>관리페이지는 import, 주차장조회페이지는 location으로 아예 페이지를 이동하자</span>
-		<ul class='parkFloorList' data-role="listview" data-count-theme="b" data-inset="true">
-			<li>
-				<a href="#">
-					<div style='height:80px;display: block;'></div>
-					<span class="ui-li-count">12</span>
-				</a>
-			</li>
-			<li>
-				<a href="#">
-					<div style='height:80px;display: block;'></div>
-					<span class="ui-li-count">0</span>
-				</a>
-			</li>
-			<li>
-				<a href="#">
-					<div style='height:80px;display: block;'></div>
-					<span class="ui-li-count">4</span>
-				</a>
-			</li>
-			<li>
-				<a href="#">
-					<div style='height:80px;display: block;'></div>
-					<span class="ui-li-count">329</span>
-				</a>
-			</li>
-			<li>
-				<a href="#" class='lastFloor'>
-					<div style='height:80px;display: block;'></div>
-					<span class="ui-li-count">62</span>
-				</a>
-			</li>
-		</ul>
+		<div class='searchArea'>
+			<table class='defaultTable'>
+					<colgroup>
+						<col style='width:40%;'/>
+						<col style='width:60%;'/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<th class='insertTh'>주차장명</th>
+							<td class='insertTd'><input type='text' name='prkplceNm' data-mini="true" placeholder="주차장명"></td>
+						</tr>
+						<tr>
+							<th class='insertTh'>층구분명</th>
+							<td class='insertTd'><input type='text' name='prkplceFlrNm' data-mini="true" placeholder="층구분명"></td>
+						</tr>
+						
+						<tr>
+							<th class='insertTh'>차번호</th>
+							<td class='insertTd'><input type='text' name='prkplceNm' data-mini="true" placeholder="주차장명"></td>
+						</tr>
+					</tbody>
+				</table>
+		</div>
+		<div class='buttonBox' style='text-align: right;margin-top:.5em;'>
+			<a href='#' class='btn' id='prkAdd' data-icon='plus'>신규등록</a>
+			<a href='#' class='btn' id='prkSelect' data-icon='search'>조회</a>
+		</div>
 	</div>
 	<!--// main_content  -->
 </form>
