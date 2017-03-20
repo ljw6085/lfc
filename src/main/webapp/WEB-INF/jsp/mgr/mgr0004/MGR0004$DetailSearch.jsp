@@ -151,8 +151,7 @@
 					<option value="99" >헤네시</option>
 				</select>
 			</div>
-			<!-- 
-			<div class='ui-bar ui-bar-a'>제조사</div>
+			<!-- <div class='ui-bar ui-bar-a'>제조사</div>
 			<div class='companyList'>
 				<div class="ui-grid-d">
 					<div class='ui-block-a grid-block'>
@@ -790,7 +789,7 @@
 						
 					</div>
 				</div>
-			</div> -->
+			</div>  -->
 			<div class='detailSearch'>
 				<div class='car-model'>
 					<div class='ui-bar ui-bar-c title'>모델</div>

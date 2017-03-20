@@ -74,25 +74,31 @@
 .codeListTable th{ padding: .5em !important; } 
 .codeListTable .ui-sortable-helper { display: table; }
 
+/******************************************************************************************* car icon */
+.car-comp{
+	max-width:80px;
+	max-height:80px;
+	background-size: cover;
+}
+.car-comp-0{
+	background-image: url("./images/car-comp/car-comp-0.png");
+}
+.car-comp-1{
+	background-image: url("./images/car-comp/car-comp-1.png");
+}
 
 
 /******************************************************************************************* jquery ui custom */
 .ui-icon-car-comp-0:after {
-	background-image: url("http://static.naver.net/m/auto/img/emblem/mnfco_16.png");
-	width:22px;
-	height:22px;
+	background-image: url("./images/car-comp/car-comp-0.png");
 	background-size: cover;
 }
 .ui-icon-car-comp-1:after {
-	background-image: url("http://static.naver.net/m/auto/img/emblem/mnfco_12.png");
-	width:22px;
-	height:22px;
+	background-image: url("./images/car-comp/car-comp-1.png");
 	background-size: cover;
 }
 .ui-icon-car-comp-4:after {
-	background-image: url("http://static.naver.net/m/auto/img/emblem/mnfco_13.png");
-	width:22px;
-	height:22px;
+	background-image: url("./images/car-comp/car-comp-4.png");
 	background-size: cover;
 }
 

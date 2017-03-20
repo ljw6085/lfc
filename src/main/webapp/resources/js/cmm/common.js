@@ -71,6 +71,7 @@ var Common = {
 					,dataType	: 'json'
 					,method		: 'post'
 					,success : callback
+					,async:true
 					,error: function(a,b,c){
 						console.log( a, b, c );
 					}
@@ -639,12 +640,17 @@ var $j = {
 				option.params = {}
 				$.extend(option.params, params);
 			}
+//			this.$page().jqmData("params",params);
 			this.$page().pagecontainer( "change", url , option);
 		}
 		,pageMoveCallback :function( callback ){
+			var t = this;
 			if( typeof callback == 'function' ){
+//				this.$page().on('pagebeforeshow',function(event,ui){
+//					callback( t.$page().jqmData('params') );
+//				});
 				this.$page().pagecontainer({
-					// page change 콜백함수.
+//					 page change 콜백함수.
 					change:function(event,ui){
 						callback(ui.options.params);
 					}

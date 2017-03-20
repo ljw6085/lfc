@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 public class CmmnCodeVO {
 
 	private String 		parentCode;
+	private String 		grpCode;
 	private String 		code;
 	private String 		codeNm;
 	private String 		codeDc;
@@ -15,6 +16,12 @@ public class CmmnCodeVO {
 	private Timestamp 	lastRegistDt;
 	private String 		lastRegister ;
 
+	public String getGrpCode() {
+		return grpCode;
+	}
+	public void setGrpCode(String grpCode) {
+		this.grpCode = grpCode;
+	}
 	public void setParentCode(String parentCode) {
 		this.parentCode = parentCode;
 	}
@@ -78,15 +85,9 @@ public class CmmnCodeVO {
 
 	@Override
 	public String toString() {
-		return "[parentCode=" + parentCode
-		 + ", code=" + code
-		 + ", codeNm=" + codeNm
-		 + ", codeDc=" + codeDc
-		 + ", useAt=" + useAt
-		 + ", sort=" + sort
-		 + ", frstRegistDt=" + frstRegistDt
-		 + ", frstRegister=" + frstRegister
-		 + ", lastRegistDt=" + lastRegistDt
-		 + ", lastRegister =" + lastRegister  + "]";
+		return "CmmnCodeVO [parentCode=" + parentCode + ", grpCode=" + grpCode + ", code=" + code + ", codeNm=" + codeNm
+				+ ", codeDc=" + codeDc + ", useAt=" + useAt + ", sort=" + sort + ", frstRegistDt=" + frstRegistDt
+				+ ", frstRegister=" + frstRegister + ", lastRegistDt=" + lastRegistDt + ", lastRegister=" + lastRegister
+				+ "]";
 	}
 }

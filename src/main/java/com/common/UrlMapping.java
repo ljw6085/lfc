@@ -104,6 +104,25 @@ public class UrlMapping {
 	/** jsp  : 판매차량관리 */
 	public static final String MGR0004_DETAIL_SEARCH_JSP="/mgr/mgr0004/MGR0004$DetailSearch";
 /***************************************************************************************************/	
+	/** url  : 공통코드관리 조회 */
+	public static final String MGR0005_LIST_URL="/mgr/mgr0005/codeList.do";
+	/** jsp  : 공통코드관리 */
+	public static final String MGR0005_LIST_JSP="/mgr/mgr0005/codeList";
+
+	/** url  : 공통코드관리 등록 */
+	public static final String MGR0005_INSERT_URL="/mgr/mgr0005/codeInsert.do";
+	/** jsp  : 공통코드관리 */
+	public static final String MGR0005_INSERT_JSP="/mgr/mgr0005/codeInsert";
+	
+	/** url  : 공통코드관리 삭제 */
+	public static final String MGR0005_DELETE_URL="/mgr/mgr0005/codeDelete.do";
+	
+	/** url  : 공통코드관리 상세조회 */
+	public static final String MGR0005_DETAIL_SELECT_URL="/mgr/mgr0005/codeDetailSelect.do";
+	
+/***************************************************************************************************/
+	
+	
 	
 	/** url  : 주차장관리 메인 */
 	public static final String PRK0001_MAIN_URL="/prk/prk0001/parkingListMain.do";

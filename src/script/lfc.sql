@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.54, for Win64 (AMD64)
+-- MySQL dump 10.13  Distrib 5.6.28, for Win64 (x86_64)
 --
 -- Host: localhost    Database: lfc
 -- ------------------------------------------------------
--- Server version	5.5.54-log
+-- Server version	5.6.28-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,6 +14,119 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `board`
+--
+
+DROP TABLE IF EXISTS `board`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `board` (
+  `B_NO` varchar(10) NOT NULL,
+  `B_TYPE` char(2) NOT NULL,
+  `TITLE` varchar(150) NOT NULL,
+  `CONTENT` varchar(2000) DEFAULT NULL,
+  `REG_DT` char(20) NOT NULL,
+  `REG_USER_ID` varchar(15) NOT NULL,
+  PRIMARY KEY (`B_NO`),
+  UNIQUE KEY `BOARD_PK` (`B_NO`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `board`
+--
+
+LOCK TABLES `board` WRITE;
+/*!40000 ALTER TABLE `board` DISABLE KEYS */;
+/*!40000 ALTER TABLE `board` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `board_attach`
+--
+
+DROP TABLE IF EXISTS `board_attach`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `board_attach` (
+  `B_NO` varchar(10) NOT NULL DEFAULT '',
+  `FILE_INNB` varchar(10) NOT NULL DEFAULT '',
+  `FILE_PATHE` varchar(200) DEFAULT NULL,
+  `FILE_NM` varchar(100) DEFAULT NULL,
+  `DELETE_YN` char(1) DEFAULT NULL,
+  `REG_DT` char(20) DEFAULT NULL,
+  `REG_USER_ID` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`B_NO`,`FILE_INNB`),
+  UNIQUE KEY `BOARD_ATTACH_PK` (`B_NO`,`FILE_INNB`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `board_attach`
+--
+
+LOCK TABLES `board_attach` WRITE;
+/*!40000 ALTER TABLE `board_attach` DISABLE KEYS */;
+/*!40000 ALTER TABLE `board_attach` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `car_info`
+--
+
+DROP TABLE IF EXISTS `car_info`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `car_info` (
+  `INFO_CD` int(9) NOT NULL,
+  `INFO_CD_NM` varchar(50) NOT NULL,
+  `P_INFO_CD` int(9) DEFAULT NULL,
+  `GRP_DIV` varchar(15) DEFAULT NULL,
+  `SORT` int(9) DEFAULT NULL,
+  PRIMARY KEY (`INFO_CD`),
+  UNIQUE KEY `CAR_INFO_PK` (`INFO_CD`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `car_info`
+--
+
+LOCK TABLES `car_info` WRITE;
+/*!40000 ALTER TABLE `car_info` DISABLE KEYS */;
+/*!40000 ALTER TABLE `car_info` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `car_pic`
+--
+
+DROP TABLE IF EXISTS `car_pic`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `car_pic` (
+  `SELL_CAR_INNB` varchar(10) NOT NULL DEFAULT '',
+  `PIC_INNB` varchar(10) NOT NULL DEFAULT '',
+  `FILE_PATH` varchar(200) DEFAULT NULL,
+  `FILE_NM` varchar(100) DEFAULT NULL,
+  `DELETE_YN` char(1) DEFAULT NULL,
+  `REG_DT` char(20) DEFAULT NULL,
+  `REG_USER_ID` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`SELL_CAR_INNB`,`PIC_INNB`),
+  UNIQUE KEY `CAR_PIC_PK` (`SELL_CAR_INNB`,`PIC_INNB`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `car_pic`
+--
+
+LOCK TABLES `car_pic` WRITE;
+/*!40000 ALTER TABLE `car_pic` DISABLE KEYS */;
+/*!40000 ALTER TABLE `car_pic` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `cmmn_code`
@@ -33,6 +146,7 @@ CREATE TABLE `cmmn_code` (
   `FRST_REGISTER` varchar(20) DEFAULT NULL,
   `LAST_REGIST_DT` datetime DEFAULT NULL,
   `LAST_REGISTER` varchar(20) DEFAULT NULL,
+  `GRP_CODE` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`PARENT_CODE`,`CODE`),
   UNIQUE KEY `CMMN_CODE_PK` (`PARENT_CODE`,`CODE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -44,7 +158,7 @@ CREATE TABLE `cmmn_code` (
 
 LOCK TABLES `cmmn_code` WRITE;
 /*!40000 ALTER TABLE `cmmn_code` DISABLE KEYS */;
-INSERT INTO `cmmn_code` VALUES ('','1','1','1','Y',0,NULL,NULL,NULL,NULL),('','2','1','1','Y',1,NULL,NULL,NULL,NULL),('','3','1','1','Y',2,NULL,NULL,NULL,NULL),('PRK_CELL_TYPE','P0','기본','기본영역(주차장)','Y',0,NULL,NULL,NULL,NULL),('PRK_CELL_TYPE','P1','소유','소유하고있는영역','Y',1,NULL,NULL,NULL,NULL),('PRK_CELL_TYPE','P2','미소유','소유하지않은영역','Y',2,NULL,NULL,NULL,NULL),('PRK_CELL_TYPE','P3','타겟영역','조회타겟영역','Y',3,NULL,NULL,NULL,NULL),('PRK_CELL_TYPE','P4','엘리베이터','엘리베이터영역','Y',4,NULL,NULL,NULL,NULL),('PRK_CELL_TYPE','P5','기타','기타영역','Y',5,NULL,NULL,NULL,NULL),('ROOT','PRK_CELL_TYPE','주차장 CELL 타입','주차장 도면에서 CELL 타입을 구분한다.','Y',0,NULL,NULL,NULL,NULL),('ROOT','USER_TYPE','사용자구분','사용자를 구분한다','Y',0,NULL,NULL,NULL,NULL),('ROOT','USE_AT','사용여부','사용여부','Y',0,NULL,NULL,NULL,NULL),('USER_TYPE','1','일반사용자','기본 사용자','Y',0,NULL,NULL,NULL,NULL),('USER_TYPE','2','고급사용자','고급사용자','Y',1,NULL,NULL,NULL,NULL),('USER_TYPE','3','업무관리자','업무관리자','Y',2,NULL,NULL,NULL,NULL),('USER_TYPE','8','운영관리자','운영관리자','Y',3,NULL,NULL,NULL,NULL),('USER_TYPE','9','최고관리자','최고관리자','Y',4,NULL,NULL,NULL,NULL),('USE_AT','N','사용안함','사용안함','Y',1,NULL,NULL,NULL,NULL),('USE_AT','Y','사용','사용','Y',0,NULL,NULL,NULL,NULL);
+INSERT INTO `cmmn_code` VALUES ('','1','1','1','Y',0,NULL,NULL,NULL,NULL,NULL),('','2','1','1','Y',1,NULL,NULL,NULL,NULL,NULL),('','3','1','1','Y',2,NULL,NULL,NULL,NULL,NULL),('CAR_COMP','0','현대자동차','현대자동차','Y',0,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','1','기아자동차','기아자동차','Y',1,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','10','포드','포드','Y',10,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','11','랜드로버','랜드로버','Y',11,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','12','렉서스','렉서스','Y',12,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','13','토요타','토요타','Y',13,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','14','미니','미니','Y',14,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','15','혼다','혼다','Y',15,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','16','크라이슬러','크라이슬러','Y',16,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','17','닛산','닛산','Y',17,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','18','볼보','볼보','Y',18,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','19','재규어','재규어','Y',19,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','2','쉐보레','쉐보레','Y',2,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','20','푸조','푸조','Y',20,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','21','인피니티','인피니티','Y',21,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','22','포르쉐','포르쉐','Y',22,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','23','캐딜락','캐딜락','Y',23,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','24','시트로엥','시트로엥','Y',24,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','25','피아트','피아트','Y',25,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','26','벤틀리','벤틀리','Y',26,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','27','롤스로이스','롤스로이스','Y',27,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','28','람보르기니','람보르기니','Y',28,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','29','페라리','페라리','Y',29,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','3','르노삼성','르노삼성','Y',3,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','30','닷지','닷지','Y',30,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','31','로터스','로터스','Y',31,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','32','르노','르노','Y',32,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','33','링컨','링컨','Y',33,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','34','마이바흐','마이바흐','Y',34,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','35','마쯔다','마쯔다','Y',35,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','36','머큐리','머큐리','Y',36,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','37','미쓰비시','미쓰비시','Y',37,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','38','뷰익','뷰익','Y',38,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','39','사브','사브','Y',39,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','4','쌍용자동차','쌍용자동차','Y',4,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','40','사이언','사이언','Y',40,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','41','새턴','새턴','Y',41,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','42','스마트','스마트','Y',42,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','43','스바루','스바루','Y',43,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','44','스즈키','스즈키','Y',44,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','45','스코다','스코다','Y',45,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','46','알파로메오','알파로메오','Y',46,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','47','애스턴마틴','애스턴마틴','Y',47,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','48','어큐라','어큐라','Y',48,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','49','지프','지프','Y',49,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','5','제네시스','제네시스','Y',5,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','50','코닉세그','코닉세그','Y',50,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','51','파가니','파가니','Y',51,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','52','폰티악','폰티악','Y',52,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','53','허머','허머','Y',53,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','54','홀덴','홀덴','Y',54,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','55','마세라티','마세라티','Y',55,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','56','GMC','GMC','Y',56,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','57','Great Wall','Great Wall','Y',57,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','58','RUF','RUF','Y',58,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','59','W모터스','W모터스','Y',59,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','6','벤츠','벤츠','Y',6,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','60','국제차량제작','국제차량제작','Y',60,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','61','다이하쓰','다이하쓰','Y',61,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','62','다치아','다치아','Y',62,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','63','돈커부트','돈커부트','Y',63,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','64','드로리언','드로리언','Y',64,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','65','란치아','란치아','Y',65,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','66','마러시아','마러시아','Y',66,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','67','마잔티','마잔티','Y',67,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','68','마힌드라','마힌드라','Y',68,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','69','맥라렌','맥라렌','Y',69,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','7','BMW','BMW','Y',7,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','70','모건','모건','Y',70,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','71','미아일렉트릭','미아일렉트릭','Y',71,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','72','미쯔오카','미쯔오카','Y',72,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','73','복스홀','복스홀','Y',73,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','74','부가티','부가티','Y',74,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','75','북기은상','북기은상','Y',75,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','76','살린','살린','Y',76,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','77','세아트','세아트','Y',77,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','78','쉘비','쉘비','Y',78,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','79','쉘비슈퍼카','쉘비슈퍼카','Y',79,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','8','아우디','아우디','Y',8,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','80','스파이커','스파이커','Y',80,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','81','스피라','스피라','Y',81,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','82','아바쓰','아바쓰','Y',82,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','83','아브토바즈','아브토바즈','Y',83,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','84','알피나','알피나','Y',84,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','85','에쿠스 오토모티브','에쿠스 오토모티브','Y',85,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','86','엘레멘탈','엘레멘탈','Y',86,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','87','오펠','오펠','Y',87,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','88','이스즈','이스즈','Y',88,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','89','장링','장링','Y',89,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','9','폭스바겐','폭스바겐','Y',9,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','90','젠보','젠보','Y',90,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','91','카르마 오토모티브','카르마 오토모티브','Y',91,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','92','칼슨','칼슨','Y',92,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','93','케이터햄','케이터햄','Y',93,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','94','쿠오로스','쿠오로스','Y',94,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','95','타타','타타','Y',95,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','96','테슬라','테슬라','Y',96,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','97','포톤','포톤','Y',97,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','98','한국지엠','한국지엠','Y',98,NULL,NULL,NULL,NULL,'CAR'),('CAR_COMP','99','헤네시','헤네시','Y',99,NULL,NULL,NULL,NULL,'CAR'),('PRK_CELL_TYPE','P0','기본','기본영역(주차장)','Y',0,NULL,NULL,NULL,NULL,NULL),('PRK_CELL_TYPE','P1','소유','소유하고있는영역','Y',1,NULL,NULL,NULL,NULL,NULL),('PRK_CELL_TYPE','P2','미소유','소유하지않은영역','Y',2,NULL,NULL,NULL,NULL,NULL),('PRK_CELL_TYPE','P3','타겟영역','조회타겟영역','Y',3,NULL,NULL,NULL,NULL,NULL),('PRK_CELL_TYPE','P4','엘리베이터','엘리베이터영역','Y',4,NULL,NULL,NULL,NULL,NULL),('PRK_CELL_TYPE','P5','기타','기타영역','Y',5,NULL,NULL,NULL,NULL,NULL),('ROOT','CAR_COMP','자동차 제조사','자동차 제조사 리스트','Y',0,NULL,NULL,NULL,NULL,'CAR'),('ROOT','PRK_CELL_TYPE','주차장 CELL 타입','주차장 도면에서 CELL 타입을 구분한다.','Y',0,NULL,NULL,NULL,NULL,NULL),('ROOT','USER_TYPE','사용자구분','사용자를 구분한다','Y',0,NULL,NULL,NULL,NULL,NULL),('ROOT','USE_AT','사용여부','사용여부','Y',0,NULL,NULL,NULL,NULL,NULL),('USER_TYPE','1','일반사용자','기본 사용자','Y',0,NULL,NULL,NULL,NULL,NULL),('USER_TYPE','2','고급사용자','고급사용자','Y',1,NULL,NULL,NULL,NULL,NULL),('USER_TYPE','3','업무관리자','업무관리자','Y',2,NULL,NULL,NULL,NULL,NULL),('USER_TYPE','8','운영관리자','운영관리자','Y',3,NULL,NULL,NULL,NULL,NULL),('USER_TYPE','9','최고관리자','최고관리자','Y',4,NULL,NULL,NULL,NULL,NULL),('USE_AT','N','사용안함','사용안함','Y',1,NULL,NULL,NULL,NULL,NULL),('USE_AT','Y','사용','사용','Y',0,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `cmmn_code` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -81,7 +195,7 @@ CREATE TABLE `menu_info` (
 
 LOCK TABLES `menu_info` WRITE;
 /*!40000 ALTER TABLE `menu_info` DISABLE KEYS */;
-INSERT INTO `menu_info` VALUES ('M0000',NULL,'HOME','',NULL,'/index.do',NULL,NULL,'home',0,15,'Y',NULL,NULL),('M0001',NULL,'정보조회',NULL,NULL,NULL,NULL,NULL,NULL,1,15,'Y',NULL,NULL),('M0002',NULL,'정보관리',NULL,NULL,NULL,NULL,NULL,NULL,4,15,'Y',NULL,NULL),('M0003',NULL,'게시판',NULL,NULL,NULL,NULL,NULL,NULL,7,15,'Y',NULL,NULL),('M0004',NULL,'운영관리',NULL,NULL,NULL,NULL,NULL,NULL,10,15,'Y',NULL,NULL),('M0009',NULL,'공지사항',NULL,'M0003',NULL,NULL,NULL,NULL,8,15,'Y',NULL,NULL),('M0010',NULL,'문의사항',NULL,'M0003',NULL,NULL,NULL,NULL,9,15,'Y',NULL,NULL),('M0011',NULL,'사용자관리',NULL,'M0004',NULL,NULL,NULL,NULL,11,15,'Y',NULL,NULL),('M0012',NULL,'메뉴관리',NULL,'M0004','/mgr/mgr0001/menuList.do',NULL,NULL,NULL,12,15,'Y',NULL,NULL),('M0013',NULL,'코드관리',NULL,'M0004','',NULL,NULL,NULL,13,15,'Y',NULL,NULL),('M0014',NULL,'공통코드관리',NULL,'M0013','/mgr/mgr0002/codeList.do',NULL,NULL,'carat-r',14,15,'Y',NULL,NULL),('M0015',NULL,'차량코드관리',NULL,'M0013',NULL,NULL,NULL,NULL,15,15,'Y',NULL,NULL),('M0020',NULL,'차량조회',NULL,'M0001','','','','',2,15,'Y',NULL,NULL),('M0021',NULL,'차량정보관리',NULL,'M0002','/mgr/mgr0004/MGR0004$List.do','','','',5,15,'Y',NULL,NULL),('M0023',NULL,'주차정보관리',NULL,'M0002','/prk/prk0002/parkingMgrMain.do','','','',6,15,'Y',NULL,NULL),('M0024',NULL,'주차조회',NULL,'M0001','/prk/prk0001/parkingListMain.do','','','',3,15,'Y',NULL,NULL);
+INSERT INTO `menu_info` VALUES ('M0000',NULL,'HOME','',NULL,'/index.do',NULL,NULL,'home',0,15,'Y',NULL,NULL),('M0001',NULL,'정보조회',NULL,NULL,NULL,NULL,NULL,NULL,1,15,'Y',NULL,NULL),('M0002',NULL,'정보관리',NULL,NULL,NULL,NULL,NULL,NULL,4,15,'Y',NULL,NULL),('M0003',NULL,'게시판',NULL,NULL,NULL,NULL,NULL,NULL,7,15,'Y',NULL,NULL),('M0004',NULL,'운영관리',NULL,NULL,NULL,NULL,NULL,NULL,10,15,'Y',NULL,NULL),('M0009',NULL,'공지사항',NULL,'M0003',NULL,NULL,NULL,NULL,8,15,'Y',NULL,NULL),('M0010',NULL,'문의사항',NULL,'M0003',NULL,NULL,NULL,NULL,9,15,'Y',NULL,NULL),('M0011',NULL,'사용자관리',NULL,'M0004',NULL,NULL,NULL,NULL,11,15,'Y',NULL,NULL),('M0012',NULL,'메뉴관리',NULL,'M0004','/mgr/mgr0001/menuList.do',NULL,NULL,NULL,12,15,'Y',NULL,NULL),('M0013',NULL,'코드관리',NULL,'M0004','',NULL,NULL,NULL,13,15,'Y',NULL,NULL),('M0014',NULL,'공통코드관리',NULL,'M0013','/mgr/mgr0002/codeList.do',NULL,NULL,'carat-r',14,15,'Y',NULL,NULL),('M0020',NULL,'차량조회',NULL,'M0001','','','','',2,15,'Y',NULL,NULL),('M0021',NULL,'차량정보관리',NULL,'M0002','/mgr/mgr0004/MGR0004$List.do','','','',5,15,'Y',NULL,NULL),('M0023',NULL,'주차정보관리',NULL,'M0002','/prk/prk0002/parkingMgrMain.do','','','',6,15,'Y',NULL,NULL),('M0024',NULL,'주차조회',NULL,'M0001','/prk/prk0001/parkingListMain.do','','','',3,15,'Y',NULL,NULL),('M0025',NULL,'차량코드관리',NULL,'M0013','/mgr/mgr0005/codeList.do','','','',15,15,'Y',NULL,NULL);
 /*!40000 ALTER TABLE `menu_info` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -274,6 +388,35 @@ LOCK TABLES `svg_object_info` WRITE;
 INSERT INTO `svg_object_info` VALUES ('P0','','rect',NULL,'box P0',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'translate(0,0)','20','30'),('P1','','rect',NULL,'box P1',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'translate(0,0)','20','30'),('P2','','rect',NULL,'box P2',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'translate(0,0)','20','30'),('P3','','rect',NULL,'box P3',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'translate(0,0)','20','30'),('P4','','rect',NULL,'box P4',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'translate(0,0)','40','40');
 /*!40000 ALTER TABLE `svg_object_info` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `user_info`
+--
+
+DROP TABLE IF EXISTS `user_info`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_info` (
+  `USER_ID` varchar(20) NOT NULL,
+  `PASSWD` varchar(100) DEFAULT NULL,
+  `EMAIL` varchar(50) DEFAULT NULL,
+  `USER_AUTH` varchar(10) DEFAULT NULL,
+  `USER_KIND` varchar(15) DEFAULT NULL,
+  `USER_NM` varchar(15) DEFAULT NULL,
+  `PHONE` varchar(12) DEFAULT NULL,
+  PRIMARY KEY (`USER_ID`),
+  UNIQUE KEY `USER_INFO_PK` (`USER_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user_info`
+--
+
+LOCK TABLES `user_info` WRITE;
+/*!40000 ALTER TABLE `user_info` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user_info` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -284,4 +427,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-03-17 17:55:42
+-- Dump completed on 2017-03-20 17:13:34

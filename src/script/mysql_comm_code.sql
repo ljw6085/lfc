@@ -123,7 +123,8 @@ INSERT INTO `lfc`.`svg_object_info` (`CELL_TYPE`, `CELL_NM`, `SHAPE`, `STYLE_CLS
 -- 공통코드
 CREATE TABLE CMMN_CODE
 (
-	PARENT_CODE 	VARCHAR(20)		NOT NULL	, /* 그룹코드(대분류코드) */	
+	GRP_CODE		VARCHAR(20)	NULL, /* 그룹코드 */
+	PARENT_CODE 	VARCHAR(20)		NOT NULL	, /* 부모코드(대분류코드) */	
 	CODE			VARCHAR(20)	NOT NULL, /* 코드(소분류코드) */
 	CODE_NM			VARCHAR(60)	NULL	, /* 코드명 */
 	CODE_DC			VARCHAR(200)	NULL	, /* 코드설명 */

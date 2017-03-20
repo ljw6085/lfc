@@ -10,6 +10,7 @@
 		from CMMN_CODE
 		where 1=1
 		AND PARENT_CODE = 'ROOT'
+		AND GRP_CODE != 'CAR'
 		 <if test="divCode != null and divCode != '' ">
 			 AND CODE = #{divCode}
 		 </if>
@@ -34,6 +35,7 @@
 			LAST_REGISTER   as lastRegister
 		 from CMMN_CODE
 		 where 1=1
+		 AND GRP_CODE != 'CAR'
 		 <if test="parentCode != null and parentCode != '' ">
 			 AND PARENT_CODE = #{parentCode}
 		 </if>
@@ -51,6 +53,7 @@
 	<insert id="insertCmmnCode" parameterType="CmmnCodeVO" >
 		 insert into CMMN_CODE(
 			PARENT_CODE,
+			GRP_CODE,
 			CODE,
 			CODE_NM,
 			CODE_DC,
@@ -62,6 +65,7 @@
 			LAST_REGISTER 
 		) values(
 			#{parentCode},
+			#{grpCode},
 			#{code},
 			#{codeNm},
 			#{codeDc},

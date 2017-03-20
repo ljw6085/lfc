@@ -9,8 +9,15 @@ public class CmmnDivCodeVO {
 	private String divCodeNm;
 	private String divCodeDc;
 	private String divUseAt;
+	private String divGrpCode;
 	private List<CmmnCodeVO> codeList;
 	
+	public String getDivGrpCode() {
+		return divGrpCode;
+	}
+	public void setDivGrpCode(String divGrpCode) {
+		this.divGrpCode = divGrpCode;
+	}
 	public List<CmmnCodeVO> getCodeList() {
 		return codeList;
 	}
@@ -49,7 +56,8 @@ public class CmmnDivCodeVO {
 	}
 	@Override
 	public String toString() {
-		return "CmmnDivCodeVO [divParentCode=" + divParentCode + ", divCode=" + divCode + ", divCodeNm=" + divCodeNm + ", divCodeDc="
-				+ divCodeDc + ", divUseAt=" + divUseAt + ", codeList=" + codeList + "]";
+		return "CmmnDivCodeVO [divParentCode=" + divParentCode + ", divCode=" + divCode + ", divCodeNm=" + divCodeNm
+				+ ", divCodeDc=" + divCodeDc + ", divUseAt=" + divUseAt + ", divGrpCode=" + divGrpCode + ", codeList="
+				+ codeList + "]";
 	}
 }

@@ -68,7 +68,7 @@ $j.documents.push(function(){
 			<li><a href="#">
 				<img class="ui-li-thumb" />
 				<h2>
-				<img src="http://static.naver.net/m/auto/img/emblem/mnfco_16.png" width='35' height='35' style='vertical-align: middle;display: inline-block;'>
+				<div class='car-comp car-comp-1' style='vertical-align: middle;display: inline-block;width:35px;height:35px;'></div>
 				<div style='vertical-align: middle;display: inline-block;'>K3</div>
 				</h2>
 				<p class="ui-li-aside lastedModify">33루1234</p>
@@ -78,7 +78,7 @@ $j.documents.push(function(){
 			<li><a href="#">
 				<img class="ui-li-thumb" />
 				<h2>
-				<img src="http://static.naver.net/m/auto/img/emblem/mnfco_16.png" width='35' height='35' style='vertical-align: middle;display: inline-block;'>
+				<div class='car-comp car-comp-1' style='vertical-align: middle;display: inline-block;width:35px;height:35px;'></div>
 				<div style='vertical-align: middle;display: inline-block;'>K3</div>
 				</h2>
 				<p class="ui-li-aside lastedModify">33루1234</p>
