@@ -115,11 +115,12 @@ public class MGR0005$Controller extends SetLogger {
 	 * @return
 	 */
 	@RequestMapping(value = UrlMapping.MGR0005_DETAIL_SELECT_URL , method=RequestMethod.POST)
-	public @ResponseBody CmmnDivCodeVO  codeDetailList(@RequestBody CmmnDivCodeVO divCodeVo) {
+	public @ResponseBody CmmnDivCodeVO  codeDetailList(@RequestBody CmmnCodeVO codeVo) {
 		CmmnCodeVO VO = new CmmnCodeVO();
-		VO.setParentCode(divCodeVo.getDivCode());
-		CmmnDivCodeVO resultDivVo  = service.selectDivCode(divCodeVo);
-		List<CmmnCodeVO> resultCodeList = service.selectCmmnCodeList(VO);
+		CmmnDivCodeVO div = new CmmnDivCodeVO();
+		div.setDivCode(codeVo.getParentCode());
+		CmmnDivCodeVO resultDivVo  = service.selectDivCode(div);
+		List<CmmnCodeVO> resultCodeList = service.selectCmmnCodeList(codeVo);
 		resultDivVo.setCodeList(resultCodeList);
 		
 		return resultDivVo;

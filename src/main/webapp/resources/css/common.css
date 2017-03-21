@@ -101,6 +101,10 @@
 	background-image: url("./images/car-comp/car-comp-4.png");
 	background-size: cover;
 }
+.ui-icon-move:after {
+	background-image: url("./images/move.png");
+	background-size: cover;
+}
 
 
 

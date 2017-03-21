@@ -9,7 +9,9 @@
 			USE_AT as divUseAt
 		from CMMN_CODE
 		where 1=1
-		AND PARENT_CODE = 'ROOT'
+		AND (
+			PARENT_CODE = 'ROOT' OR PARENT_CODE = '' OR PARENT_CODE IS NULL
+		)
 		AND GRP_CODE != 'CAR'
 		 <if test="divCode != null and divCode != '' ">
 			 AND CODE = #{divCode}

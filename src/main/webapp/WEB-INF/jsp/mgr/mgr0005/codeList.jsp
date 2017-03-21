@@ -14,7 +14,7 @@ $j.documents.push(function(){
 		
 		$m.openMenuFromSwipe($uiPage);
 		
-		$form.find('.buttonBox').on('click',function(e){
+		$form.find('.infoButtonBox').on('click',function(e){
 			var $target = $(e.target);
 			switch (true) {
 				case $target.hasClass('codeAdd'):
@@ -30,10 +30,8 @@ $j.documents.push(function(){
 		
 		$("#carCodeList").on('click','li',function(){
 			var t = $(this);
-			setTimeout(function(){
-				var param = Common.getDataFromDoms( t );
-				$j.pageMove( '#codeInsert' , param );
-			},500)
+			var param = Common.getDataFromDoms( t );
+			$j.pageMove( '#codeInsert' , param );
 		});
 		
 	});
@@ -43,20 +41,24 @@ $j.documents.push(function(){
 	}
 	
 	var item = "";
-	item += "<li><a href='#'>";
+	item += "<li><a href='#' class='item'>";
 	item += "<input type='hidden' name='parentCode' value='%{divCode}'>";
-	item += "<h2>%{divCodeNm}</h2>";
-	item += "<p class='ui-li-aside'>%{divCode}</p>";
-	item += "<p>%{divCodeDc}</p>";
+	item += "<h2><span class='title'>코드명</span> %{divCodeNm}</h2>";
+	item += "<p class='ui-li-aside'>%{divUseAt}</p>";
+	item += "<p><span class='title'>코드</span> %{divCode}</p>";
+	item += "<p><span class='title'>코드설명</span> %{divCodeDc}</p>";
 	item += "</a></li>"
 	function selectCodeList( $form ){
 		var url = "<c:url value='/mgr/mgr0005/codeList.do'/>";
-Common.ajaxJson( url ,$form,function(data){
+		$("#carCodeList").html("");
+		Common.ajaxJson( url ,$form,function(data){
 
     		for( var i =0,len=data.length;i<len;i++){
+    			if( data[i].divUseAt == 'Y' ) data[i].divUseAt = '사용'
+    			else data[i].divUseAt = '사용안함'
+    			
 				var it = Common.matchedReplace( item, data[i]);
 				$("#carCodeList").append( it );
-    			
     		}
     		$("#carCodeList").listview('refresh');
     	});
@@ -64,46 +66,57 @@ Common.ajaxJson( url ,$form,function(data){
 	
 });
 </script>
+<style>
+	h2 .title { 
+		font-size:0.75em;
+		font-weight: normal;
+	}
+	.item .title {
+		color:#aaa;
+		margin-right:1em;
+	}
+	.disabledRow .itemCont{
+		color:#aaa;
+	}
+</style>
 <!-- form 단위로 이루어진 content -->
 <form name='codeSelectForm'>
 	<!-- 실제 구성될 화면페이지  영역 -->
 	<div class='main_content'>
 	<div id='searchBox'>
-		<table class='defaultTable'>
-				<colgroup>
-					<col style='width:20%;'/>
-					<col style='width:30%;'/>
-					<col style='width:20%;'/>
-					<col style='width:30%;'/>
-				</colgroup>
-				<tbody>
-					<tr>
-						<input type='hidden' name='divGrpCode' value='CAR'>
-						<th class='insertTh'>분류코드</th>
-						<td class='insertTd'><input type='text' name='divCode' data-mini="true" placeholder="분류코드"></td>
-						<th class='insertTh'>분류코드명</th>
-						<td class='insertTd'><input type='text' name='divCodeNm' data-mini="true" placeholder="분류코드명"></td>
-					</tr>
-					<tr>
-						<th class='insertTh'>사용여부</th>
-						<td class='insertTd' colspan='3' data-role="controlgroup" data-type="horizontal" data-mini="true">
-							<input type="radio" name="divUseAt" id="div_use_at_y" value="Y" checked="checked">
-					        <label for="div_use_at_y">사용</label>
-					        <input type="radio" name="divUseAt" id="div_use_at_n" value="N">
-					        <label for="div_use_at_n">사용안함</label>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+		<div class='ui-corner-all custom-corners ui-shadow '>
+			<div data-role="collapsible" class="ui-nodisc-icon ui-alt-icon">
+				<h3>조회조건</h3>
+				<input type='hidden' name='divParentCode'>
+				<div class="ui-field-contain">
+					<label for="divCodeInput" class='label'>분류코드</label>
+					<input type='search' id='divCodeInput' name='divCode' placeholder="분류코드" data-mini='true'>
+				</div>
+				<div class="ui-field-contain">
+					<label for="divCodeNmInput" class='label'>분류코드명</label>
+					<input type='search' id='divCodeNmInput' name='divCodeNm' placeholder="분류코드명" data-mini='true'>
+				</div>
+				<div class="ui-field-contain">
+					<label for="divCodeDcInput" class='label'>분류코드설명</label>
+					<input type='search' id='divCodeDcInput' name='divCodeDc' placeholder="분류코드설명" data-mini='true'>
+				</div>
+				<div class="ui-field-contain divUseAtRow">
+					<label for="" class='label'>사용여부</label>
+					<div class='divUseAt'></div>
+				</div>
+			</div>
+		</div>
 	</div>
-	<div class='buttonBox' style='text-align: right;margin-top:.5em;'>
-		<a href='#' class='btn codeAdd' data-icon='plus'>코드등록</a>
-		<a href='#' class='btn codeSelect' data-icon='search'>조회</a>
+	<div class='ui-grid-a infoButtonBox'>
+		<div class='ui-block-a'>
+			<a href='#' class='codeSelect' data-role='button' data-icon='search' data-mini='true'>조회</a>
+		</div>
+		<div class='ui-block-b'>
+			<a href='#' class='codeAdd' data-role='button' data-icon='plus' data-mini='true'>코드등록</a>
+		</div>
 	</div>
 	<div class='listWrap' >
-		<ul id='carCodeList' data-role="listview" data-inset="false"  class='dataList'>
-			
-		</ul>
+		<ul id='carCodeList' data-role="listview" data-inset="true"  class='dataList'></ul>
 	</div>
 	</div>
 	<!--// main_content  -->

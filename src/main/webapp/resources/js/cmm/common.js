@@ -639,20 +639,25 @@ var $j = {
 			if( params ) {
 				option.params = {}
 				$.extend(option.params, params);
+//				this.$page().jqmData("params",params)
 			}
-//			this.$page().jqmData("params",params);
-			this.$page().pagecontainer( "change", url , option);
+			this.$page().pagecontainer( "change", url , option );
 		}
 		,pageMoveCallback :function( callback ){
 			var t = this;
 			if( typeof callback == 'function' ){
-//				this.$page().on('pagebeforeshow',function(event,ui){
-//					callback( t.$page().jqmData('params') );
-//				});
+				/*this.$page()
+				.on('pagebeforeshow',function(event,ui){
+					callback( t.$page().jqmData('params') );
+				})
+				.on( "pagechange", function( event ) {
+//					callback(ui.options.params);
+					$j.refreshPage();
+				});*/
 				this.$page().pagecontainer({
-//					 page change 콜백함수.
 					change:function(event,ui){
 						callback(ui.options.params);
+//						$j.refreshPage();
 					}
 				});// page move
 			}
@@ -699,7 +704,9 @@ var COMPONENT ={
 				controllgroup.controlgroup( "container" ).append( $el );
 				$( $el[ 1 ] ).checkboxradio();
 			}
-			$j.refreshPage( $form );
+			
+			controllgroup.controlgroup('refresh');
+//			$j.refreshPage( $form );
 			return controllgroup;
 		}
 		/**
@@ -749,7 +756,10 @@ var COMPONENT ={
 				select.append( $el );
 			}
 			select.selectmenu();
-			$j.refreshPage();
+			select.selectmenu('refresh');
+			
+			return select;
+//			$j.refreshPage();
 		},
 		/**
 		 * checkbox 버튼을 생성해준다.
@@ -764,6 +774,57 @@ var COMPONENT ={
 			return this._radio_check(  'checkbox' ,option   ,$form);
 		},
 		flipSwtich:function(option){
+			var name 	 = option.name;
+			var appendTo = option.appendTo;
+			var cmmnCode = option.cmmnCode;
+			var target 	 = option.target;
+			var defaultVal = option.defaultVal;
+			var onVal = option.on;
+			
+			var codeMap;
+			if( typeof cmmnCode == 'string' ){
+				codeMap = Common.getCommonCode( cmmnCode );
+			}else{
+				codeMap = cmmnCode;
+			}
+			var controllgroup = $("<div data-role='controlgroup' data-type='horizontal' data-mini='true'></div>");
+			if( appendTo ){
+				target[appendTo](controllgroup)
+			}else{
+				target.append( controllgroup );
+			}
+			controllgroup.controlgroup();
+			
+			var select = $("<select name='"+name+"'  data-role='flipswitch' ></select>");
+			controllgroup.append( select );
+			var i=0;
+			for( var code in codeMap ){
+				
+				var value = codeMap[code];
+				var $el = $( "<option value='"+  code  +"'>"+value+"</option>" );
+				
+				if( (typeof defaultVal != 'undefined' && code == defaultVal) || (typeof defaultVal == 'undefined' && i++ == 0 ) ) {
+					$el[0].selected = true;
+				}
+				
+				select.append( $el );
+			}
+			
+			select.flipswitch();
+			if( option.onText ){
+				select.flipswitch( "option", "onText", option.onText )
+			}
+			if( option.offText ){
+				select.flipswitch( "option", "offText", option.offText )
+			}
+			select.find("option").each(function(){
+				if( this.value == onVal ){
+					select.find('option:last').after( $(this) );
+				}
+			});
+			
+			select.flipswitch('refresh');
+			controllgroup.controlgroup('refresh');
 			
 		}
 }

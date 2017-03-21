@@ -6,14 +6,20 @@
 	화면이동이 필요할때, jsp를 따로 관리하고자 하면
 	$j.documents 에 초기화 함수를 push 해야한다. 
 */
-var counter = 0;
+var counter = 0 , drawing = false;
 $j.documents.push(function(){
 	/** Form 단위로 스크립팅 한다. */
 	$j.documentReady('codeInsertForm', function($form,$uiPage){
 		var frm = $form[0];
 		MENU.createHeaderBackButton( $form.find('.header') );
 		var backBtn = $form.find('.header').find('a');
-		
+		$(backBtn).on('click',function(e){
+			if(drawing){
+				e.preventDefault();
+				return false;
+			}
+		});
+		$("#detailInfoPopup").popup();
 		var $codeDetailList = $form.find(".codeDetailList");
 		// 분류코드 라디오버튼 생성
 		var divUseAtRadio = COMPONENT.radio({
@@ -21,6 +27,14 @@ $j.documents.push(function(){
 			,name		: 'divUseAt'
 			,cmmnCode	: 'USE_AT'
 		});
+		
+		/* COMPONENT.flipSwtich({
+			target 		: $('.useAtBox')
+			,name		: 'useAt'
+			,cmmnCode	: 'USE_AT'
+			,on : 'Y'
+		}); */
+		
 		var initParams;
 		$j.pageMoveCallback(function(params){
 			$.mobile.loading('show');
@@ -59,53 +73,135 @@ $j.documents.push(function(){
 					
 				/* 삭제 */
 				case '_infoDelete':
-					var url = "<c:url value='/mgr/mgr0005/codeDelete.do'/>";
-					Common.ajaxJson( url , { divCode:frm.divCode.value } ,function(data){
-						if( data.result > 0 ){
-							alert("삭제됨");
-						}
-						$(backBtn).trigger('click');
-			    	});
+					var isDel = confirm('해당코드를 모두 삭제하시겠습니까?');
+					if( isDel ){
+						var url = "<c:url value='/mgr/mgr0005/codeDelete.do'/>";
+						Common.ajaxJson( url , { divCode:frm.divCode.value } ,function(data){
+							if( data.result > 0 ){
+								alert("삭제됨");
+							}
+							$(backBtn).trigger('click');
+				    	});
+					}
 					break;
 					
 					
 				/* 초기화 */
 				case '_infoReset':
-					initCodeList( $form, initParams );
+					var isReset = confirm('해당코드를 모두 초기화하시겠습니까?');
+					if( isReset) initCodeList( $form, initParams );
+					break;
+				case '_rowAdd':
+					counter++; // 전역변수
+					rowAdd( $form ,{
+						parentCode : frm.divCode.value
+					}, counter);
+					$codeDetailList.listview('refresh');
+					$j.refreshPage();
 					break;
 				default:
 					break;
 			}
 		});
 		
-		$form.find(".rowBtnBox").on('click',function(e){
-			switch ( e.target.id ) {
-				case '_rowAdd':
-					counter++; // 전역변수
-					rowAdd( $form ,{
-						parentCode : frm.divCode.value
-					}, counter);
-					break;
 		
-				default:
+		$(".detailInfoPopupButton").on('click',function(e){
+			e.preventDefault();
+			switch (e.target.id) {
+				case '_detailApply':
+					var popup = $("#detailInfoPopup");
+					var data = Common.getDataFromDoms( popup );
+					if( !data.code ) {
+						alert("코드를 입력하세요.");
+						return;
+					}
+					var li = popup.jqmData('clickedLi');
+					li.find('input:hidden').each(function(){
+						if( data[this.name] ){
+							this.value = data[this.name];
+							li.find('span.'+this.name).text( this.value );
+							if( this.name == 'useAt'){
+								var ret;
+								if( this.value == 'Y'){
+									ret = '사용'
+									li.removeClass('disabledRow');
+								}else{
+									ret = '사용안함'
+									li.addClass('disabledRow');
+								}
+								li.find('.useAtNm').text( ret );
+							}
+						}
+					});
+					$("#detailInfoPopup").popup('close');
+					
 					break;
+				case '_detailDelete':
+					var isDelete = confirm('삭제하시겠습니까?');
+					if( isDelete ){
+						$("#detailInfoPopup").popup('close')
+												.jqmData('clickedLi').remove();
+						refreshConrner($(".codeListWrap"));
+					}
+					break;
+				case '_detailCancel':
+					$("#detailInfoPopup").popup('close');
+					break;
+
+			default:
+				break;
 			}
-			
-		});//row add
+		});
 		
-		$uiPage.on( 'click', '.rowDelete', function(e){
-			$(e.target).closest('tr').remove();
-		});// delete
-	
-		$(".codeListTable").sortable({
-			items:" > tbody > tr"
+		
+		$form.find(".codeDetailList").on('click','li',function(e){
+			$("#detailInfoPopup").popup('open',{
+				transition:'pop'
+			});
+			var data = Common.getDataFromDoms( $(this) );
+			
+			$("#detailInfoPopup").jqmData('clickedLi', $(this) )
+			
+			var form = $("#detailInfoPopup").find('form')[0];
+			
+			for( var k in data ){
+				var el = form[k];
+				if( el  ) {
+					if( k == 'useAt'){
+						for( var i = 0,len=el.length;i<len;i++ ){
+							if( el[i].value == data[k] ) {
+								el[i].checked = true;
+							}
+							$(el).checkboxradio('refresh');
+						}
+						
+					}else{
+						el.value = data[k];
+						if( k == 'code'){
+							if( data[k] != ''){
+								el.disabled = true;
+								$(el).addClass('ui-state-disabled');
+							}else{
+								el.disabled = false;
+								$(el).removeClass('ui-state-disabled');
+							}
+						}
+					}
+				}
+			}
+			//detailInfoPopup
+		});
+		
+		$(".codeListWrap").sortable({
+			items:" > li"
 			,axis:'y'
-			,handle: ".move_icon"
+			,handle: ".itemEdit"
 	        ,opacity: 0.7
 	        ,delay: 50
 	        ,dropOnEmpty: true
 	        ,pullPlaceholder: false
-	        ,stop:function(e){
+	        ,stop:function(e , ui){
+	        	refreshConrner($(this));
 	        }
 			,helper: function(e, ui) {
 				ui.children().each(function() {
@@ -116,7 +212,14 @@ $j.documents.push(function(){
 		});
 		
 	});
-	
+	function refreshConrner( $target ){
+		$target.find("li.ui-first-child").removeClass('ui-first-child')
+		.end()
+		.find("li.ui-last-child").removeClass('ui-last-child');
+		$target.find("li:first").addClass("ui-first-child")
+		.end()
+		.find("li:last").addClass("ui-last-child");
+	}
 	function initCodeList( $form,  params ){
 		var frm = $form[0];
 		var $codeDetailList = $form.find(".codeDetailList");
@@ -126,17 +229,25 @@ $j.documents.push(function(){
 			//수정
 			frm.divCode.disabled = true; // 수정인경우 `분류코드`수정을 막는다.
 			var url = "<c:url value='/mgr/mgr0005/codeDetailSelect.do'/>";
+			console.log( params );
 			// 분류코드 및 상세코드 조회&세팅
 			Common.ajaxJson( url , params ,function(data){
 				for(var k in data ){
 					var dt = data[k]
 						,el = frm[k];
+					
 					switch (k) {
 						case 'codeList': // 상세코드 List 생성
-							comLib.asyncLoop(dt,function(i, item){
-									rowAdd( $form , item , i );
-								 },function(){
-									 $.mobile.loading('hide');
+							comLib.asyncLoop( dt , function(i, item){
+								drawing = true;
+								var row = rowAdd( $form , item , i );
+								$codeDetailList.listview('refresh');
+								if( i == 5 ) $j.refreshPage();
+							},function(){ 
+								//callback
+								drawing = false;
+								$.mobile.loading('hide');
+								$j.refreshPage();
 							});
 							break;
 						case 'divParentCode': // 분류코드의 부모코드를 ROOT로 하드코딩
@@ -147,35 +258,44 @@ $j.documents.push(function(){
 					}
 					
 				}
-				counter = $codeDetailList.find('tr').length;
 	    	});
 			
 		}else{
 			//등록 & 초기화
 			frm.divCode.disabled = false;
 			$form.find('input:text').val("");
+			$.mobile.loading('hide');
 		}
 	}
 	
 	// dom 관리방법 강구해볼것	- value mapping #.+#
-	var row ="<tr>";
+	var row ="<li><a href='#' class='item' >";
+		row += "<input type='hidden' name='grpCode' value='CAR'>"
 		row += "<input type='hidden' name='parentCode' value='%{parentCode}'><input type='hidden' name='sort' value='%{sort}'>"
-		row += "<td style='text-align:center;'><div class='move_icon'></div></td>"
-		row += "<td><input type='text' data-mini='true' name='code' style='text-align:center' class='filter:require:max[6]:eng:num' placeholder='코드' size='6' value='%{code}'></td>"
-		row += "<td><input type='text' data-mini='true'  name='codeNm' class='filter:require' placeholder='코드명' value='%{codeNm}'></td>"
-		row += "<td><input type='text' data-mini='true'  name='codeDc' placeholder='코드설명' value='%{codeDc}' style='width:100%;'></td>"
-		row += "<td class='codeUseAt' style='text-align: center;'></td>"
-		row += "<td style='text-align: center;'> <a href='#' class='btnIcon rowDelete' data-icon='delete' data-color='red' data-notext='true'>삭제</a></td>"
-		row += "</tr>";
-		
+		row += "<input type='hidden' name='code' value='%{code}'>"
+		row += "<input type='hidden' name='codeNm' value='%{codeNm}'>"
+		row += "<input type='hidden' name='codeDc' value='%{codeDc}'>"
+		row += "<input type='hidden' name='useAt' value='%{useAt}'>"
+		row += "<p class='ui-li-aside useAtNm'>%{useAtNm}</div>"
+		row += "<h2 class='itemCont itemCodeNm'><span class='title'>코드명</span> <span class='codeNm'>%{codeNm}</span></h2>"
+		row += "<p class='itemCont itemContent'><span class='title'>코드</span> <span class='code'>%{code}</span></p>"
+		row += "<p class='itemCont itemDesc'><span class='title'>코드설명</span><span class='codeDc'>%{codeDc}</span></p>";
+		row += "</a>";
+		row += "<a href='#' class='itemEdit'></a></li>";
+	
 	/* 상세코드List row 추가 함수 */
 	function rowAdd( $form , data , counter){
+		if( !data )return;
+		var useAt = 	data.useAt;
+		if( useAt == 'Y') data.useAtNm = '사용';
+		else if( useAt == 'N') data.useAtNm = '사용안함'
 		//row 전역변수
 		var _row = Common.matchedReplace(row, data);
 		
 		var $row = $( _row );
+		if ( useAt == 'N' )$row.addClass('disabledRow');
 		$(".codeDetailList").append($row);
-		var $target = $row.find(".codeUseAt");
+		/* var $target = $row.find(".useAtBox");
 		
 		var radio = COMPONENT.radio({
 			target 		: $target	
@@ -183,84 +303,120 @@ $j.documents.push(function(){
 			,cmmnCode	:'USE_AT'
 			,classes 	: 'codeUseAt'
 			,defaultVal : data.useAt
-		},$form);
+		}); */
+		return $row;
 	}
 });
 </script> 
 <style>
-	.insertTh { font-size: 0.9em;}
+	.ui-field-contain { padding:0;padding-top:0.3em; border:0;}
+	.custom-corners .ui-bar {
+		-webkit-border-top-left-radius: inherit;
+		border-top-left-radius: inherit;
+		-webkit-border-top-right-radius: inherit;
+		border-top-right-radius: inherit;
+	}
+	.custom-corners .ui-body {
+		border-top-width: 0;
+		-webkit-border-bottom-left-radius: inherit;
+		border-bottom-left-radius: inherit;
+		-webkit-border-bottom-right-radius: inherit;
+		border-bottom-right-radius: inherit;
+	}
+	.ui-field-contain .label{display:none;}
+	@media ( min-width: 28em ) {
+		.ui-field-contain  .label{display:block;}
+	} 
+	.ui-input-text { margin: 0.1em;}
+	.itemCont { color:#333; }
+	
+	.ui-block-a, .ui-block-b, .ui-block-c { padding:0;}
+	
+	.divUseAtRow{text-align: right;}
 </style>
 <div data-role="page" id='codeInsert'><!-- second page start -->
 	<form name='codeInsertForm' >
-		<div class='header' data-role='header'><h1>공통코드 등록/수정</h1></div>
+		<div class='header' data-role='header'><h1>차량정보코드 등록/수정</h1></div>
 		<div role='main' class='ui-content' >
 			<div id='infoArea' style='text-align: center;'>
-				<table class='defaultTable' >
-					<colgroup>
-						<col style='width:20%;'/>
-						<col style='width:30%;'/>
-						<col style='width:20%;'/>
-						<col style='width:30%;'/>
-					</colgroup>
-					<tbody>
-						<tr>
-							<td class='insertTd' colspan='4' style='border:0;padding:0;'>
-								<div class='buttonBox infoBtnBox' style='margin-bottom:.5em;'>
-									<a href='#' id='_infoSave' class='btn save' data-icon='check' data-mini='true'>저장</a>
-									<a href='#' id='_infoDelete' class='btn delete' data-icon='delete' data-mini='true' data-color='red'>삭제</a>
-									<a href='#' id='_infoReset' class='btn reset' data-icon='refresh' data-mini='true' data-color='gray'>초기화</a>
-								</div>
-							</td>
-						</tr>
-						<tr class='searchArea'>
-							<th class='insertTh'>분류코드</th>
-							<td class='insertTd'><input type='hidden' name='divParentCode' value='ROOT'>
-								<input type='text' name='divCode' placeholder="분류코드">
-							</td>
-							<th class='insertTh'>분류코드명</th>
-							<td class='insertTd'><input type='text' name='divCodeNm' placeholder="분류코드명" data-mini='true'></td>
-						</tr>
-						<tr class='searchArea'>
-							<th class='insertTh'>분류코드설명</th>
-							<td class='insertTd'><input type='text' name='divCodeDc' placeholder="분류코드설명" data-mini='true'></td>
-							<th class='insertTh'>사용여부</th>
-							<td class='insertTd divUseAt'></td>
-						</tr>
-						<tr>
-							<td class='insertTd' colspan='4' style='border:0;'>
-								<div class='buttonBox rowBtnBox' style='margin-top:.5em;'>
-									<a href='#' id='_rowAdd' class='btn rowAdd' data-icon='plus' data-mini='true'>행추가</a>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td class='insertTd' colspan='4' style='border:0;width:100%'>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-				<table class='defaultTable codeListTable'  style='width:100%'>
-					<colgroup>
-						<col style='width:10%'>
-						<col style='width:10%'>
-						<col style='width:20%'>
-						<col style='width:30%'>
-						<col style='width:20%'>
-						<col style='width:10%'>
-					</colgroup>
-					<thead>
-						<tr>
-							<th class='insertTh'>이동</th>
-							<th class='insertTh'>코드</th>
-							<th class='insertTh'>코드명</th>
-							<th class='insertTh'>코드설명</th>
-							<th class='insertTh'>사용여부</th>
-							<th class='insertTh'>삭제</th>
-						</tr>
-					</thead>
-					<tbody class='codeDetailList'></tbody>
-				</table>
+				<div class='ui-corner-all custom-corners ui-shadow '>
+					<div data-role="collapsible" class="ui-nodisc-icon ui-alt-icon">
+						<h3>
+							분류코드정보
+						</h3>
+						<input type='hidden' name='divParentCode'>
+						<div class="ui-field-contain">
+							<label for="divCodeInput" class='label'>분류코드</label>
+							<input type='text' id='divCodeInput' name='divCode' placeholder="분류코드" data-mini='true'>
+						</div>
+						<div class="ui-field-contain">
+							<label for="divCodeNmInput" class='label'>분류코드명</label>
+							<input type='text' id='divCodeNmInput' name='divCodeNm' placeholder="분류코드명" data-mini='true'>
+						</div>
+						<div class="ui-field-contain">
+							<label for="divCodeDcInput" class='label'>분류코드설명</label>
+							<input type='text' id='divCodeDcInput' name='divCodeDc' placeholder="분류코드설명" data-mini='true'>
+						</div>
+						<div class="ui-field-contain divUseAtRow">
+							<label for="" class='label'>사용여부</label>
+							<div class='divUseAt'></div>
+						</div>
+					</div>
+				</div>
+				<div class='ui-grid-a infoBtnBox'>
+					<div class='ui-block-a'>
+						<a href='#' data-role='button'  id='_infoSave' class='save' data-icon='check' data-mini='true'>저장</a>
+					</div>
+					<div class='ui-block-b'>
+						<a href='#' data-role='button' id='_infoDelete' class='delete' data-icon='delete' data-mini='true'>삭제</a>
+					</div>
+				</div>
+				<div class='ui-grid-a infoBtnBox'>
+					<div class='ui-block-a'>
+						<a href='#' data-role='button' id='_infoReset' class='reset' data-icon='refresh' data-mini='true'>초기화</a>
+					</div>
+					<div class='ui-block-b'>
+						<a href='#' id='_rowAdd' class='rowAdd' data-role='button' data-icon='plus' data-mini='true'>행추가</a>
+					</div>
+				</div>
+				<div class='listWrap'>
+					<ul class='codeDetailList codeListWrap' data-role='listview' data-inset='true' data-split-icon="move" data-split-theme="a" class='ui-nodisc-icon'>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</form>
+<div id='detailInfoPopup' class='custom-corners' style='background: #fff;min-width:17em;' data-role="popup" data-overlay-theme="a">
+	<form name='detailInfoPopupForm'>
+	<h3 class='ui-bar ui-bar-a' style='margin:0;'>코드상세보기</h3>
+	<div style='margin:1em;margin-top:0;'>
+		<div class="ui-field-contain">
+			<label for="detailCode" class='detailLabel'>코드</label>
+			<input type='text' id='detailCode' name='code' placeholder="코드" data-mini='true'>
+		</div>
+		<div class="ui-field-contain">
+			<label for="detailCodeNm" class='detailLabel'>코드명</label>
+			<input type='text' id='detailCodeNm' name='codeNm' placeholder="코드명" data-mini='true'>
+		</div>
+		<div class="ui-field-contain">
+			<label for="detailCodeDc" class='detailLabel'>코드설명</label>
+			<input type='text' id='detailCodeDc' name='codeDc' placeholder="코드설명" data-mini='true'>
+		</div>
+		<div class="ui-field-contain" >
+			<label for="" class='detailLabel'>사용여부</label>
+			<div data-role="controlgroup" data-type="horizontal" data-mini="true">
+				<input type="radio" name="useAt" id="detailUseAt_y" value="Y" checked>
+				<label for="detailUseAt_y">사용</label>
+				<input type="radio" name="useAt" id="detailUseAt_n" value="N">
+				<label for="detailUseAt_n">사용안함</label>
+			</div>
+		</div>
+	</div>
+	<div class='detailInfoPopupButton'>
+		<a href='#' id='_detailApply' data-role='button' data-icon='check' data-mini='true'>적용</a>
+		<a href='#' id='_detailDelete' data-role='button' data-icon='delete' data-mini='true'>삭제</a>
+		<a href='#' id='_detailCancel' data-role='button' data-icon='back' data-mini='true' data-rel='close'>닫기</a>
+	</div>
+	</form>
+</div>
 </div>

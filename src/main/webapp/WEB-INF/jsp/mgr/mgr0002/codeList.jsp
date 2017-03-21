@@ -54,6 +54,7 @@ $j.documents.push(function(){
 	function selectCodeList( $form, grid ){
 		var url = "<c:url value='/mgr/mgr0002/codeList.do'/>";
     	Common.ajaxJson( url ,$form,function(data){
+    		console.log( data );
 			grid.reload( data );
     	});
 	}

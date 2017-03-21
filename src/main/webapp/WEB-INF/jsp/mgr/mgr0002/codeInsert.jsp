@@ -26,6 +26,7 @@ $j.documents.push(function(){
 		$j.pageMoveCallback(function(params){
 			initParams = params;
 			initCodeList( $form, params );
+// 			$j.refreshPage( $form );
 		});
 		/* $( ":mobile-pagecontainer" ).pagecontainer({
 			// page change 콜백함수.

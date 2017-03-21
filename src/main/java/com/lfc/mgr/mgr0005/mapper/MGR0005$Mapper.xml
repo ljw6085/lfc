@@ -3,24 +3,25 @@
 <mapper namespace="MGR0005">
 	<select id="selectDivCodeList" parameterType="CmmnDivCodeVO" resultType="CmmnDivCodeVO">
 		select
-			CODE as divCode,
-			CODE_NM as divCodeNm,
-			CODE_DC as divCodeDc,
-			GRP_CODE as divGrpCode,
-			USE_AT as divUseAt
-		from CMMN_CODE
+			A.CODE as divCode,
+			A.CODE_NM as divCodeNm,
+			A.CODE_DC as divCodeDc,
+			A.GRP_CODE as divGrpCode,
+			A.USE_AT as divUseAt
+		from CMMN_CODE A , CMMN_CODE B 
 		where 1=1
-		AND PARENT_CODE = 'ROOT'
-		AND GRP_CODE = 'CAR'
+		AND A.CODE = B.PARENT_CODE 
+		AND A.GRP_CODE = 'CAR' 
 		 <if test="divCode != null and divCode != '' ">
-			 AND CODE = #{divCode}
+			 AND A.CODE = #{divCode}
 		 </if>
 		 <if test="divCodeNm != null and divCodeNm != '' ">
-			 AND CODE_NM = #{divCodeNm}
+			 AND A.CODE_NM LIKE CONCAT( '%', #{divCodeNm} , '%' )
 		 </if>
 		 <if test="divUseAt != null and divUseAt != '' ">
-			 AND USE_AT = #{divUseAt}
+			 AND A.USE_AT = #{divUseAt}
 		 </if>
+		GROUP BY A.CODE
 	</select>	
 	<select id="selectCmmnCode" parameterType="CmmnCodeVO" resultType="CmmnCodeVO">
 		 select
@@ -36,7 +37,9 @@
 			LAST_REGISTER   as lastRegister
 		 from CMMN_CODE
 		 where 1=1
-		 AND PARENT_CODE != 'ROOT'
+		 AND (
+			PARENT_CODE != 'ROOT' AND PARENT_CODE != '' AND PARENT_CODE IS NOT NULL
+		 )
 		 AND GRP_CODE = 'CAR'
 		 <if test="parentCode != null and parentCode != '' ">
 			 AND PARENT_CODE = #{parentCode}

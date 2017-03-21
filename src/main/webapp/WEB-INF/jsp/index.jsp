@@ -20,7 +20,7 @@
 			MENU.createMenuButton( 'indexMenu_page2' ,'user');
 			
 			$("#codeList").bind('click',function(e){
-				location.href=CONTEXT_PATH+'/mgr/mgr0002/codeList.do';
+				location.href=CONTEXT_PATH+'/mgr/mgr0005/codeList.do';
 			});
 			$("#menuList").bind('click',function(e){
 				location.href=CONTEXT_PATH+'/mgr/mgr0001/menuList.do';
