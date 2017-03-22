@@ -115,9 +115,9 @@ $j.documents.push(function(){
 
 <!-- 화면 하단 include  -->
 <!-- ################################# bottom.jsp -->
-<div class='footer'>
+<!-- <div class='footer'>
 	<h1 style='text-align: center;'>Footer</h1>
-</div>
+</div> -->
 <c:import url="/mgr/mgr0004/MGR0004$DetailSearch.do"></c:import>
 </div><!-- page -->
 <script>

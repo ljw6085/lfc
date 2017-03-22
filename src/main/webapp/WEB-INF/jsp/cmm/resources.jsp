@@ -16,14 +16,14 @@
 $(document).ready(function(){
 	$(".header").attr({
 		"data-role":"header"
-		,'data-position':'fixed'
+// 		,'data-position':'fixed'
 // 		,'data-fullscreen':true
 	});
-	$(".footer").attr({
+	/* $(".footer").attr({
 		"data-role":"footer"
-			,'data-position':'fixed'
-//	 		,'data-fullscreen':true
-		});
+// 			,'data-position':'fixed'
+	 		,'data-fullscreen':true
+		}); */
 });
 </script>
 <link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/jquery-ui.css">

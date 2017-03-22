@@ -29,6 +29,7 @@ $j.documents.push(function(){
 		});
 		
 		$("#carCodeList").on('click','li',function(){
+			if( $(this).hasClass('noData') ) return;
 			var t = $(this);
 			var param = Common.getDataFromDoms( t );
 			$j.pageMove( '#codeInsert' , param );
@@ -48,19 +49,25 @@ $j.documents.push(function(){
 	item += "<p><span class='title'>코드</span> %{divCode}</p>";
 	item += "<p><span class='title'>코드설명</span> %{divCodeDc}</p>";
 	item += "</a></li>"
+	var noItem = "<li class='noData'>조회된 데이터가 없습니다.</li>";
 	function selectCodeList( $form ){
+		$.mobile.loading('show');
 		var url = "<c:url value='/mgr/mgr0005/codeList.do'/>";
 		$("#carCodeList").html("");
 		Common.ajaxJson( url ,$form,function(data){
-
-    		for( var i =0,len=data.length;i<len;i++){
-    			if( data[i].divUseAt == 'Y' ) data[i].divUseAt = '사용'
-    			else data[i].divUseAt = '사용안함'
-    			
-				var it = Common.matchedReplace( item, data[i]);
-				$("#carCodeList").append( it );
+	
+    		if( !data.length ) $("#carCodeList").append( noItem );
+    		else{
+	    		for( var i =0,len=data.length;i<len;i++){
+	    			if( data[i].divUseAt == 'Y' ) data[i].divUseAt = '사용'
+	    			else data[i].divUseAt = '사용안함'
+	    			
+					var it = Common.matchedReplace( item, data[i]);
+					$("#carCodeList").append( it );
+	    		}
     		}
     		$("#carCodeList").listview('refresh');
+    		$.mobile.loading('hide');
     	});
 	}
 	
@@ -109,14 +116,16 @@ $j.documents.push(function(){
 	</div>
 	<div class='ui-grid-a infoButtonBox'>
 		<div class='ui-block-a'>
-			<a href='#' class='codeSelect' data-role='button' data-icon='search' data-mini='true'>조회</a>
+			<a href='#' class='codeAdd' data-role='button' data-icon='plus' data-mini='true'>코드등록</a>
 		</div>
 		<div class='ui-block-b'>
-			<a href='#' class='codeAdd' data-role='button' data-icon='plus' data-mini='true'>코드등록</a>
+			<a href='#' class='codeSelect' data-role='button' data-icon='search' data-mini='true'>조회</a>
 		</div>
 	</div>
 	<div class='listWrap' >
-		<ul id='carCodeList' data-role="listview" data-inset="true"  class='dataList'></ul>
+		<ul id='carCodeList' data-role="listview" data-inset="true"  class='dataList'>
+			<li class='noData'>조회된 데이터가 없습니다.</li>
+		</ul>
 	</div>
 	</div>
 	<!--// main_content  -->

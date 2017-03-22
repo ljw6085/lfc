@@ -74,6 +74,10 @@
 .codeListTable th{ padding: .5em !important; } 
 .codeListTable .ui-sortable-helper { display: table; }
 
+
+
+.noData { text-align: center !important;}
+
 /******************************************************************************************* car icon */
 .car-comp{
 	max-width:80px;

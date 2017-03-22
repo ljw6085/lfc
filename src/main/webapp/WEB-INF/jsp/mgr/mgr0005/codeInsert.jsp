@@ -91,12 +91,18 @@ $j.documents.push(function(){
 					var isReset = confirm('해당코드를 모두 초기화하시겠습니까?');
 					if( isReset) initCodeList( $form, initParams );
 					break;
+				/* 행추가 */
 				case '_rowAdd':
 					counter++; // 전역변수
 					rowAdd( $form ,{
 						parentCode : frm.divCode.value
 					}, counter);
 					$codeDetailList.listview('refresh');
+					
+					$('body').animate( { 
+							scrollTop :  $codeDetailList.find('li:last').offset().top 
+					},200 );
+					
 					$j.refreshPage();
 					break;
 				default:
@@ -104,6 +110,37 @@ $j.documents.push(function(){
 			}
 		});
 		
+		var parentCodeInfo = "<div><span class='title'></span><span class='selected %{isError}'>선택</span> | <span class='parentCode %{isError}'>%{code}</span> | <span class='parentCodeNm %{isError}'>%{codeNm}</span> </div>";
+		$("#divParentCodeInput").on('keyup',function(){
+			var url = "<c:url value='/mgr/mgr0005/selectParentCode.do'/>";
+			var $t = $(this);
+			var val = $t.val();
+			Common.ajaxJson( url , { code : val } ,function(data){
+				var res;
+				console.log( data , val );
+				if( val == 'ROOT' || !val ){
+					$(".parentCodeInfo").html( "" );
+					$t.parent('.ui-input-search').removeClass('error');
+				}else if( data.length == 0  ){
+					$t.parent('.ui-input-search').addClass('error');
+					res = Common.matchedReplace( parentCodeInfo ,{
+						code:'Error'
+						,codeNm :'존재하지않는코드'
+						,isError:'isError'
+					});
+					$(".parentCodeInfo").html( res );
+				}else{
+					$(".parentCodeInfo").html( "" );
+					for(var i = 0 , len = data.length; i< len ;i++){
+						$t.parent('.ui-input-search').removeClass('error');
+						res = Common.matchedReplace( parentCodeInfo , data[i] );
+						$(".parentCodeInfo").append( res );
+					}
+				}
+				
+			});
+			
+		});
 		
 		$(".detailInfoPopupButton").on('click',function(e){
 			e.preventDefault();
@@ -229,7 +266,6 @@ $j.documents.push(function(){
 			//수정
 			frm.divCode.disabled = true; // 수정인경우 `분류코드`수정을 막는다.
 			var url = "<c:url value='/mgr/mgr0005/codeDetailSelect.do'/>";
-			console.log( params );
 			// 분류코드 및 상세코드 조회&세팅
 			Common.ajaxJson( url , params ,function(data){
 				for(var k in data ){
@@ -251,13 +287,15 @@ $j.documents.push(function(){
 							});
 							break;
 						case 'divParentCode': // 분류코드의 부모코드를 ROOT로 하드코딩
-							if( null ==  dt ) el.value='ROOT';
+							if( !dt ) el.value='ROOT';
 						default:// 나머지값 세팅
 							if( el )  el.value = dt; 
 							break;
 					}
 					
 				}
+				
+				$("#divParentCodeInput").trigger('keyup');
 	    	});
 			
 		}else{
@@ -333,6 +371,14 @@ $j.documents.push(function(){
 	.ui-block-a, .ui-block-b, .ui-block-c { padding:0;}
 	
 	.divUseAtRow{text-align: right;}
+	
+	.ui-input-search.error { border:1px solid red !important; background: #ffc1c1 !important;}
+	.parentCodeInfo { font-size:0.7em;margin:1em;text-align: right; overflow: hidden;}
+	.parentCodeInfo .title { display: inline-block; }
+	.parentCodeInfo .parentCode { display: inline-block; margin:0 .3em;}
+	.parentCodeInfo .parentCodeNm { display: inline-block;margin:0 .3em; }
+	.isError { color:red !important;}
+	.selected.isError{color:#ddd !important}
 </style>
 <div data-role="page" id='codeInsert'><!-- second page start -->
 	<form name='codeInsertForm' >
@@ -344,7 +390,11 @@ $j.documents.push(function(){
 						<h3>
 							분류코드정보
 						</h3>
-						<input type='hidden' name='divParentCode'>
+						<div class="ui-field-contain">
+							<label for="divParentCodeInput" class='label'>부모코드</label>
+							<input type='search' id='divParentCodeInput' name='divParentCode' placeholder="부모코드" data-mini='true'>
+							<div class='parentCodeInfo'></div>
+						</div>
 						<div class="ui-field-contain">
 							<label for="divCodeInput" class='label'>분류코드</label>
 							<input type='text' id='divCodeInput' name='divCode' placeholder="분류코드" data-mini='true'>
