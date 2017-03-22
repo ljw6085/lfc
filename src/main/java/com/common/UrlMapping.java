@@ -119,6 +119,8 @@ public class UrlMapping {
 	
 	/** url  : 공통코드관리 상세조회 */
 	public static final String MGR0005_DETAIL_SELECT_URL="/mgr/mgr0005/codeDetailSelect.do";
+	/** url  : 부모코드 조회 */
+	public static final String MGR0005_PARENT_CODE_SELECT_URL="/mgr/mgr0005/selectParentCode.do";
 	
 /***************************************************************************************************/
 	

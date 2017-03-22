@@ -47,4 +47,11 @@ public class MGR0005$ServiceImpl extends SetLogger implements MGR0005$Service{
 	public int insertCmmnCode(CmmnCodeVO vo) {
 		return dao.insert("MGR0005.insertCmmnCode",vo);
 	}
+
+	@Override
+	public List<CmmnCodeVO> selectParentCode(CmmnCodeVO param) {
+		List<CmmnCodeVO> result = dao.selectList("MGR0005.selectParentCode",param);
+		if( null == result ) result = new ArrayList<CmmnCodeVO>();
+		return result;
+	}
 }

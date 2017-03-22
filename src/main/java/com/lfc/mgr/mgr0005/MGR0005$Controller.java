@@ -125,6 +125,15 @@ public class MGR0005$Controller extends SetLogger {
 		
 		return resultDivVo;
 	}
+	/**
+	 * 공통코드 상세조회 - ajax
+	 * @param param
+	 * @return
+	 */
+	@RequestMapping(value = UrlMapping.MGR0005_PARENT_CODE_SELECT_URL , method=RequestMethod.POST)
+	public @ResponseBody List<CmmnCodeVO>  selectParentCode(@RequestBody CmmnCodeVO codeVo) {
+		return service.selectParentCode(codeVo);
+	}
 	
 	
 	/**

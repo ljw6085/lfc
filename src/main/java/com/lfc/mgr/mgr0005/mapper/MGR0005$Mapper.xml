@@ -7,7 +7,8 @@
 			A.CODE_NM as divCodeNm,
 			A.CODE_DC as divCodeDc,
 			A.GRP_CODE as divGrpCode,
-			A.USE_AT as divUseAt
+			A.USE_AT as divUseAt,
+			A.PARENT_CODE as divParentCode
 		from CMMN_CODE A , CMMN_CODE B 
 		where 1=1
 		AND A.CODE = B.PARENT_CODE 
@@ -23,6 +24,16 @@
 		 </if>
 		GROUP BY A.CODE
 	</select>	
+	<select id="selectParentCode" parameterType="CmmnCodeVO" resultType="CmmnCodeVO">
+		select
+			CODE			as code,
+			CODE_NM			as codeNm
+		 from CMMN_CODE
+		 where 1=1
+		 <if test="code != null and code != '' ">
+			 AND CODE = #{code}
+		 </if>
+	</select>
 	<select id="selectCmmnCode" parameterType="CmmnCodeVO" resultType="CmmnCodeVO">
 		 select
 			PARENT_CODE		as parentCode,

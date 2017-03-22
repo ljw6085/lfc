@@ -7,6 +7,7 @@ import com.lfc.mgr.mgr0002.vo.CmmnDivCodeVO;
 
 public interface MGR0005$Service {
 	
+	public List<CmmnCodeVO> selectParentCode(CmmnCodeVO param);
 	public List<CmmnDivCodeVO> selectDivCodeList(CmmnDivCodeVO param);
 	public CmmnDivCodeVO selectDivCode(CmmnDivCodeVO vo);
 	public List<CmmnCodeVO> selectCmmnCodeList(CmmnCodeVO vo);
