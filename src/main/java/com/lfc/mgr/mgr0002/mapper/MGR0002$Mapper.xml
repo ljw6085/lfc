@@ -12,7 +12,7 @@
 		AND (
 			PARENT_CODE = 'ROOT' OR PARENT_CODE = '' OR PARENT_CODE IS NULL
 		)
-		AND GRP_CODE != 'CAR'
+		AND (  GRP_CODE != 'CAR' OR  GRP_CODE IS NULL )
 		 <if test="divCode != null and divCode != '' ">
 			 AND CODE = #{divCode}
 		 </if>
@@ -37,7 +37,7 @@
 			LAST_REGISTER   as lastRegister
 		 from CMMN_CODE
 		 where 1=1
-		 AND GRP_CODE != 'CAR'
+		 AND ( GRP_CODE != 'CAR' OR  GRP_CODE IS NULL )
 		 <if test="parentCode != null and parentCode != '' ">
 			 AND PARENT_CODE = #{parentCode}
 		 </if>

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.common.SetLogger;
 import com.common.UrlMapping;
+import com.common.utils.VAR;
 import com.lfc.mgr.mgr0002.vo.CmmnCodeVO;
 import com.lfc.mgr.mgr0002.vo.CmmnDivCodeVO;
 
@@ -72,38 +73,62 @@ public class MGR0005$Controller extends SetLogger {
 	public @ResponseBody Map<String,String> codeInsert(Locale locale, Model model , @RequestBody CmmnDivCodeVO param) {
 		Map<String,String> returnMap = new HashMap<String,String>();
 		// 그냥,,,,, 삭제 후 insert로 함.
+		// 1. 분류코드 CRUD 체크 -  진행
+		String status = param.getRowStatus();
 		
-		logger.debug("## 코드 등록 ##" );
-		logger.debug("## 등록정보 파라미터 : ##" );
-		logger.debug("## {} " , param );
+		CmmnCodeVO divCode = new CmmnCodeVO();
+		divCode.setParentCode(param.getDivParentCode());
+		divCode.setGrpCode(param.getDivGrpCode());
+		divCode.setCode(param.getDivCode());
+		divCode.setCodeNm(param.getDivCodeNm());
+		divCode.setCodeDc(param.getDivCodeDc());
+		divCode.setUseAt(param.getDivUseAt());
 		
-		List<CmmnDivCodeVO> div = service.selectDivCodeList(param);
-		
-		CmmnCodeVO curDivCode = new CmmnCodeVO();
-		curDivCode.setParentCode("ROOT");
-		curDivCode.setCode(param.getDivCode());
-		curDivCode.setCodeNm(param.getDivCodeNm());
-		curDivCode.setCodeDc(param.getDivCodeDc());
-		curDivCode.setUseAt(param.getDivUseAt());
-		
+		// 2. 리스트만큼 돌면서 CRUD 체크 - 진행
 		List<CmmnCodeVO> detailCodes = param.getCodeList();
-		if( div.size() > 0){
-			//삭제
-			codeDelete( param , curDivCode);
+		int div = 0, details = 0;
+		if(VAR.UPDATE.equals(status)){
+			div = service.updateCmmnCode( divCode );
+		}else if(VAR.INSERT.equals(status)){
+			div = service.insertCmmnCode( divCode );
+		}else if(VAR.DELETE.equals(status)){
+			
+			div = service.deleteCmmnCode( divCode );
+			if( null != detailCodes ){
+				for( CmmnCodeVO vo : detailCodes ){
+					int	res = service.deleteCmmnCode( vo );
+					details += res;
+					logger.debug("");
+					logger.debug(" ################ {} : {} " , "[ "+ status +" ]"+ vo.getParentCode() , vo.getCode()+"/"+vo.getCodeNm() );
+					logger.debug("");
+				}
+			}
+			returnMap.put("divCode", div+"");
+			returnMap.put("details", details+"");
+			commonModel.refreshCommonCode();
+			return returnMap;
 		}
-		//등록
-		int r = service.insertCmmnCode( curDivCode );
 		
 		if( null != detailCodes ){
 			for( CmmnCodeVO vo : detailCodes ){
-				int insertR = service.insertCmmnCode( vo );
+				String detailStatus = vo.getRowStatus();
+				int res=0;
+				if(VAR.UPDATE.equals(detailStatus)){
+					res = service.updateCmmnCode( vo );
+				}else if(VAR.INSERT.equals(detailStatus)){
+					res = service.insertCmmnCode( vo );
+				}else if(VAR.DELETE.equals(detailStatus)){
+					res = service.deleteCmmnCode( vo );
+				}
+				details += res;
 				logger.debug("");
-				logger.debug(" ################ {} : {} 등록 " , "[ "+ insertR +" ]"+ vo.getParentCode() , vo.getCode()+"/"+vo.getCodeNm() );
+				logger.debug(" ################ {} : {} " , "[ "+ status +" ]"+ vo.getParentCode() , vo.getCode()+"/"+vo.getCodeNm() );
 				logger.debug("");
 			}
 		}
-		returnMap.put("result", r+"");
 		
+		returnMap.put("divCode", div+"");
+		returnMap.put("details", details+"");
 		commonModel.refreshCommonCode();
 		return returnMap;
 	}

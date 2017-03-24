@@ -1,6 +1,8 @@
 package com.lfc.mgr.mgr0001.vo;
 
-public class MenuInfoVO {
+import com.common.vo.CommonVO;
+
+public class MenuInfoVO extends CommonVO{
 
 	private String menuId;
 	private String menuDiv;

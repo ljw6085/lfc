@@ -1,6 +1,8 @@
 package com.lfc.prk.prk0002.vo;
 
-public class SvgObjectInfoVO {
+import com.common.vo.CommonVO;
+
+public class SvgObjectInfoVO extends CommonVO{
 
 	private String cellType;
 	private String cellNm;

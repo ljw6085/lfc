@@ -104,27 +104,58 @@ public class UrlMapping {
 	/** jsp  : 판매차량관리 */
 	public static final String MGR0004_DETAIL_SEARCH_JSP="/mgr/mgr0004/MGR0004$DetailSearch";
 /***************************************************************************************************/	
-	/** url  : 공통코드관리 조회 */
-	public static final String MGR0005_LIST_URL="/mgr/mgr0005/codeList.do";
-	/** jsp  : 공통코드관리 */
-	public static final String MGR0005_LIST_JSP="/mgr/mgr0005/codeList";
+	/** url  : 차량 속성코드관리 조회 */
+	public static final String MGR0005_LIST_URL="/mgr/mgr0005/MGR0005$List.do";
+	/** jsp  : 차량 속성코드관리 */
+	public static final String MGR0005_LIST_JSP="/mgr/mgr0005/MGR0005$List";
 
-	/** url  : 공통코드관리 등록 */
-	public static final String MGR0005_INSERT_URL="/mgr/mgr0005/codeInsert.do";
-	/** jsp  : 공통코드관리 */
-	public static final String MGR0005_INSERT_JSP="/mgr/mgr0005/codeInsert";
+	/** url  : 차량 속성코드관리 등록 */
+	public static final String MGR0005_INSERT_URL="/mgr/mgr0005/MGR0005$Insert.do";
+	/** jsp  : 차량 속성코드관리 */
+	public static final String MGR0005_INSERT_JSP="/mgr/mgr0005/MGR0005$Insert";
 	
-	/** url  : 공통코드관리 삭제 */
-	public static final String MGR0005_DELETE_URL="/mgr/mgr0005/codeDelete.do";
+	/** url  : 차량 속성코드관리 삭제 */
+	public static final String MGR0005_DELETE_URL="/mgr/mgr0005/MGR0005$Delete.do";
 	
-	/** url  : 공통코드관리 상세조회 */
-	public static final String MGR0005_DETAIL_SELECT_URL="/mgr/mgr0005/codeDetailSelect.do";
-	/** url  : 부모코드 조회 */
-	public static final String MGR0005_PARENT_CODE_SELECT_URL="/mgr/mgr0005/selectParentCode.do";
+	/** url  : 차량 속성코드관리 상세조회 */
+	public static final String MGR0005_DETAIL_SELECT_URL="/mgr/mgr0005/MGR0005$SelectDetail.do";
+	
+	/** url  : 차량 속성 부모코드 조회 */
+	public static final String MGR0005_PARENT_CODE_SELECT_URL="/mgr/mgr0005/MGR0005$SelectParentCode.do";
 	
 /***************************************************************************************************/
+	/** url  : 차량 모델 조회 */
+	public static final String MGR0006_LIST_URL="/mgr/mgr0006/MGR0006$List.do";
+	/** jsp  : 차량 모델 관리 */
+	public static final String MGR0006_LIST_JSP="/mgr/mgr0006/MGR0006$List";
 	
+	/** url  : 차량 모델 조회 */
+	public static final String MGR0006_SELECT_URL="/mgr/mgr0006/MGR0006$Select.do";
 	
+	/** url  : 차량 모델  등록 */
+	public static final String MGR0006_INSERT_URL="/mgr/mgr0006/MGR0006$Insert.do";
+	/** jsp  : 차량 모델 등록 */
+	public static final String MGR0006_INSERT_JSP="/mgr/mgr0006/MGR0006$Insert";
+	
+	/** url  : 차량 모델 상세조회조건 */
+	public static final String MGR0006_DETAIL_SEARCH_URL="/mgr/mgr0006/MGR0006$DetailSearch.do";
+	/** jsp  : 차량 모델 상세조회조건 */
+	public static final String MGR0006_DETAIL_SEARCH_JSP="/mgr/mgr0006/MGR0006$DetailSearch";
+	
+	/** url  : 차량 제조사 구분 조회 */
+	public static final String MGR0006_SELECT_CAR_COMP_DIV_URL="/mgr/mgr0006/MGR0006$SelectCarCompDiv.do";
+	/** url  : 차량 제조사 조회 */
+	public static final String MGR0006_SELECT_CAR_COMP_LIST_URL="/mgr/mgr0006/MGR0006$SelectCarCompList.do";
+	/** url  : 차량 종류 조회 */
+	public static final String MGR0006_SELECT_CAR_COMP_KIND_URL="/mgr/mgr0006/MGR0006$SelectCarCompKind.do";
+	/** url  : 차량 외형 조회 */
+	public static final String MGR0006_SELECT_CAR_COMP_OUTLINE_URL="/mgr/mgr0006/MGR0006$SelectCarCompOutline.do";
+	/** url  : 차량 연료 조회 */
+	public static final String MGR0006_SELECT_CAR_COMP_FURE_URL="/mgr/mgr0006/MGR0006$SelectCarCompFure.do";
+	/** url  : 차량 미션 조회 */
+	public static final String MGR0006_SELECT_CAR_COMP_MSN_URL="/mgr/mgr0006/MGR0006$SelectCarCompMsn.do";
+	
+/***************************************************************************************************/
 	
 	/** url  : 주차장관리 메인 */
 	public static final String PRK0001_MAIN_URL="/prk/prk0001/parkingListMain.do";

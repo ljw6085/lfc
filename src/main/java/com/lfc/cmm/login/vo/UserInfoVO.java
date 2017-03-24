@@ -1,6 +1,8 @@
 package com.lfc.cmm.login.vo;
 
-public class UserInfoVO {
+import com.common.vo.CommonVO;
+
+public class UserInfoVO  extends CommonVO{
 	String userId		
 			,passwd	    
 			,email	    

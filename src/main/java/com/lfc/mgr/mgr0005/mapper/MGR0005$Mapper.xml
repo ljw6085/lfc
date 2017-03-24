@@ -30,8 +30,12 @@
 			CODE_NM			as codeNm
 		 from CMMN_CODE
 		 where 1=1
+		 AND GRP_CODE = 'CAR'
 		 <if test="code != null and code != '' ">
 			 AND CODE = #{code}
+		 </if>
+		 <if test="codeNm != null and codeNm != '' ">
+			 AND CODE_NM LIKE CONCAT('%',#{codeNm},'%')
 		 </if>
 	</select>
 	<select id="selectCmmnCode" parameterType="CmmnCodeVO" resultType="CmmnCodeVO">
@@ -109,21 +113,11 @@
 		 where 
 			 PARENT_CODE = #{parentCode}
 			 AND CODE = #{code}
-			 AND CODE_NM = #{codeNm}
-			 AND CODE_DC = #{codeDc}
-			 AND USE_AT = #{useAt}
-			 AND SORT = #{sort}
-			 AND FRST_REGIST_DT = #{frstRegistDt}
-			 AND FRST_REGISTER = #{frstRegister}
-			 AND LAST_REGIST_DT = #{lastRegistDt}
-			 AND LAST_REGISTER  = #{lastRegister }
 	</update>
 	<delete id="deleteCmmnCode" parameterType="CmmnCodeVO" >
 		 delete from CMMN_CODE
 		 where 
-			 PARENT_CODE = #{parentCode}
-			 <if test="code != null and code != '' ">
-				 AND CODE = #{code}
-			 </if>
+			PARENT_CODE = #{parentCode}
+			AND CODE = #{code}
 	</delete>
 </mapper>

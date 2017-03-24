@@ -2,12 +2,14 @@ package com.lfc.prk.prk0001.vo;
 
 import java.util.List;
 
+import com.common.vo.CommonVO;
+
 /**
  * 주차장관리테이블 VO
  * @author Leejw
  *
  */
-public class PrkplceMngVO {
+public class PrkplceMngVO extends CommonVO{
 
 	private String prkplceCode;
 	private String prkplceNm;

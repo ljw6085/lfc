@@ -2,7 +2,9 @@ package com.lfc.mgr.mgr0002.vo;
 
 import java.util.List;
 
-public class CmmnDivCodeVO {
+import com.common.vo.CommonVO;
+
+public class CmmnDivCodeVO extends CommonVO{
 
 	private String divParentCode;
 	private String divCode;

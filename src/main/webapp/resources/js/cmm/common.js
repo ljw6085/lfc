@@ -657,7 +657,7 @@ var $j = {
 				this.$page().pagecontainer({
 					change:function(event,ui){
 						callback(ui.options.params);
-//						$j.refreshPage();
+						$j.refreshPage();
 					}
 				});// page move
 			}

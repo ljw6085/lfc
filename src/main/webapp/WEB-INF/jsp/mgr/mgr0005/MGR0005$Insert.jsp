@@ -6,7 +6,7 @@
 	화면이동이 필요할때, jsp를 따로 관리하고자 하면
 	$j.documents 에 초기화 함수를 push 해야한다. 
 */
-var counter = 0 , drawing = false;
+var counter = 0 , drawing = false , pageType = 'C';
 $j.documents.push(function(){
 	/** Form 단위로 스크립팅 한다. */
 	$j.documentReady('codeInsertForm', function($form,$uiPage){
@@ -21,19 +21,13 @@ $j.documents.push(function(){
 		});
 		$("#detailInfoPopup").popup();
 		var $codeDetailList = $form.find(".codeDetailList");
+		
 		// 분류코드 라디오버튼 생성
 		var divUseAtRadio = COMPONENT.radio({
 			target 		: $form.find('.divUseAt')
 			,name		: 'divUseAt'
 			,cmmnCode	: 'USE_AT'
 		});
-		
-		/* COMPONENT.flipSwtich({
-			target 		: $('.useAtBox')
-			,name		: 'useAt'
-			,cmmnCode	: 'USE_AT'
-			,on : 'Y'
-		}); */
 		
 		var initParams;
 		$j.pageMoveCallback(function(params){
@@ -46,25 +40,28 @@ $j.documents.push(function(){
 			switch (e.target.id) {
 				/** 저장*/	
 				case '_infoSave':
+					
+					if( !confirm("저장하시겠습니까?") ) return;
+					if( !frm.divParentCode.value ) frm.divParentCode.value = 'ROOT';
+					
 					// CmmnDivCodeVO 클래스에 맞춰 파라미터를 생성하고 전달.
-					var cmmnDivCodeVO = Common.getDataFromDoms( $form.find(".searchArea") );
+					var cmmnDivCodeVO = Common.getDataFromDoms( $form.find("#infoArea") );
 						cmmnDivCodeVO.codeList = [];
-					$codeDetailList.find('tr').each(function(i,item){
+						
+					var parentCode = frm.divCode.value;
+					$codeDetailList.find('li').each(function(i,item){
 						var t = $(this);
 						var rowInfo = Common.getDataFromDoms( t );
-						// 라디오버튼(사용여부)의 경우 name이 다르므로( USE_AT_x 형태 ), 따로 세팅해줌
-						for(var k in rowInfo) {
-							if( /USE_AT*/.test(k) )rowInfo.useAt = rowInfo[k];
-							else if ( k == 'sort') rowInfo.sort = i;
-							else continue;
-						}
+							rowInfo.sort = i;
+							rowInfo.parentCode = parentCode;
 						cmmnDivCodeVO.codeList.push(rowInfo);
 					});
 			    	
-					var url = "<c:url value='/mgr/mgr0005/codeInsert.do'/>";
+					var url = "<c:url value='/mgr/mgr0005/MGR0005$Insert.do'/>";
 					Common.ajaxJson( url , cmmnDivCodeVO ,function(data){
+						console.log( data );
 						if( data.result > 0 ){
-							alert("수정됨");
+							alert("저장됨");
 						}
 			    	});
 					
@@ -74,13 +71,27 @@ $j.documents.push(function(){
 				/* 삭제 */
 				case '_infoDelete':
 					var isDel = confirm('해당코드를 모두 삭제하시겠습니까?');
+					
 					if( isDel ){
-						var url = "<c:url value='/mgr/mgr0005/codeDelete.do'/>";
-						Common.ajaxJson( url , { divCode:frm.divCode.value } ,function(data){
+						var $divCode = $form.find("#infoArea");
+						var cmmnDivCodeVO = Common.getDataFromDoms( $divCode );
+							cmmnDivCodeVO.codeList = [];
+							rowStatusChange( $divCode ,  'D' );
+						$codeDetailList.find('li').each(function(i,item){
+							var t = $(this);
+							var rowInfo = Common.getDataFromDoms( t );
+								rowInfo.sort = i;
+								rowInfo.rowStatus='D'
+							cmmnDivCodeVO.codeList.push(rowInfo);
+						});
+				    	
+						console.log( '삭제', cmmnDivCodeVO );
+						var url = "<c:url value='/mgr/mgr0005/MGR0005$Insert.do'/>";
+						Common.ajaxJson( url , cmmnDivCodeVO ,function(data){
+							console.log( data );
 							if( data.result > 0 ){
 								alert("삭제됨");
 							}
-							$(backBtn).trigger('click');
 				    	});
 					}
 					break;
@@ -89,13 +100,18 @@ $j.documents.push(function(){
 				/* 초기화 */
 				case '_infoReset':
 					var isReset = confirm('해당코드를 모두 초기화하시겠습니까?');
-					if( isReset) initCodeList( $form, initParams );
+					if( isReset) {
+						if( pageType == 'C' ) initParams = false;
+						initCodeList( $form, initParams );
+					}
 					break;
+					
 				/* 행추가 */
 				case '_rowAdd':
 					counter++; // 전역변수
 					rowAdd( $form ,{
 						parentCode : frm.divCode.value
+						,rowStatus:'C'
 					}, counter);
 					$codeDetailList.listview('refresh');
 					
@@ -110,36 +126,61 @@ $j.documents.push(function(){
 			}
 		});
 		
-		var parentCodeInfo = "<div><span class='title'></span><span class='selected %{isError}'>선택</span> | <span class='parentCode %{isError}'>%{code}</span> | <span class='parentCodeNm %{isError}'>%{codeNm}</span> </div>";
+		var parentCodeInfo = "<li>"
+			parentCodeInfo +="<a href='#'>";
+			parentCodeInfo +="<input type='hidden' name='parentCode' value='%{code}'>";
+			parentCodeInfo +="<span class='parentCode %{isError}'>%{code}</span> · " ;
+			parentCodeInfo +="<span class='parentCodeNm %{isError}'>%{codeNm}</span>";
+			parentCodeInfo +="</a>";
+			parentCodeInfo +="</li>";
+			
 		$("#divParentCodeInput").on('keyup',function(){
-			var url = "<c:url value='/mgr/mgr0005/selectParentCode.do'/>";
+			var url = "<c:url value='/mgr/mgr0005/MGR0005$SelectParentCode.do'/>";
 			var $t = $(this);
 			var val = $t.val();
-			Common.ajaxJson( url , { code : val } ,function(data){
+			
+			var params = {};
+			var paramType = $("#parentCodeSrch").val();
+			params[paramType] = val;
+			Common.ajaxJson( url , params ,function(data){
 				var res;
-				console.log( data , val );
 				if( val == 'ROOT' || !val ){
 					$(".parentCodeInfo").html( "" );
 					$t.parent('.ui-input-search').removeClass('error');
+					
+					res = Common.matchedReplace( parentCodeInfo ,{
+						code:'ROOT'
+						,codeNm :'최상위코드'
+					});
+					
+					$(".parentCodeInfo").html( res );
+					
 				}else if( data.length == 0  ){
 					$t.parent('.ui-input-search').addClass('error');
 					res = Common.matchedReplace( parentCodeInfo ,{
-						code:'Error'
+						code:'#Error'
 						,codeNm :'존재하지않는코드'
 						,isError:'isError'
 					});
 					$(".parentCodeInfo").html( res );
 				}else{
 					$(".parentCodeInfo").html( "" );
+					$t.parent('.ui-input-search').removeClass('error');
 					for(var i = 0 , len = data.length; i< len ;i++){
-						$t.parent('.ui-input-search').removeClass('error');
 						res = Common.matchedReplace( parentCodeInfo , data[i] );
 						$(".parentCodeInfo").append( res );
 					}
 				}
-				
+				$(".parentCodeInfo").listview('refresh');
 			});
 			
+		});
+		
+		
+		$(".parentCodeInfo").on('click','li',function(e){
+			var d = Common.getDataFromDoms( $(this) );
+			if( d.parentCode == '#Error' ) return;
+			$("#divParentCodeInputVal").val( d.parentCode );
 		});
 		
 		$(".detailInfoPopupButton").on('click',function(e){
@@ -170,15 +211,22 @@ $j.documents.push(function(){
 							}
 						}
 					});
+					if( getRowStatus(li) != 'C' ) rowStatusChange( li , 'U' );
 					$("#detailInfoPopup").popup('close');
 					
 					break;
 				case '_detailDelete':
 					var isDelete = confirm('삭제하시겠습니까?');
 					if( isDelete ){
-						$("#detailInfoPopup").popup('close')
-												.jqmData('clickedLi').remove();
-						refreshConrner($(".codeListWrap"));
+						var $pop = $("#detailInfoPopup") 
+							, target = $pop.jqmData('clickedLi');
+						if( getRowStatus( target ) == 'C' ){
+							target.remove();
+							refreshConrner( $(".codeListWrap") );
+						}else{
+							rowStatusChange( target , 'D' );
+						}
+						$pop.popup('close');
 					}
 					break;
 				case '_detailCancel':
@@ -190,12 +238,26 @@ $j.documents.push(function(){
 			}
 		});
 		
-		
 		$form.find(".codeDetailList").on('click','li',function(e){
+			var data = Common.getDataFromDoms( $(this) );
+			if( $(e.target).hasClass('itemDelete') ) {
+				var msg = "[ %{codeNm}(%{code}) ] 를 삭제하시겠습니까?";
+				if( confirm(Common.matchedReplace(msg, data)) ) {
+					if( getRowStatus( $(this) ) == 'C' ){
+						$(this).remove();
+						refreshConrner($(".codeListWrap"));
+					}else{
+						rowStatusChange( $(this) , 'D' );
+					}
+				}
+				return;
+			}else if( $(e.target ).hasClass('itemMove') ){
+				return;
+			}
+			
 			$("#detailInfoPopup").popup('open',{
 				transition:'pop'
 			});
-			var data = Common.getDataFromDoms( $(this) );
 			
 			$("#detailInfoPopup").jqmData('clickedLi', $(this) )
 			
@@ -232,7 +294,7 @@ $j.documents.push(function(){
 		$(".codeListWrap").sortable({
 			items:" > li"
 			,axis:'y'
-			,handle: ".itemEdit"
+			,handle: ".itemMove"
 	        ,opacity: 0.7
 	        ,delay: 50
 	        ,dropOnEmpty: true
@@ -249,6 +311,16 @@ $j.documents.push(function(){
 		});
 		
 	});
+	
+	function rowStatusChange( $target, type ){
+		if( type == 'D' ) $target.addClass('ui-state-disabled');
+		$target.find("[name='rowStatus']").val( type )
+	}
+	function getRowStatus( $target ){
+		var $r = $target.find("[name='rowStatus']");
+		return $r[0] ? $r.val() : '';
+	}
+	
 	function refreshConrner( $target ){
 		$target.find("li.ui-first-child").removeClass('ui-first-child')
 		.end()
@@ -257,15 +329,24 @@ $j.documents.push(function(){
 		.end()
 		.find("li:last").addClass("ui-last-child");
 	}
+	
 	function initCodeList( $form,  params ){
 		var frm = $form[0];
 		var $codeDetailList = $form.find(".codeDetailList");
 		$codeDetailList.html("");
-		if( params ){			// 이전 codeList 페이지에서 받아온 파라미터 
+		$form.find("#infoArea").removeClass( 'ui-state-disabled' );
+		var rowStatus;
+		if( params ){// 이전 codeList 페이지에서 받아온 파라미터
 			$.mobile.loading('show');
 			//수정
+			$(".parentCodeWrap").hide();
 			frm.divCode.disabled = true; // 수정인경우 `분류코드`수정을 막는다.
-			var url = "<c:url value='/mgr/mgr0005/codeDetailSelect.do'/>";
+			frm.divParentCode.disabled = true; // 수정인경우 `부모코드`수정을 막는다.
+			$(frm.divCode).addClass('ui-state-disabled');
+			$(frm.divParentCode).addClass('ui-state-disabled');
+			rowStatus = pageType = 'U';
+			
+			var url = "<c:url value='/mgr/mgr0005/MGR0005$SelectDetail.do'/>";
 			// 분류코드 및 상세코드 조회&세팅
 			Common.ajaxJson( url , params ,function(data){
 				for(var k in data ){
@@ -288,26 +369,39 @@ $j.documents.push(function(){
 							break;
 						case 'divParentCode': // 분류코드의 부모코드를 ROOT로 하드코딩
 							if( !dt ) el.value='ROOT';
+							else el.value = dt;
+							break;
+						case 'rowStatus':
+							break;
 						default:// 나머지값 세팅
 							if( el )  el.value = dt; 
 							break;
 					}
 					
 				}
-				
 				$("#divParentCodeInput").trigger('keyup');
 	    	});
 			
 		}else{
 			//등록 & 초기화
-			frm.divCode.disabled = false;
+			frm.divCode.disabled = false; 
+			$(frm.divCode).removeClass('ui-state-disabled');
+			frm.divParentCode.disabled = true; 
+			$(frm.divParentCode).addClass('ui-state-disabled');
+			
 			$form.find('input:text').val("");
+			$(".parentCodeWrap").show();
 			$.mobile.loading('hide');
+			
+			rowStatus = pageType = 'C';
 		}
+		
+		$("#divRowStatus").val( rowStatus );
 	}
 	
 	// dom 관리방법 강구해볼것	- value mapping #.+#
 	var row ="<li><a href='#' class='item' >";
+		row += "<input type='hidden' name='rowStatus' value='%{rowStatus}'>"
 		row += "<input type='hidden' name='grpCode' value='CAR'>"
 		row += "<input type='hidden' name='parentCode' value='%{parentCode}'><input type='hidden' name='sort' value='%{sort}'>"
 		row += "<input type='hidden' name='code' value='%{code}'>"
@@ -319,7 +413,8 @@ $j.documents.push(function(){
 		row += "<p class='itemCont itemContent'><span class='title'>코드</span> <span class='code'>%{code}</span></p>"
 		row += "<p class='itemCont itemDesc'><span class='title'>코드설명</span><span class='codeDc'>%{codeDc}</span></p>";
 		row += "</a>";
-		row += "<a href='#' class='itemEdit'></a></li>";
+		row += "<a href='#' class='itemDelete ui-btn ui-btn-icon-notext ui-icon-delete ui-btn-a'></a>"
+		row += "<a href='#' class='itemMove'></a></li>";
 	
 	/* 상세코드List row 추가 함수 */
 	function rowAdd( $form , data , counter){
@@ -327,21 +422,16 @@ $j.documents.push(function(){
 		var useAt = 	data.useAt;
 		if( useAt == 'Y') data.useAtNm = '사용';
 		else if( useAt == 'N') data.useAtNm = '사용안함'
+		
+		if( !data.rowStatus ) data.rowStatus = 'N';
 		//row 전역변수
 		var _row = Common.matchedReplace(row, data);
 		
 		var $row = $( _row );
-		if ( useAt == 'N' )$row.addClass('disabledRow');
+		if ( useAt == 'N' ) $row.addClass('disabledRow');
+		rowStatusChange( $row , data.rowStatus );
 		$(".codeDetailList").append($row);
-		/* var $target = $row.find(".useAtBox");
 		
-		var radio = COMPONENT.radio({
-			target 		: $target	
-			,name		:"USE_AT_" + counter
-			,cmmnCode	:'USE_AT'
-			,classes 	: 'codeUseAt'
-			,defaultVal : data.useAt
-		}); */
 		return $row;
 	}
 });
@@ -373,12 +463,31 @@ $j.documents.push(function(){
 	.divUseAtRow{text-align: right;}
 	
 	.ui-input-search.error { border:1px solid red !important; background: #ffc1c1 !important;}
-	.parentCodeInfo { font-size:0.7em;margin:1em;text-align: right; overflow: hidden;}
-	.parentCodeInfo .title { display: inline-block; }
-	.parentCodeInfo .parentCode { display: inline-block; margin:0 .3em;}
-	.parentCodeInfo .parentCodeNm { display: inline-block;margin:0 .3em; }
+	.parentCodeInfo a { padding-top:0 !important;padding-bottom:0 !important;}
+	.parentCodeInfo .parentCode { font-size:0.8em; font-weight: normal;}
+	.parentCodeInfo .parentCodeNm { font-size:0.8em; font-weight: normal; } 
 	.isError { color:red !important;}
 	.selected.isError{color:#ddd !important}
+	
+	.codeDetailList .item { margin-right:5em !important; }
+	.itemDelete { 
+		margin-right:2.5em !important;
+		border-right:0 !important;
+	    -webkit-border-top-left-radius: 0 !important;
+	    border-top-left-radius: 0 !important;
+	    -webkit-border-top-right-radius: 0 !important;
+	    border-top-right-radius: 0 !important;
+	    -webkit-border-bottom-left-radius: 0 !important;
+	    border-bottom-left-radius: 0 !important;
+	    -webkit-border-bottom-right-radius: 0 !important;
+	    border-bottom-right-radius: 0 !important;
+	}
+	.parentCodeWrap { padding:0.5em;}
+	.parentCodeWrap .ui-last-child {border-bottom:1px solid #ddd !important;}
+	.parentCodeWrap .ui-listview {margin:0 !important;margin-top:0.5em !important}
+	.parentCodeWrap .ui-select, .parentCodeWrap .ui-input-search { margin:0 }
+	.parentCodeWrap .ui-select { padding-right:0.5em;}
+	
 </style>
 <div data-role="page" id='codeInsert'><!-- second page start -->
 	<form name='codeInsertForm' >
@@ -390,10 +499,28 @@ $j.documents.push(function(){
 						<h3>
 							분류코드정보
 						</h3>
+						<input type='hidden' name='rowStatus' id='divRowStatus'>
+						<input type='hidden' name='divGrpCode' value='CAR'>
+						<div class='parentCodeWrap'>
+							<div class="ui-field-contain">
+								<label for="divParentCodeInput" class='label'>부모코드선택</label>
+								<div class='ui-grid-a'>
+									<div class='ui-block-a' style='width:50%'>
+										<select id='parentCodeSrch' data-mini='true'>
+											<option value='codeNm'>코드명</option>
+											<option value='code'>코드</option>
+										</select>
+									</div>
+									<div class='ui-block-b' style='width:50%'>
+										<input type='search' id='divParentCodeInput' placeholder="부모코드선택" data-mini='true'>
+									</div>
+								</div>
+							</div>
+							<ul class='parentCodeInfo' data-role='listview' data-inset="false"></ul>
+						</div>
 						<div class="ui-field-contain">
-							<label for="divParentCodeInput" class='label'>부모코드</label>
-							<input type='search' id='divParentCodeInput' name='divParentCode' placeholder="부모코드" data-mini='true'>
-							<div class='parentCodeInfo'></div>
+							<label for="divParentCodeInputVal" class='label'>부모코드</label>
+							<input type='text' id='divParentCodeInputVal' name='divParentCode' placeholder="부모코드" data-mini='true' >
 						</div>
 						<div class="ui-field-contain">
 							<label for="divCodeInput" class='label'>분류코드</label>
@@ -413,26 +540,26 @@ $j.documents.push(function(){
 						</div>
 					</div>
 				</div>
-				<div class='ui-grid-a infoBtnBox'>
-					<div class='ui-block-a'>
-						<a href='#' data-role='button'  id='_infoSave' class='save' data-icon='check' data-mini='true'>저장</a>
-					</div>
-					<div class='ui-block-b'>
-						<a href='#' data-role='button' id='_infoDelete' class='delete' data-icon='delete' data-mini='true'>삭제</a>
-					</div>
+			</div>
+			<div class='ui-grid-a infoBtnBox'>
+				<div class='ui-block-a'>
+					<a href='#' data-role='button'  id='_infoSave' class='save' data-icon='check' data-mini='true'>저장</a>
 				</div>
-				<div class='ui-grid-a infoBtnBox'>
-					<div class='ui-block-a'>
-						<a href='#' data-role='button' id='_infoReset' class='reset' data-icon='refresh' data-mini='true'>초기화</a>
-					</div>
-					<div class='ui-block-b'>
-						<a href='#' id='_rowAdd' class='rowAdd' data-role='button' data-icon='plus' data-mini='true'>행추가</a>
-					</div>
+				<div class='ui-block-b'>
+					<a href='#' data-role='button' id='_infoDelete' class='delete' data-icon='delete' data-mini='true'>삭제</a>
 				</div>
-				<div class='listWrap'>
-					<ul class='codeDetailList codeListWrap' data-role='listview' data-inset='true' data-split-icon="move" data-split-theme="a" class='ui-nodisc-icon'>
-					</ul>
+			</div>
+			<div class='ui-grid-a infoBtnBox'>
+				<div class='ui-block-a'>
+					<a href='#' data-role='button' id='_infoReset' class='reset' data-icon='refresh' data-mini='true'>초기화</a>
 				</div>
+				<div class='ui-block-b'>
+					<a href='#' id='_rowAdd' class='rowAdd' data-role='button' data-icon='plus' data-mini='true'>행추가</a>
+				</div>
+			</div>
+			<div class='listWrap'>
+				<ul class='codeDetailList codeListWrap' data-role='listview' data-inset='true' data-split-icon="move" data-split-theme="a" class='ui-nodisc-icon'>
+				</ul>
 			</div>
 		</div>
 	</form>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MGR0006">
+	
+	<select id="selectCarModelInfo" parameterType="CarModelInfoVO" resultType="CarModelInfoVO">
+		 select
+			CAR_COMP as carComp,
+			MODEL_CODE as modelCode,
+			MODEL_NM as modelNm,
+			CAR_KIND as carKind,
+			CAR_OUTLINE as carOutline,
+			CAR_FURE as carFure,
+			CAR_MSN as carMsn
+		 from CAR_MODEL_INFO
+		 where 1=1
+		 <if test="carComp != null and carComp != '' ">
+			 AND CAR_COMP = #{carComp}
+		 </if>
+		 <if test="modelCode != null and modelCode != '' ">
+			 AND MODEL_CODE = #{modelCode}
+		 </if>
+		 <if test="modelNm != null and modelNm != '' ">
+			 AND MODEL_NM LIKE CONCAT ('%', #{modelNm} , '%' )
+		 </if>
+		 <if test="carKind != null and carKind != '' ">
+			 AND CAR_KIND = #{carKind}
+		 </if>
+		 <if test="carOutline != null and carOutline != '' ">
+			 AND CAR_OUTLINE = #{carOutline}
+		 </if>
+		 <if test="carFure != null and carFure != '' ">
+			 AND CAR_FURE = #{carFure}
+		 </if>
+		 <if test="carMsn != null and carMsn != '' ">
+			 AND CAR_MSN = #{carMsn}
+		 </if>
+	</select>
+	<insert id="insertCarModelInfo" parameterType="CarModelInfoVO" >
+		 insert into CAR_MODEL_INFO(
+			CAR_COMP,
+			MODEL_CODE,
+			MODEL_NM,
+			CAR_KIND,
+			CAR_OUTLINE,
+			CAR_FURE,
+			CAR_MSN
+		) values(
+			#{carComp},
+			#{modelCode},
+			#{modelNm},
+			#{carKind},
+			#{carOutline},
+			#{carFure},
+			#{carMsn}
+		)
+	</insert>
+	<update id="updateCarModelInfo" parameterType="CarModelInfoVO" >
+		 update CAR_MODEL_INFO
+		 set
+			MODEL_NM = #{modelNm},
+			CAR_KIND = #{carKind},
+			CAR_OUTLINE = #{carOutline},
+			CAR_FURE = #{carFure},
+			CAR_MSN = #{carMsn}
+		 where 
+			 CAR_COMP = #{carComp}
+			 AND MODEL_CODE = #{modelCode}
+	</update>
+	<delete id="deleteCarModelInfo" parameterType="CarModelInfoVO" >
+		 delete from CAR_MODEL_INFO
+		 where 
+			 CAR_COMP = #{carComp}
+			 AND MODEL_CODE = #{modelCode}
+	</delete>
+	
+	<!-- 차량제조사구분( 국내/외제 ) -->
+	<select id="selectCarCompDiv" resultType="CmmnCodeVO">
+		 select
+			CODE as code,
+			CODE_NM as codeNm
+		 from CMMN_CODE 
+		 where 1=1
+		 	AND GRP_CODE = 'CAR'
+			AND PARENT_CODE = 'CAR_COMP'
+			AND USE_AT = 'Y'
+	</select>
+	
+	<!-- 차량제조사리스트  -->
+	<select id="selectCarCompList" resultType="CmmnCodeVO">
+		 SELECT
+			CODE as code,
+			CODE_NM as codeNm
+		 FROM CMMN_CODE 
+		 WHERE 1=1
+            AND GRP_CODE = 'CAR'
+            AND USE_AT = 'Y'
+            <if test="parentCode == null or parentCode == '' ">
+	            AND PARENT_CODE IN (
+					SELECT
+						CODE
+					FROM CMMN_CODE 
+	                WHERE
+						GRP_CODE = 'CAR'
+						AND PARENT_CODE = 'CAR_COMP'
+						AND USE_AT = 'Y'
+	            )
+            </if>
+            <if test="parentCode != null and parentCode != '' ">
+				 AND PARENT_CODE = #{parentCode}
+			</if>
+            <if test="code != null and code != '' ">
+				 AND CODE = #{code}
+			</if>
+            <if test="codeNm != null and codeNm != '' ">
+				 AND CODE_NM LIKE CONCAT('%',  #{codeNm} , '%' )
+			</if>
+            ORDER BY CODE
+	</select>
+	
+	<!-- 차량 종류 ('경형', '소형' , '준중형' , '중형' , '대형' , '스포츠카' )-->
+	<select id="selectCarKind" resultType="CmmnCodeVO">
+		select
+			CODE as code,
+			CODE_NM as codeNm
+		 from CMMN_CODE 
+		 where 1=1
+            AND GRP_CODE = 'CAR'
+            AND PARENT_CODE = 'CAR_KIND'
+            <if test="code != null and code != '' ">
+				 AND CODE = #{code}
+			</if>
+            <if test="codeNm != null and codeNm != '' ">
+				 AND CODE_NM LIKE CONCAT('%',  #{codeNm} , '%' )
+			</if>
+			AND USE_AT = 'Y'
+            ORDER BY SORT
+	</select>
+	
+	<!-- 차량 외형 ( 세단 , 왜건 , 해치백 , SUV , 컨버터블 , RV , 쿠페 , 벤 , 트럭 , 기타 ) -->
+	<select id="selectCarOutline" resultType="CmmnCodeVO">
+		select
+			CODE as code,
+			CODE_NM as codeNm
+		 from CMMN_CODE 
+		 where 1=1
+            AND GRP_CODE = 'CAR'
+            AND PARENT_CODE = 'CAR_OUTLINE'
+            <if test="code != null and code != '' ">
+				 AND CODE = #{code}
+			</if>
+            <if test="codeNm != null and codeNm != '' ">
+				 AND CODE_NM LIKE CONCAT('%',  #{codeNm} , '%' )
+			</if>
+			AND USE_AT = 'Y'
+            ORDER BY SORT
+	</select>
+	
+	<!-- 차량 연료 (  디젤 , 가솔린 , LPG , 하이브리드 , 전기 , 수소 ) -->
+	<select id="selectCarFure" resultType="CmmnCodeVO">
+		select
+			CODE as code,
+			CODE_NM as codeNm
+		 from CMMN_CODE 
+		 where 1=1
+            AND GRP_CODE = 'CAR'
+            AND PARENT_CODE = 'CAR_FURE'
+            <if test="code != null and code != '' ">
+				 AND CODE = #{code}
+			</if>
+            <if test="codeNm != null and codeNm != '' ">
+				 AND CODE_NM LIKE CONCAT('%',  #{codeNm} , '%' )
+			</if>
+			AND USE_AT = 'Y'
+            ORDER BY SORT
+	</select>
+	
+	<!-- 차량 미션 (  오토, 수동 ) -->
+	<select id="selectCarMsn" resultType="CmmnCodeVO">
+		select
+			CODE as code,
+			CODE_NM as codeNm
+		 from CMMN_CODE 
+		 where 1=1
+            AND GRP_CODE = 'CAR'
+            AND PARENT_CODE = 'CAR_MSN'
+            <if test="code != null and code != '' ">
+				 AND CODE = #{code}
+			</if>
+            <if test="codeNm != null and codeNm != '' ">
+				 AND CODE_NM LIKE CONCAT('%',  #{codeNm} , '%' )
+			</if>
+			AND USE_AT = 'Y'
+            ORDER BY SORT
+	</select>
+</mapper>

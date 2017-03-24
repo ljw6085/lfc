@@ -2,7 +2,9 @@ package com.lfc.mgr.mgr0002.vo;
 
 import java.sql.Timestamp;
 
-public class CmmnCodeVO {
+import com.common.vo.CommonVO;
+
+public class CmmnCodeVO extends CommonVO{
 
 	private String 		parentCode;
 	private String 		grpCode;

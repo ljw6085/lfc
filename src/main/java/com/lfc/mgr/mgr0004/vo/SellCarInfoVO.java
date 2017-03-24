@@ -1,6 +1,8 @@
 package com.lfc.mgr.mgr0004.vo;
 
-public class SellCarInfoVO {
+import com.common.vo.CommonVO;
+
+public class SellCarInfoVO extends CommonVO{
 
 	private String sellCarInnb;
 	private String carDiv;

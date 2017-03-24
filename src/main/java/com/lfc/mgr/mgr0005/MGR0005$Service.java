@@ -14,4 +14,6 @@ public interface MGR0005$Service {
 	
 	public int deleteCmmnCode(CmmnCodeVO vo);
 	public int insertCmmnCode(CmmnCodeVO vo);
+	public int updateCmmnCode(CmmnCodeVO vo);
+	
 }

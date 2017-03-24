@@ -54,4 +54,9 @@ public class MGR0005$ServiceImpl extends SetLogger implements MGR0005$Service{
 		if( null == result ) result = new ArrayList<CmmnCodeVO>();
 		return result;
 	}
+
+	@Override
+	public int updateCmmnCode(CmmnCodeVO vo) {
+		return dao.insert("MGR0005.updateCmmnCode",vo);
+	}
 }

@@ -21,7 +21,7 @@
 			CODE_NM
 		 from CMMN_CODE 
 		 where 1=1
-			AND PARENT_CODE = 'ROOT'
+			AND (PARENT_CODE = 'ROOT' OR PARENT_CODE = '' OR PARENT_CODE IS NULL )
 			AND USE_AT = 'Y'
 	</select>
 	

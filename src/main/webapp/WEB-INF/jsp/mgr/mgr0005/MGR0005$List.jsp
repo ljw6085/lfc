@@ -52,7 +52,7 @@ $j.documents.push(function(){
 	var noItem = "<li class='noData'>조회된 데이터가 없습니다.</li>";
 	function selectCodeList( $form ){
 		$.mobile.loading('show');
-		var url = "<c:url value='/mgr/mgr0005/codeList.do'/>";
+		var url = "<c:url value='/mgr/mgr0005/MGR0005$List.do'/>";
 		$("#carCodeList").html("");
 		Common.ajaxJson( url ,$form,function(data){
 	
@@ -124,7 +124,7 @@ $j.documents.push(function(){
 	</div>
 	<div class='listWrap' >
 		<ul id='carCodeList' data-role="listview" data-inset="true"  class='dataList'>
-			<li class='noData'>조회된 데이터가 없습니다.</li>
+			<li class='noData'>[조회] 버튼을 누르세요.</li>
 		</ul>
 	</div>
 	</div>
@@ -135,7 +135,7 @@ $j.documents.push(function(){
 <!-- ############################################################################################################################################ -->
 <!-- 코드등록/수정화면 시작 -->
 <!-- second page start -->
-<c:import url="/mgr/mgr0005/codeInsert.do"></c:import>
+<c:import url="/mgr/mgr0005/MGR0005$Insert.do"></c:import>
 <!-- 코드등록화면 끝 -->
 <!-- ############################################################################################################################################ -->
 <%@ include file="/WEB-INF/jsp/cmm/inc/bottom2.jsp" %>
