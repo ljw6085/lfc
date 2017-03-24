@@ -22,6 +22,15 @@ $j.documents.push(function(){
 				$("#detailSearch").panel('open');
 			}
 		});
+		
+		var carComp = Common.getCommonCode("CAR_COMP");
+		var carCompInter = Common.getCommonCode("CAR_COMP_INTER" ,true );
+		var carCompExter = Common.getCommonCode("CAR_COMP_EXTER" , true);
+		var carKind = Common.getCommonCode("CAR_KIND");
+		var carFure = Common.getCommonCode("CAR_FURE");
+		var carOutline= Common.getCommonCode("CAR_OUTLINE");
+		var carMission= Common.getCommonCode("CAR_MSN");
+		console.log(carComp ,  carCompInter , carCompExter , carKind, carFure, carOutline );
 	});
 });
 </script>

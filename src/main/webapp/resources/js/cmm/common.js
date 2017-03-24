@@ -100,9 +100,11 @@ var Common = {
 		/**
 		 * 공통코드를 조회하여반환한다.
 		 */
-		,getCommonCode:function( parentCode ){
+		,getCommonCode:function( parentCode , isRefresh ){
 			var result,t = this;
-			if( !this.loadedCodeList[parentCode] ){
+			console.log( isRefresh );
+			if( !this.loadedCodeList[parentCode] || isRefresh ){
+				console.log( isRefresh );
 				Common.ajaxJson(CONTEXT_PATH+"/getCommonCode.do",{ parentCode:parentCode },function(data){
 					t.loadedCodeList[parentCode] = data;
 		    	},'post',false);
