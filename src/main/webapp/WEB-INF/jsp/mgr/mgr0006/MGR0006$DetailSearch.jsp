@@ -40,7 +40,6 @@
 	.ui-selectmenu .ui-input-clear{ padding:0;}
 	.detailSearch .ui-select {margin-top:0; margin-bottom:0;}
 </style>
-
 <!-- 상세조회옵션 판넬 -->
 	<div id="detailSearch" data-role='panel' data-position='right' data-display='overlay' data-position-fixed="true" >
 <!-- 			<div class='ui-bar ui-bar-c'>상세조회옵션</div> -->
@@ -49,7 +48,7 @@
 				<select name="companyList" class="filterable-select"  id="company-list" data-native-menu="false">
 					<option>제조사</option>
 					<option value="" >전체</option>
-					<option value="0" >현대자동차</option>
+					<!-- <option value="0" >현대자동차</option>
 					<option value="1" >기아자동차</option>
 					<option value="2" >쉐보레</option>
 					<option value="3" >르노삼성</option>
@@ -148,7 +147,7 @@
 					<option value="96" >테슬라</option>
 					<option value="97" >포톤</option>
 					<option value="98" >한국지엠</option>
-					<option value="99" >헤네시</option>
+					<option value="99" >헤네시</option> -->
 				</select>
 			</div>
 			<!-- <div class='ui-bar ui-bar-a'>제조사</div>
@@ -802,42 +801,6 @@
 							<option value="2" >The 2nd Option</option>
 							<option value="3" >The 3rd Option</option>
 							<option value="4">The 4th Option</option>
-							<option value="1">The 1st Option</option>
-							<option value="2" >The 2nd Option</option>
-							<option value="3" >The 3rd Option</option>
-							<option value="4">The 4th Option</option>
-							<option value="1">The 1st Option</option>
-							<option value="2" >The 2nd Option</option>
-							<option value="3" >The 3rd Option</option>
-							<option value="4">The 4th Option</option>
-							<option value="1">The 1st Option</option>
-							<option value="2" >The 2nd Option</option>
-							<option value="3" >The 3rd Option</option>
-							<option value="4">The 4th Option</option>
-							<option value="1">The 1st Option</option>
-							<option value="2" >The 2nd Option</option>
-							<option value="3" >The 3rd Option</option>
-							<option value="4">The 4th Option</option>
-							<option value="1">The 1st Option</option>
-							<option value="2" >The 2nd Option</option>
-							<option value="3" >The 3rd Option</option>
-							<option value="4">The 4th Option</option>
-							<option value="1">The 1st Option</option>
-							<option value="2" >The 2nd Option</option>
-							<option value="3" >The 3rd Option</option>
-							<option value="4">The 4th Option</option>
-							<option value="1">The 1st Option</option>
-							<option value="2" >The 2nd Option</option>
-							<option value="3" >The 3rd Option</option>
-							<option value="4">The 4th Option</option>
-							<option value="1">The 1st Option</option>
-							<option value="2" >The 2nd Option</option>
-							<option value="3" >The 3rd Option</option>
-							<option value="4">The 4th Option</option>
-							<option value="1">The 1st Option</option>
-							<option value="2" >The 2nd Option</option>
-							<option value="3" >The 3rd Option</option>
-							<option value="4">The 4th Option</option>
 					</select>
 				</div> 
 			</div>
@@ -851,7 +814,7 @@
 					</div>
 				</div>
 				<div class='ui-grid-a'>
-					<div class='ui-block-a car-type cont' data-role="controlgroup" data-iconpos="right" data-mini='true'> 
+					<div class='ui-block-a car-type cont' id='carKind' data-role="controlgroup" data-iconpos="right" data-mini='true'> 
 							<label for="detail-car-type-1">경형</label>
 							<input type="checkbox" id="detail-car-type-1" name="detail-car-type-1">
 							<label for="detail-car-type-2">소형</label>
@@ -913,6 +876,46 @@
 			</div>
 	</div>
 <script>
+	var carComp = Common.getCommonCode("CAR_COMP") 
+		, carCompInter = Common.getCommonCode("CAR_COMP_INTER") 
+		, carCompExter = Common.getCommonCode("CAR_COMP_EXTER") 
+		, carKind = Common.getCommonCode("CAR_KIND") 
+		, carFure = Common.getCommonCode("CAR_FURE") 
+		, carOutline= Common.getCommonCode("CAR_OUTLINE") 
+		, carMission= Common.getCommonCode("CAR_MSN");
+	
+	var $compList = $("#company-list");
+	var totalCompList = $.extend({},carCompInter, carCompExter);
+	for( var k in totalCompList ){
+		var opt = "<option value='"+k+"'>"+totalCompList[k]+"</option>";
+		$compList.append( opt );
+	}
+	/* <div class='ui-block-a car-type cont' id='carKind' data-role="controlgroup" data-iconpos="right" data-mini='true'> 
+	<label for="detail-car-type-1">경형</label>
+	<input type="checkbox" id="detail-car-type-1" name="detail-car-type-1">
+	<label for="detail-car-type-2">소형</label>
+	<input type="checkbox" id="detail-car-type-2" name="detail-car-type-1">
+	<label for="detail-car-type-3">준중형</label>
+	<input type="checkbox" id="detail-car-type-3" name="detail-car-type-1">
+	<label for="detail-car-type-4">중형</label>
+	<input type="checkbox" id="detail-car-type-4" name="detail-car-type-1">
+	<label for="detail-car-type-5">대형</label>
+	<input type="checkbox" id="detail-car-type-5" name="detail-car-type-1">
+	<label for="detail-car-type-6">스포츠카</label>
+	<input type="checkbox" id="detail-car-type-6" name="detail-car-type-1">
+</div> */
+	// car kind list
+	var html="<div class='ui-block-a car-type cont' id='carKind' data-role='controlgroup' data-iconpos='right' data-mini='true'>"
+	for( var k in carKind ){
+		var val = carKind[k] 
+			, id = "car-kind-"+k;
+		html += "<label for='"+id+"'>"+val+"</label>";
+		html += "<input type='checkbox' id='"+id+"' name='carKind'>";
+		
+	}
+	html += "</div>";
+</script>
+<script>
 ( function( $ ) {
 	
 	function pageIsSelectmenuDialog( page ) {
@@ -937,7 +940,7 @@
 				if( event.target.name == 'companyList' ){
 					selectmenu.find('option').each(function(i){
 						var val = this.value;
-						$( list.find("li")[i] ).find('a').addClass('ui-icon-car-comp-'+val+' ui-btn-icon-left ui-nodisc-icon')
+						$( list.find("li")[i] ).find('a').addClass('ui-icon-'+val+' ui-btn-icon-left ui-nodisc-icon')
 					});
 				}
 				input = $( "<input data-type='search' class='keyword'></input>" ); 

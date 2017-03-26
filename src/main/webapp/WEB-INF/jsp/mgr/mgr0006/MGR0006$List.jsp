@@ -22,15 +22,6 @@ $j.documents.push(function(){
 				$("#detailSearch").panel('open');
 			}
 		});
-		
-		var carComp = Common.getCommonCode("CAR_COMP");
-		var carCompInter = Common.getCommonCode("CAR_COMP_INTER" ,true );
-		var carCompExter = Common.getCommonCode("CAR_COMP_EXTER" , true);
-		var carKind = Common.getCommonCode("CAR_KIND");
-		var carFure = Common.getCommonCode("CAR_FURE");
-		var carOutline= Common.getCommonCode("CAR_OUTLINE");
-		var carMission= Common.getCommonCode("CAR_MSN");
-		console.log(carComp ,  carCompInter , carCompExter , carKind, carFure, carOutline );
 	});
 });
 </script>
@@ -145,7 +136,7 @@ $j.documents.push(function(){
 <!-- <div class='footer'>
 	<h1 style='text-align: center;'>Footer</h1>
 </div> -->
-<c:import url="/mgr/mgr0004/MGR0004$DetailSearch.do"></c:import>
+<c:import url="/mgr/mgr0006/MGR0006$DetailSearch.do"></c:import>
 </div><!-- page -->
 <script>
 $(document).ready(function(){
@@ -157,7 +148,7 @@ $(document).ready(function(){
 <!-- ############################################################################################################################################ -->
 <!-- 코드등록/수정화면 시작 -->
 <!-- second page start -->
-<c:import url="/mgr/mgr0004/MGR0004$Insert.do"></c:import>
+<c:import url="/mgr/mgr0006/MGR0006$Insert.do"></c:import>
 <!-- 코드등록화면 끝 -->
 <!-- ############################################################################################################################################ -->
 <%@ include file="/WEB-INF/jsp/cmm/inc/bottom2.jsp" %>
