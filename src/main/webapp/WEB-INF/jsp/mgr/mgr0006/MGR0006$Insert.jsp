@@ -8,238 +8,234 @@
 */
 $j.documents.push(function(){
 	/** Form 단위로 스크립팅 한다. */
-	$j.documentReady('carInsertForm', function($form,$uiPage){
+	$j.documentReady('carModelInsertForm', function($form,$uiPage){
 		var frm = $form[0];
 		MENU.createHeaderBackButton( $form.find('.header') );
 		var backBtn = $form.find('.header').find('a');
 		
-		var $codeDetailList = $form.find(".codeDetailList");
-		
-		var initParams;
-		$j.pageMoveCallback(function(params){
-			initParams = params;
-			console.log( params );
-			initCodeList( $form, params );
-		});
-		/* $( ":mobile-pagecontainer" ).pagecontainer({
-			// page change 콜백함수.
-			change:function(event,ui){
-				initParams = ui.options.params;
-				initCodeList( $form, initParams );
-			}
-		});// page move */
-		
-		$form.find(".infoBtnBox").on('click',function(e){
-			switch (e.target.id) {
-				/** 저장*/	
-				case '_infoSave':
-					// PrkplceMngVO 클래스에 맞춰 파라미터를 생성하고 전달.
-					var prkplceMngVO = Common.getDataFromDoms( $form.find(".searchArea") );
-						prkplceMngVO.floorList = [];
-					$codeDetailList.find('tr').each(function(i,item){
-						var t = $(this);
-						var rowInfo = Common.getDataFromDoms( t );
-						// 라디오버튼(사용여부)의 경우 name이 다르므로( USE_AT_x 형태 ), 따로 세팅해줌
-						for(var k in rowInfo) {
-							if ( k == 'sort') rowInfo.sort = i;
-							else continue;
-						}
-						prkplceMngVO.floorList.push(rowInfo);
-					});
-			    	
-					console.log( prkplceMngVO );
-					var url = "<c:url value='/mgr/mgr0003/codeInsert.do'/>";
-					Common.ajaxJson( url , prkplceMngVO ,function(data){
-						if( data.result > 0 ){
-							alert("수정됨");
-						}
-			    	});
-					
-					break;
-					
-					
-				/* 삭제 */
-				case '_infoDelete':
-					var url = "<c:url value='/mgr/mgr0003/codeDelete.do'/>";
-					var prkplceCode = $("#prkplceCode").val();
-					Common.ajaxJson( url , { prkplceCode : prkplceCode } ,function(data){
-						if( data.result > 0 ){
-							alert("삭제됨");
-						}
-						$(backBtn).trigger('click');
-			    	});
-					break;
-					
-					
-				/* 초기화 */
-				case '_infoReset':
-					initCodeList( $form, initParams );
-					break;
-				default:
-					break;
-			}
-		});
-		
-		$form.find(".rowBtnBox").on('click',function(e){
-			switch ( e.target.id ) {
-				case '_rowAdd':
-					var prkplceCode = $("#prkplceCode").val();
-					rowAdd( $form ,{
-						prkplceCode : prkplceCode
-					});
-					break;
-		
-				default:
-					break;
-			}
+		$(".companyListInsert").on('change',function(){
+			var gbn = $("[name='carComp']:checked").val();
+			var selectedCompany = $("select."+gbn+" > option:selected").val();
 			
-		});//row add
-		
-		$uiPage.on( 'click', '.rowDelete', function(e){
-			$(e.target).closest('tr').remove();
-		});// delete
-	
-		$(".codeListTable").sortable({
-			items:" > tbody > tr"
-			,axis:'y'
-			,handle: ".move_icon"
-	        ,opacity: 0.7
-	        ,delay: 50
-	        ,dropOnEmpty: true
-	        ,pullPlaceholder: false
-	        ,stop:function(e){
-	        }
-			,helper: function(e, ui) {
-/* 				ui.children().each(function() {
-			        $(this).width($(this).width());
-			    }); */
-				return ui;
-			}
+// 			$(this).closest('.ui-grid-a').next(".carAttr").find('.title').next('div').slideDown('fast');
 		});
 		
-	});
-	
-	function initCodeList( $form,  params ){
-		var frm = $form[0];
-		var $codeDetailList = $form.find(".codeDetailList");
-		$codeDetailList.html("");
-		if( params ){			// 이전 codeList 페이지에서 받아온 파라미터 
-			//수정
-			frm.prkplceCode.disabled = true; // 수정인경우 `분류코드`수정을 막는다.
-			var url = "<c:url value='/mgr/mgr0003/codeDetailSelect.do'/>";
-			// 분류코드 및 상세코드 조회&세팅
-			Common.ajaxJson( url , params ,function(data){
-				for(var k in data ){
-					var dt = data[k]
-						,el = frm[k];
-					switch (k) {
-						case 'floorList': // 상세코드 List 생성
-							for( var i = 0; i < dt.length;i++) {
-								rowAdd( $form , dt[i] , i );
-							}
-							break;
-						default:// 나머지값 세팅
-							if( el )  el.value = dt; 
-							break;
-					}
+		$('.carAttr').on('click',function(e){
+			var $t = $(e.target);
+			if( !$t.hasClass('selectItem')) { return; }
+			if( $t.hasClass('selected') ){
+				$t.removeClass('selected');
+				$(this).find(".currentValue").text('');
+				return;
+			}
+				$(this).find('.selected').removeClass('selected');
+				$t.addClass('selected' ,{duration:50});
+				$(this).find(".currentValue").text( "선택 : " + $t.text() );
+		});
+		
+		$(".ui-bar-d.title").on('click',function(){
+// 			$(this).nextAll('div').slideToggle('fast');
+		});
+		
+		$form.find("#save").on('click',function(){
+			if( !confirm('저장하시겠습니까?') ) return;
+			
+			var gbn = $("[name='carComp']:checked").val() 
+				, selectedCompany = $("select."+gbn+" > option:selected").val() 
+				, carKind = $("#carKindList .selected").attr('data-value') 
+				, carOutline = $("#carOutlineList .selected").attr('data-value') 
+				, carFure = $("#carFureList .selected").attr('data-value') 
+				, carMsn = $("#carMsnList .selected").attr('data-value') 
+				, modelNm = $("#modelNm").val();
+			
+			var param = {
+					carComp : selectedCompany
+					,carKind : carKind
+					,carOutline:carOutline
+					,carFure:carFure
+					,carMsn:carMsn
+					,modelNm:modelNm
+			}
+			var msgBox = {
+					carKind : "차종을 선택하세요"
+					,carOutline:"외관을 선택하세요"
+					,carFure:"연료를 선택하세요"
+					,carMsn:"미션을 선택하세요"
+					,modelNm:"모델명을 입력하세요"
+			}
+			for( var k in param ){
+				var v = param[k] ;
+				var msg = '';
+				switch (k) {
+					case 'carComp':
+						if( v == '국내차' || v == '외제차' ) {
+							alert("제조사를 선택하세요.");
+							return;
+						}
+						break;
+					
+					default:
+						if( !v ) {
+							alert( msgBox[k] );
+							return;
+						}
+						break;
+				}
+			}
+			param.rowStatus = $("[name='rowStatus']").val();
+			param.modelCode = $("[name='modelCode']").val();
+			var url = "<c:url value='/mgr/mgr0006/MGR0006$Insert.do'/>";
+			Common.ajaxJson( url , param ,function(data){
+				if( data.ok > 0 ){
+					alert('정상적으로 처리되었습니다.');
+				}else{
+					alert('오류가 발생하였습니다. 다시 시도해주세요.');
 				}
 	    	});
-			
-		}else{
-			//등록 & 초기화
-			frm.prkplceCode.disabled = false;
-			$form.find('input:text').val("");
-		}
-	}
-	
-	// dom 관리방법 강구해볼것	- value mapping #.+#
-	var row ="<tr>";
-		row += "<input type='hidden' name='prkplceCode' value='%{prkplceCode}'><input type='hidden' name='sort' value='%{sort}'>"
-		row += "<td style='text-align:center;'><div class='move_icon'></div></td>"
-		row += "<td><input type='text' data-mini='true' name='prkplceFlrCode' style='text-align:center' placeholder='층코드' size='6' value='%{prkplceFlrCode}'></td>"
-		row += "<td><input type='text' data-mini='true'  name='prkplceFlrNm' class='filter:require' placeholder='층구분명' value='%{prkplceFlrNm}'></td>"
-		row += "<td style='text-align: center;'><a href='#' class='btnIcon rowDelete' data-icon='delete' data-color='red' data-notext='true'>삭제</a></td>"
-		row += "</tr>";
-		
-	/* 상세코드List row 추가 함수 */
-	function rowAdd( $form , data ){
-		console.log( data );
-		//row 전역변수
-		var _row = Common.matchedReplace(row, data);
-		var $row = $( _row );
-		$(".codeDetailList").append($row);
-		$j.refreshPage($form);
-	}
+		});
+	});
 });
 </script> 
 <style>
-	.insertTh { font-size: 0.9em;}
+	.ui-block-a label { border-right:1px solid #ddd;}
+	
+	.selectItem { font-weight: normal;}
+/* 	.selectItem.selected { background: #3388cc  !important ; box-shadow: inset 5px  5px 5px rgba(0,0,0,.15) !important;} */
+	.currentValue { float: right; }
+	.titleText { float:left;}
+	.ui-bar-a { font-size:0.8em;}
+	.selectCompanyList .ui-select { margin:0;}
+	
+	.mb0_3 { margin-bottom: 0.3em;}
 </style>
-<div data-role="page" id='carInsert'><!-- second page start -->
-	<form name='carInsertForm'>
+<div data-role="page" id='carModelInsert'><!-- second page start -->
+	<form name='carModelInsertForm'>
+		<input type="hidden" name="rowStatus" value='C'/>
+		<input type="hidden" name="modelCode" value=''/>
 		<div class='header' data-role='header'><h1>주차장코드 등록/수정</h1></div>
 		<div role='main' class='ui-content'>
 			<div id='infoArea' style='text-align: center;'>
-				<table class='defaultTable searchArea'  >
-					<colgroup>
-						<col style='width:40%;'/>
-						<col style='width:60%;'/>
-					</colgroup>
-					<tbody>
-						<tr>
-							<td class='insertTd' colspan='2' style='border:0;padding:0;'>
-								<div class='buttonBox infoBtnBox' style='margin-bottom:.5em;'>
-									<a href='#' id='_infoSave' class='btn save' data-icon='check' data-mini='true'>저장</a>
-									<a href='#' id='_infoDelete' class='btn delete' data-icon='delete' data-mini='true' data-color='red'>삭제</a>
-									<a href='#' id='_infoReset' class='btn reset' data-icon='refresh' data-mini='true' data-color='gray'>초기화</a>
-								</div>
-							</td>
-						</tr>
-						<tr >
-							<th class='insertTh'>주차장코드</th>
-							<td class='insertTd'>
-								<input type='text' name='prkplceCode' id='prkplceCode' placeholder="주차장코드">
-							</td>
-						</tr>
-						<tr>
-							<th class='insertTh'>주차장명</th>
-							<td class='insertTd'><input type='text' name='prkplceNm' placeholder="주차장명" data-mini='true'></td>
-						</tr>
-						<tr class='searchArea'>
-							<th class='insertTh'>비고</th>
-							<td class='insertTd' colspan='3'><input type='text' name='rm' placeholder="비고" data-mini='true'></td>
-						</tr>
-						<tr>
-							<td class='insertTd' colspan='2' style='border:0;'>
-								<div class='buttonBox rowBtnBox' style='margin-top:.5em;'>
-									<a href='#' id='_rowAdd' class='btn rowAdd' data-icon='plus' data-mini='true'>행추가</a>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td class='insertTd' colspan='4' style='border:0;width:100%'>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-				<table class='defaultTable codeListTable'  style='width:100%'>
-					<colgroup>
-						<col style='width:10%'>
-						<col style='width:30%'>
-						<col style='width:50%'>
-						<col style='width:10%'>
-					</colgroup>
-					<thead>
-						<tr>
-							<th class='insertTh'>이동</th>
-							<th class='insertTh'>층코드</th>
-							<th class='insertTh'>층구분명</th>
-							<th class='insertTh'>삭제</th>
-						</tr>
-					</thead>
-					<tbody class='codeDetailList'></tbody>
-				</table>
+				<div class='ui-grid-a mb0_3'>
+					<div class="ui-bar ui-bar-d title"><span class="titleText">1. 제조사 선택</span></div>
+					<div class='ui-block-a'>
+						<div class='ui-bar ui-bar-a' id='carComp' style='padding :6px;'></div>
+					</div>
+					<div class='ui-block-b' >
+						<div class='ui-bar ui-bar-a selectCompanyList' style='padding :6px;'>
+							<select name="companyList" class="companyListInsert filterable-select CAR_COMP_INTER"  id="company-list-inter-insert" data-native-menu="false" data-mini='true'>
+								<option>국내차</option>
+							</select>
+							<select name="companyList" class="companyListInsert filterable-select CAR_COMP_EXTER"  id="company-list-exter-insert" data-native-menu="false" data-mini='true'>
+								<option>외제차</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<!-- 차종 -->
+				<div id='carKindList' class='carAttr mb0_3'></div>
+				<!-- 외관 -->
+				<div id='carOutlineList' class='carAttr mb0_3'></div>
+				<!-- 연료 -->
+				<div id='carFureList' class='carAttr mb0_3'></div>
+				<!-- 미션 -->
+				<div id='carMsnList' class='carAttr mb0_3'></div>
+				<div class='ui-grid-a' style='background: #eee;'>
+					<div class="ui-bar ui-bar-d title"><span class="titleText">6. 모델명입력</span></div>
+					<input type='text' data-mini='true' placeholder='모델명을 입력하세요.' id='modelNm' name='modelNm'>
+				</div>
+				<div class='ui-grid-a'>
+					<a href='#' data-role='button' data-icon='check' id='save'>저장</a>
+				</div>
+			</div>
+			<div>
+				<div class="ui-field-contain">
+					
+				</div>
 			</div>
 		</div>
 	</form>
 </div>
+<script>
+	var carCompGbn = COMPONENT.radio({
+		target 		: $('#carComp')
+		,name		: 'carComp'
+		,cmmnCode	: carComp
+	});
+	
+	/* var carMsnGbn = COMPONENT.radio({
+		target 		: $('#carMsn')
+		,name		: 'carMsn'
+		,cmmnCode	: carMission
+	}); */
+	
+	var $compInterList = $("#company-list-inter-insert");
+	for( var k in carCompInter ){
+		var opt = "<option value='"+k+"'>"+carCompInter[k]+"</option>";
+		$compInterList.append( opt );
+	}
+	
+	var $compExterList = $("#company-list-exter-insert");
+	for( var k in carCompExter ){
+		var opt = "<option value='"+k+"'>"+carCompExter[k]+"</option>";
+		$compExterList.append( opt );
+	}
+
+	var repeat = [
+		{
+			target :$("#carMsnList") 
+			,title : '<div class="ui-bar ui-bar-d title"><span class="titleText">5. 미션 선택</span><span class="currentCarMsn currentValue"></span></div>'
+			,option : {
+			  	data : carMission
+				, cellCount : 2
+				, addClass:['selectItem']
+			}
+		},
+		{
+			target :$("#carFureList") 
+			,title : '<div class="ui-bar ui-bar-d title"><span class="titleText">4. 연료 선택</span><span class="currentCarFure currentValue"></span></div>'
+			,option : {
+			  	data : carFure
+				, cellCount : 3
+				, addClass:['selectItem']
+			}
+		},
+		{
+			target :$("#carOutlineList") 
+			,title : '<div class="ui-bar ui-bar-d title"><span class="titleText">3. 외관 선택</span><span class="currentCarOutline currentValue"></span></div>'
+			,option : {
+			  	data : carOutline
+				, cellCount : 3
+				, addClass:['selectItem']
+			}
+		},
+		{
+			target :$("#carKindList") 
+			,title : '<div class="ui-bar ui-bar-d title"><span class="titleText">2. 차종 선택</span><span class="currentCarKind currentValue"></span></div>'
+			,option : {
+			  	data : carKind
+				, cellCount : 3
+				, addClass:['selectItem']
+			}
+		}
+	]
+	
+	for( var i = 0 , len=repeat.length; i < len ; i ++){
+		var o = repeat[i];
+		$j.makeGridGroup( o.target , o.title, o.option );
+	}
+	
+	$(document).ready(function(){
+		
+		$("#company-list-exter-insert-button").hide();
+		
+		$("[name='carComp']").on('change',function(){
+			if( this.value.indexOf('EXTER') > -1   ){
+				$("#company-list-exter-insert-button").show();
+				$("#company-list-inter-insert-button").hide();
+			}else{
+				$("#company-list-exter-insert-button").hide();
+				$("#company-list-inter-insert-button").show();
+			}
+		});
+	});
+</script>

@@ -22,6 +22,62 @@ $j.documents.push(function(){
 				$("#detailSearch").panel('open');
 			}
 		});
+		
+		var url = "<c:url value='/mgr/mgr0006/MGR0006$List.do'/>";
+		var param = {};
+		
+		/*  
+		carComp
+:
+"CAR_COMP_00"
+carFure
+:
+"D"
+carKind
+:
+"CAR_KIND_2"
+carMsn
+:
+"A"
+carOutline
+:
+"CAR_OUTLINE_0"
+modelCode
+:
+"C0001"
+modelNm
+:
+"아반떼"
+		*/
+		var html = "";
+		 	html += "<li><a href='#'>";
+		 	html += "<input type='hidden' name='modelCode' value='%{modelCode}'/>";
+		 	html += "<img class='ui-li-thumb' />";
+		 	html += "<h2>";
+		 	html += "<span class='ui-icon-%{carComp}' style='display: inline-block;width:35px;height:35px;vertical-align: middle;'></span>";
+		 	html += "<div style='vertical-align: baseline;display: inline-block;height:35px;'>%{modelNm}</div>";
+		 	html += "</h2>";
+		 	html += "<p class='ui-li-aside lastedModify'>%{carComp}</p>";
+		 	html += "<p>";
+		 	html += "<span class='attr'>%{carFure}</span>";
+		 	html += "<span class='split'>|</span>";
+		 	html += "<span class='attr'>%{carMsn}</span>";
+		 	html += "<span class='split'>|</span>";
+		 	html += "<span class='attr'>%{carOutline}</span>";
+		 	html += "<span class='split'>|</span>";
+		 	html += "<span class='attr'>%{carKind}</span>";
+		 	html += "</p>";
+		 	html += "</a></li>";
+		Common.ajaxJson( url , param ,function(data){
+			$("#carInfoList").html("");
+			console.log( data );
+			for( var i = 0 , len = data.length;i <len;i++){
+				var res = Common.matchedReplace (html , data[i] )
+				$("#carInfoList").append(res);
+			}
+			$("#carInfoList").listview('refresh');
+    	});
+		
 	});
 });
 </script>
@@ -31,11 +87,10 @@ $j.documents.push(function(){
 #searchBox .ui-grid-a .ui-btn { margin:0.3em;}
 #searchBox .search-condition-box .ui-block-a { width:30%} 
 #searchBox .search-condition-box .ui-block-b { width:70%} 
+.split{margin:0 0.5em;}
 </style>
 <!-- form 단위로 이루어진 content -->
 <form name='carSelectForm'>
-	
-	
 	<!-- 실제 구성될 화면페이지  영역 -->
 	<div class='main_content' >
 	<div id='searchBox'>
@@ -64,7 +119,7 @@ $j.documents.push(function(){
 		</div>
 		<div class='ui-grid-a'>
 			<div class='ui-block-a'>
-				<a href='#' data-role='button' id='add' data-icon='plus' data-mini='true'>신규등록</a>
+				<a href='#carModelInsert' data-role='button' id='add' data-icon='plus' data-mini='true' data-transition='slide'>신규등록</a>
 			</div>
 			<div class='ui-block-b'>
 				<a href='#' data-role='button' id='select' data-icon='search' data-mini='true'>조회</a>
@@ -76,12 +131,19 @@ $j.documents.push(function(){
 			<li><a href="#">
 				<img class="ui-li-thumb" />
 				<h2>
-				<img src="http://static.naver.net/m/auto/img/emblem/mnfco_16.png" width='35' height='35' style='vertical-align: middle;display: inline-block;'>
-				<div style='vertical-align: middle;display: inline-block;'>K3</div>
+					<span class='ui-icon-CAR_COMP_01' style='display: inline-block;width:35px;height:35px;vertical-align: middle;'></span>
+					<div style='vertical-align: baseline;display: inline-block;height:35px;'>K3</div>
 				</h2>
-				<p class="ui-li-aside lastedModify">33루1234</p>
-				<p>가솔린 · 5,000km </p>
-				<p>1,000 만원</p>
+				<p class="ui-li-aside lastedModify">기아자동차</p>
+				<p>
+					<span class='attr'>가솔린</span>
+					<span class='split'>|</span>
+					<span class='attr'>오토</span>
+					<span class='split'>|</span>
+					<span class='attr'>세단</span>
+					<span class='split'>|</span>
+					<span class='attr'>준중형</span>
+				</p>
 			</a></li>
 			<li><a href="#">
 				<img class="ui-li-thumb" />
@@ -130,7 +192,27 @@ $j.documents.push(function(){
 </form>
 
 </div><!-- main -->
+<script>
+var CarInfoCode = {
+		getCarCompGbnList	: function(){return Common.getCommonCode("CAR_COMP")}
+	  , getCarCompInterList : function(){return Common.getCommonCode("CAR_COMP_INTER")}
+	  , getCarCompExterList : function(){return Common.getCommonCode("CAR_COMP_EXTER")}
+	  , getCarKindList 		: function(){return Common.getCommonCode("CAR_KIND")}      
+	  , getCarFureList 		: function(){return Common.getCommonCode("CAR_FURE")}      
+	  , getCarOutlineList	: function(){return Common.getCommonCode("CAR_OUTLINE")}   
+	  , getCarMissionList	: function(){ return Common.getCommonCode("CAR_MSN")}
+	  , getCarTotalCompList : function(){ return $.extend({},this.getCarCompInterList(), this.getCarCompExterList());}
+}
 
+var   carComp 		= CarInfoCode.getCarCompGbnList() 
+	, carCompInter	= CarInfoCode.getCarCompInterList() 
+	, carCompExter	= CarInfoCode.getCarCompExterList() 
+	, totalCompList	= CarInfoCode.getCarTotalCompList() 
+	, carKind 		= CarInfoCode.getCarKindList() 
+	, carFure 		= CarInfoCode.getCarFureList()
+	, carOutline	= CarInfoCode.getCarOutlineList()
+	, carMission	= CarInfoCode.getCarMissionList();
+</script>
 <!-- 화면 하단 include  -->
 <!-- ################################# bottom.jsp -->
 <!-- <div class='footer'>
@@ -149,6 +231,91 @@ $(document).ready(function(){
 <!-- 코드등록/수정화면 시작 -->
 <!-- second page start -->
 <c:import url="/mgr/mgr0006/MGR0006$Insert.do"></c:import>
+<script>
+( function( $ ) {
+	
+	function pageIsSelectmenuDialog( page ) {
+		var isDialog = false
+			, id = page && page.attr( "id" ); 
+		$( ".filterable-select" ).each( function() { 
+			if ( $( this ).attr( "id" ) + "-dialog" === id ) { 
+				isDialog = true; 
+				return false; 
+			}
+		});
+		return isDialog; 
+	}
+	
+	$.mobile.document
+		.on( "selectmenucreate", ".filterable-select", function( event ,a,b) { 
+			var input, selectmenu = $( event.target )
+				, list = $( "#" + selectmenu.attr( "id" ) + "-menu" ) 
+				,form = list.jqmData( "filter-form" ); 
+			
+			if ( !form ) {
+				if( event.target.name == 'companyList' ){
+					selectmenu.find('option').each(function(i){
+						var val = this.value;
+						$( list.find("li")[i] ).find('a').addClass('ui-icon-'+val+' ui-btn-icon-left ui-nodisc-icon')
+					});
+				}
+				input = $( "<input data-type='search' class='keyword'></input>" ); 
+				form = $( "<form></form>" ).append( input ); 
+				input.textinput(); 
+				list
+					.before( form )
+					.jqmData( "filter-form", form );
+				form.jqmData( "listview", list ); 
+			}
+			
+			//실질적으로 필터링하는 함수
+			selectmenu
+				.filterable({
+					input: input
+					,children: "> option[value]"
+				})
+				.on( "filterablefilter", function(event,b,c) {
+					selectmenu.selectmenu( "refresh" );
+					list.find('li:not(.ui-screen-hidden)').each(function(){
+						var t = $(this) 
+							, idx = t.attr('data-option-index') 
+							, val = selectmenu.find('option:eq('+idx+')').val();
+						t.find('a').addClass('ui-icon-'+val+' ui-btn-icon-left ui-nodisc-icon');
+					});
+				});
+			
+			selectmenu.on('change',function(e){
+				$(this).find('.ui-screen-hidden').removeClass('ui-screen-hidden')
+				selectmenu.selectmenu('refresh');
+			});
+		})
+		.on( "pagecontainerbeforeshow", function( event, data ) {
+	        var listview, form;
+			if ( !pageIsSelectmenuDialog( data.toPage ) ) {
+				return;
+			}
+			listview = data.toPage.find( "ul" );
+			form = listview.jqmData( "filter-form" );
+			data.toPage.jqmData( "listview", listview );
+			listview.before( form );
+	    })
+		.on( "pagecontainerhide", function( event, data ) {
+			var listview, form;
+			if ( !pageIsSelectmenuDialog( data.toPage ) ) {
+				return;
+			}
+			listview = data.toPage.jqmData( "listview" );
+			form = listview.jqmData( "filter-form" );
+			listview.before( form );
+		})
+		//**********************
+		.on("pagebeforechange",function(event,data){
+			if( data.prevPage && data.prevPage.hasClass('ui-selectmenu')){
+				$("#detailSearch").panel('open');
+			}
+		});
+})( jQuery );
+</script>
 <!-- 코드등록화면 끝 -->
 <!-- ############################################################################################################################################ -->
 <%@ include file="/WEB-INF/jsp/cmm/inc/bottom2.jsp" %>

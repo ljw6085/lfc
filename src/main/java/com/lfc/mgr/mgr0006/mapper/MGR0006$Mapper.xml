@@ -2,6 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="MGR0006">
 	
+	<select id="getMaxModelCode" resultType="CarModelInfoVO">
+		SELECT CONCAT( 'C', 
+					LPAD( 
+						SUBSTR( MAX( MODEL_CODE ) ,2,4) + 1 , 4, 0
+					) 
+				) AS modelCode 
+		FROM CAR_MODEL_INFO
+	</select>
 	<select id="selectCarModelInfo" parameterType="CarModelInfoVO" resultType="CarModelInfoVO">
 		 select
 			CAR_COMP as carComp,

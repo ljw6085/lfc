@@ -80,5 +80,12 @@ public class MGR0006$ServiceImpl extends SetLogger implements MGR0006$Service{
 	public int deleteCarModelInfo(CarModelInfoVO param) {
 		return dao.delete("MGR0006.deleteCarModelInfo", param);
 	}
+
+	@Override
+	public CarModelInfoVO getMaxModelCode() {
+		CarModelInfoVO result = dao.selectOne("MGR0006.getMaxModelCode");
+		if( result == null ) result = new CarModelInfoVO(); 
+		return result;
+	}
 	
 }

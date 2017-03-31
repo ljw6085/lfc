@@ -81,6 +81,8 @@ public class MGR0006$Controller extends SetLogger {
 		if(VAR.UPDATE.equals(status)){
 			ok = service.updateCarModelInfo(param);
 		}else if(VAR.INSERT.equals(status)){
+			CarModelInfoVO maxId = service.getMaxModelCode();
+			param.setModelCode(maxId.getModelCode());
 			ok = service.insertCarModelInfo(param);
 		}else if(VAR.DELETE.equals(status)){
 			ok = service.deleteCarModelInfo(param);

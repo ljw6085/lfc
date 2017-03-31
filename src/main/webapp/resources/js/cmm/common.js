@@ -664,6 +664,46 @@ var $j = {
 				});// page move
 			}
 		}
+		
+		/**
+		 * 그리드를 그린다( object[key-value] 를 기준으로, cell의 key: data-value속성 / value : text )
+		 * { 
+		 * 		data : {Object}
+		 * 		, cellCount : {Number}
+		 * 		, addClass : {Array} 
+		 * }
+		 */
+		, makeMobileGrid:function ( option ){
+			var data  = option.data
+				, cellCnt = option.cellCount
+				, addClass = option.addClass;
+			
+			if( cellCnt < 1 ) cellCnt = 1;
+			if( cellCnt > 5 ) cellCnt = 5;
+			
+			var block  		= ['ui-block-a','ui-block-b','ui-block-c','ui-block-d','ui-block-e'] 
+				, cellInfo 	= ['ui-grid-a','ui-grid-a','ui-grid-a','ui-grid-b','ui-grid-c','ui-grid-d','ui-grid-e'] 
+				, rowIdx 	= cellCnt - 1
+				, i 		= 0
+				, html 		= "";
+			if( addClass && addClass.length ) addClass = addClass.join(" ");
+			if ( !addClass ) addClass = '';
+			html  += '<div class="'+cellInfo[cellCnt]+'">';
+			for( var k in data ){
+				var idx = i++%cellCnt 
+					, blockCls = block[idx];
+					html += "<div class='"+blockCls+"'><div class='ui-bar ui-bar-a "+addClass+"' data-value='"+k+"'>"+data[k]+"</div></div>";
+			}
+			html  += '</div>';
+			
+			return html;
+		}
+		,makeGridGroup:function( target, title, option ){
+			var html = title;
+			html += this.makeMobileGrid( option );
+			target.html( html );
+			return target;
+		}
 }
 var COMPONENT ={
 		

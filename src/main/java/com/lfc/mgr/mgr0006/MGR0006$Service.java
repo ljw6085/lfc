@@ -14,6 +14,8 @@ public interface MGR0006$Service {
 	public List<CmmnCodeVO> selectCarFure (CmmnCodeVO param);
 	public List<CmmnCodeVO> selectCarMsn (CmmnCodeVO param);
 	
+	
+	public CarModelInfoVO getMaxModelCode ();
 	public List<CarModelInfoVO> selectCarModelInfo (CarModelInfoVO param);
 	public int insertCarModelInfo (CarModelInfoVO param);
 	public int updateCarModelInfo (CarModelInfoVO param);
