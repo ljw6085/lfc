@@ -4,6 +4,8 @@ import com.common.vo.CommonVO;
 
 public class CarModelInfoVO extends CommonVO{
 
+	
+	private String carCompGbn;
 	private String carComp;
 	private String modelCode;
 	private String modelNm;
@@ -12,6 +14,12 @@ public class CarModelInfoVO extends CommonVO{
 	private String carFure;
 	private String carMsn;
 
+	public String getCarCompGbn() {
+		return carCompGbn;
+	}
+	public void setCarCompGbn(String carCompGbn) {
+		this.carCompGbn = carCompGbn;
+	}
 	public void setCarComp(String carComp) {
 		this.carComp = carComp;
 	}
@@ -57,12 +65,8 @@ public class CarModelInfoVO extends CommonVO{
 
 	@Override
 	public String toString() {
-		return "[carComp=" + carComp
-		 + ", modelCode=" + modelCode
-		 + ", modelNm=" + modelNm
-		 + ", carKind=" + carKind
-		 + ", carOutline=" + carOutline
-		 + ", carFure=" + carFure
-		 + ", carMsn=" + carMsn + "]";
+		return "CarModelInfoVO [carCompGbn=" + carCompGbn + ", carComp=" + carComp + ", modelCode=" + modelCode
+				+ ", modelNm=" + modelNm + ", carKind=" + carKind + ", carOutline=" + carOutline + ", carFure="
+				+ carFure + ", carMsn=" + carMsn + "]";
 	}
 }

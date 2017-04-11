@@ -17,7 +17,7 @@ $(document).ready(function(){
 	$(".header").attr({
 		"data-role":"header"
 // 		,'data-position':'fixed'
-// 		,'data-fullscreen':true
+		,'data-fullscreen':true
 	});
 	/* $(".footer").attr({
 		"data-role":"footer"
@@ -29,4 +29,7 @@ $(document).ready(function(){
 <link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/jquery-ui.css">
 <link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/jquery.mobile-1.4.5.css">
 <link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/common.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/boot-btn.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/font-awesome.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/font-boot-icon.css">
 <script src="<%=request.getContextPath() %>/resources/js/jquery.mobile-1.4.5.min.js"></script>

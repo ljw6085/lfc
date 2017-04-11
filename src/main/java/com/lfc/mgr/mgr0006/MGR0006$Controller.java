@@ -15,6 +15,7 @@ import com.common.SetLogger;
 import com.common.UrlMapping;
 import com.common.utils.VAR;
 import com.lfc.mgr.mgr0002.vo.CmmnCodeVO;
+import com.lfc.mgr.mgr0006.vo.CarModelInfoSearchVO;
 import com.lfc.mgr.mgr0006.vo.CarModelInfoVO;
 
 /**
@@ -61,7 +62,7 @@ public class MGR0006$Controller extends SetLogger {
 	 * @return
 	 */
 	@RequestMapping(value = UrlMapping.MGR0006_LIST_URL, method=RequestMethod.POST)
-	public  @ResponseBody List<CarModelInfoVO> carModelSelect( @RequestBody CarModelInfoVO param) {
+	public  @ResponseBody List<CarModelInfoVO> carModelSelect( @RequestBody CarModelInfoSearchVO param ) {
 		return service.selectCarModelInfo(param); 
 	}
 	

@@ -33,7 +33,7 @@
 				if( w > 190 ) w = 190;
 				$(".grid-box")
 					.width( w )
-					.height( w );
+// 					.height( w );
 			}).trigger('resize');
 			
 			$("#logout").bind('click',function(){
@@ -41,12 +41,12 @@
 			});
 		})
 		.on('swipeleft','.ui-page',function(e){
-			navnext( url+"#page2" );
-			$("#pageNaiv").text(" ○ ● ");
+// 			navnext( url+"#page2" );
+// 			$("#pageNaiv").text(" ○ ● ");
 		})
 		.on('swiperight','.ui-page',function(e){
-			navprev( url+"#page1" );
-			$("#pageNaiv").text(" ● ○ ");
+// 			navprev( url+"#page1" );
+// 			$("#pageNaiv").text(" ● ○ ");
 		});
 		
 		
@@ -64,7 +64,7 @@
 		
 		</script>
 	<style>
-		.ui-panel-wrapper { background: #eee !important;}
+		.ui-panel-wrapper { background: #fff !important;}
 	</style>
 </head>
 <body>
@@ -111,6 +111,18 @@
 		    		<div><img src='<c:url value="/images/parking_info_mgr_.png"/>' width='50%'></div>
 	    		</div>
 		    </div>
+		    <div class="ui-block-a block">
+		    	<div class='grid-box '>
+		    	<div>공지사항관리</div>
+	    		<div><img src='<c:url value="/images/notice_mgr.png"/>' width='50%'></div>
+		    </div>
+		    </div>
+		    <div class="ui-block-b block">
+		    	<div class='grid-box ' id='menuList'>
+		    		<div>운영관리</div>
+		    		<div><img src='<c:url value="/images/op_mgr.png"/>' width='50%'></div>
+		    	</div>
+		    </div>
 		</div><!-- /grid-c -->
 	</div>
 </div>
@@ -141,6 +153,6 @@
 	권한 : ${sessionScope.userAuth }
 	<div id='logout'>로그아웃</div>
 </div>
-<div id='pageNaiv' style='position:fixed; z-index: 9999;bottom:0;left:50%;margin-left:-19px;'> ● ○ </div>
+<div id='pageNaiv' style='position:fixed; z-index: 9999;bottom:0;left:50%;margin-left:-19px;'> <!-- ● ○ --> </div>
 </body>
 </html>

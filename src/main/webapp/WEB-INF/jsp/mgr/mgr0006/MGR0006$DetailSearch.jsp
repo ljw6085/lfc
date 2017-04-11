@@ -45,24 +45,17 @@
 <!-- 			<div class='ui-bar ui-bar-c'>상세조회옵션</div> -->
 			<div class='ui-bar ui-bar-c'>제조사</div>
 			<div class='detailSearch'>
-				<select name="companyList" class="filterable-select"  id="company-list" data-native-menu="false">
-					<option>제조사</option>
+				<select name="carComp" class="filterable-select"  id="company-list" data-native-menu="false" data-has-icon='true'>
+					<option value="">제조사</option>
 					<option value="" >전체</option>
 				</select>
 			</div>
 			<div class='detailSearch'>
 				<div class='car-model'>
-					<div class='ui-bar ui-bar-c title'>모델</div>
+					<div class='ui-bar ui-bar-c title'>모델명</div>
 				</div> 
-				<div class='car-model cont' data-iconpos="right" data-mini='true'>
-					<select name="select-custom-19" class="filterable-select"  id="title-filter-menu" data-native-menu="false">
-							<option>차량모델</option>
-							<option value="0">전체</option>
-							<option value="1">The 1st Option</option>
-							<option value="2" >The 2nd Option</option>
-							<option value="3" >The 3rd Option</option>
-							<option value="4">The 4th Option</option>
-					</select>
+				<div class='car-model cont' data-iconpos="right" data-mini='true'  style='padding:0.5em;'>
+					<input type='search' name='modelNm' placeholder='모델명을입력하세요.'>
 				</div> 
 			</div>
 			<div>
@@ -111,7 +104,7 @@
 		var val = carKind[k] 
 			, id = "car-kind-"+k;
 		carKindHtml += "<label for='"+id+"'>"+val+"</label>";
-		carKindHtml += "<input type='checkbox' id='"+id+"' name='carKind'>";
+		carKindHtml += "<input type='checkbox' id='"+id+"' name='carKind' value='"+k+"' data-label='"+val+"'>";
 		
 	}
 	$carKind.html( carKindHtml );
@@ -122,7 +115,7 @@
 		var val = carFure[k] 
 			, id = "car-fure-"+k;
 		carFureHtml += "<label for='"+id+"'>"+val+"</label>";
-		carFureHtml += "<input type='checkbox' id='"+id+"' name='carFure'>";
+		carFureHtml += "<input type='checkbox' id='"+id+"' name='carFure' value='"+k+"' data-label='"+val+"'>";
 		
 	}
 	$carFure.html( carFureHtml );
@@ -135,20 +128,20 @@
 			, id = "car-outline-"+k 
 			, carOutlineHtml=""
 			carOutlineHtml += "<label for='"+id+"'>"+val+"</label>";
-			carOutlineHtml += "<input type='checkbox' id='"+id+"' name='carOutline'>";
+			carOutlineHtml += "<input type='checkbox' id='"+id+"' name='carOutline' value='"+k+"' data-label='"+val+"'>";
 		
 		$("#car-outline-"+area).append( carOutlineHtml );
 		i++;
 	}
 	
 	var i=0;
-	for( var k in carMission ){
+	for( var k in carMsn ){
 		var area = i % 2  
-			, val = carMission[k] 
+			, val = carMsn[k] 
 			, id = "car-mission-"+k 
 			, carMissionHtml=""
 			carMissionHtml += "<label for='"+id+"'>"+val+"</label>";
-			carMissionHtml += "<input type='checkbox' id='"+id+"' name='carMsn'>";
+			carMissionHtml += "<input type='checkbox' id='"+id+"' name='carMsn' value='"+k+"' data-label='"+val+"'>";
 		
 		$("#car-mission-"+area).append( carMissionHtml );
 		i++;

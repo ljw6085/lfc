@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.common.CommonDAO;
 import com.common.SetLogger;
 import com.lfc.mgr.mgr0002.vo.CmmnCodeVO;
+import com.lfc.mgr.mgr0006.vo.CarModelInfoSearchVO;
 import com.lfc.mgr.mgr0006.vo.CarModelInfoVO;
 
 @Service
@@ -60,7 +61,7 @@ public class MGR0006$ServiceImpl extends SetLogger implements MGR0006$Service{
 	}
 
 	@Override
-	public List<CarModelInfoVO> selectCarModelInfo(CarModelInfoVO param) {
+	public List<CarModelInfoVO> selectCarModelInfo(CarModelInfoSearchVO param) {
 		List<CarModelInfoVO> returnList = dao.selectList("MGR0006.selectCarModelInfo",param);
 		if( returnList == null ) returnList = new ArrayList<CarModelInfoVO>(); 
 		return returnList;

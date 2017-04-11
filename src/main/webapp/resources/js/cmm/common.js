@@ -143,8 +143,11 @@ var Common = {
 					value = $(this).find("option:selected").val();
 				}else{
 					switch (this.type) {
-					case 'radio':
 					case 'checkbox':
+						if( !result[name] ) result[name] = [];
+						if( this.checked ) result[name].push( this.value );
+						break;
+					case 'radio':
 						if( this.checked ) value = this.value;
 						break;
 						
@@ -599,7 +602,7 @@ var $j = {
 		}
 		,refreshPage : function( $form ){
 			$m.setIcon($('.btnIcon'));
-			$m.setButton($('.btn'),{
+			$m.setButton($('a.btn:not(button)'),{
 				mini:true
 				,inline:true
 			});
@@ -676,8 +679,8 @@ var $j = {
 		, makeMobileGrid:function ( option ){
 			var data  = option.data
 				, cellCnt = option.cellCount
-				, addClass = option.addClass;
-			
+				, addClass = option.addClass
+				, type = ( option.type ) ? option.type : 'div';
 			if( cellCnt < 1 ) cellCnt = 1;
 			if( cellCnt > 5 ) cellCnt = 5;
 			
@@ -692,7 +695,11 @@ var $j = {
 			for( var k in data ){
 				var idx = i++%cellCnt 
 					, blockCls = block[idx];
-					html += "<div class='"+blockCls+"'><div class='ui-bar ui-bar-a "+addClass+"' data-value='"+k+"'>"+data[k]+"</div></div>";
+					if ( type == 'button' ){
+						html += "<div class='"+blockCls+" ui-block'><a href='#' class='ui-btn "+addClass+"' data-value='"+k+"'>"+data[k]+"</a></div>";
+					}else{
+						html += "<div class='"+blockCls+" ui-block'><div class='ui-bar ui-bar-a "+addClass+"' data-value='"+k+"'>"+data[k]+"</div></div>";
+					}
 			}
 			html  += '</div>';
 			

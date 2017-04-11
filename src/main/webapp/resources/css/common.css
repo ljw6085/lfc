@@ -3,7 +3,28 @@
 /******************************************************************************************** COMMON css */
 /* @import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css); */
 
-* { text-shadow: 0 0 0 !important; font-family: 'Nanum Gothic', "Myriad Pro", "Consolas"; }
+@font-face {
+  font-family: 'NanumGothic';
+  src: url('../fonts/NanumGothic.eot');
+  src: url('../fonts/NanumGothic.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/NanumGothic.woff') format('woff'),
+       url('../fonts/NanumGothic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'NanumGothicEB';
+  src: url('../fonts/NanumGothicEB.eot');
+  src: url('../fonts/NanumGothicEB.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/NanumGothicEB.woff') format('woff'),
+       url('../fonts/NanumGothicEB.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+
+* { text-shadow: 0 0 0 !important; font-family: 'NanumGothic', "Myriad Pro", "Consolas"; }
 .main_content { margin: 0.2em auto; min-height: 25em; }
 .menu-header-btn { background: none !important; border: none !important; }
 .buttonBox { text-align: right; margin-top: .5em; }
@@ -24,10 +45,10 @@
 	display: table-cell;
 	vertical-align: middle;
 	text-align: center;
-	border-bottom: 3px solid #ddd !important;
+/* 	border-bottom: 3px solid #ddd !important;
 	border-right: 3px solid #ddd !important;
 	border-top: 1px solid #ddd !important;
-	border-left: 1px solid #ddd !important;
+	border-left: 1px solid #ddd !important; */
 }
 
 /***************************************************************************************** 메뉴관련 css*/
@@ -297,11 +318,11 @@
 
 
 
-
 /******************************************************************************************* jquery mobile custom */
 .ui-content/*  , .ui-header, .ui-footer */{
 	max-width: 1024px !important;
 	margin: 0 auto;
+	background: #fff !important;
 }
 .ui-index.ui-content {
 	max-width: 400px !important;

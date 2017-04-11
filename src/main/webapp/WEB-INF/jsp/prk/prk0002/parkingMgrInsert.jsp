@@ -437,7 +437,10 @@
 			,defaultVal : 'P0'
 		});
 	});
-		
+	
+	$(window).on('beforeunload',function(e){
+		return "";
+	});
 	</script>
 </head>
 <body>

@@ -10,8 +10,9 @@
 				) AS modelCode 
 		FROM CAR_MODEL_INFO
 	</select>
-	<select id="selectCarModelInfo" parameterType="CarModelInfoVO" resultType="CarModelInfoVO">
+	<select id="selectCarModelInfo" parameterType="CarModelInfoSearchVO" resultType="CarModelInfoVO">
 		 select
+		 	CAR_COMP_GBN as carCompGbn,
 			CAR_COMP as carComp,
 			MODEL_CODE as modelCode,
 			MODEL_NM as modelNm,
@@ -21,6 +22,9 @@
 			CAR_MSN as carMsn
 		 from CAR_MODEL_INFO
 		 where 1=1
+		 <if test="carCompGbn != null and carCompGbn != '' ">
+			 AND CAR_COMP_GBN = #{carCompGbn}
+		 </if>
 		 <if test="carComp != null and carComp != '' ">
 			 AND CAR_COMP = #{carComp}
 		 </if>
@@ -30,21 +34,30 @@
 		 <if test="modelNm != null and modelNm != '' ">
 			 AND MODEL_NM LIKE CONCAT ('%', #{modelNm} , '%' )
 		 </if>
-		 <if test="carKind != null and carKind != '' ">
-			 AND CAR_KIND = #{carKind}
+		 <if test="carKind  != null and carKind.length > 0 ">
+           AND CAR_KIND IN (
+              <foreach collection="carKind" item="arr" separator=",">#{arr}</foreach>
+          )
+        </if>
+		 <if test="carOutline != null and carOutline.length > 0 ">
+			 AND CAR_OUTLINE IN (
+	              <foreach collection="carOutline" item="arr" separator=",">#{arr}</foreach>
+	          )
 		 </if>
-		 <if test="carOutline != null and carOutline != '' ">
-			 AND CAR_OUTLINE = #{carOutline}
+		 <if test="carFure != null and carFure.length > 0  ">
+			 AND CAR_FURE IN (
+	              <foreach collection="carFure" item="arr" separator=",">#{arr}</foreach>
+	          )
 		 </if>
-		 <if test="carFure != null and carFure != '' ">
-			 AND CAR_FURE = #{carFure}
-		 </if>
-		 <if test="carMsn != null and carMsn != '' ">
-			 AND CAR_MSN = #{carMsn}
+		 <if test="carMsn != null and carMsn.length > 0  ">
+			 AND CAR_MSN IN (
+	              <foreach collection="carMsn" item="arr" separator=",">#{arr}</foreach>
+	          )
 		 </if>
 	</select>
 	<insert id="insertCarModelInfo" parameterType="CarModelInfoVO" >
 		 insert into CAR_MODEL_INFO(
+			CAR_COMP_GBN,
 			CAR_COMP,
 			MODEL_CODE,
 			MODEL_NM,
@@ -53,6 +66,7 @@
 			CAR_FURE,
 			CAR_MSN
 		) values(
+			( SELECT PARENT_CODE FROM CMMN_CODE WHERE CODE = #{carComp} ),
 			#{carComp},
 			#{modelCode},
 			#{modelNm},

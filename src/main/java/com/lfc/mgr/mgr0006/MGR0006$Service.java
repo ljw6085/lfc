@@ -3,6 +3,7 @@ package com.lfc.mgr.mgr0006;
 import java.util.List;
 
 import com.lfc.mgr.mgr0002.vo.CmmnCodeVO;
+import com.lfc.mgr.mgr0006.vo.CarModelInfoSearchVO;
 import com.lfc.mgr.mgr0006.vo.CarModelInfoVO;
 
 public interface MGR0006$Service {
@@ -16,7 +17,7 @@ public interface MGR0006$Service {
 	
 	
 	public CarModelInfoVO getMaxModelCode ();
-	public List<CarModelInfoVO> selectCarModelInfo (CarModelInfoVO param);
+	public List<CarModelInfoVO> selectCarModelInfo (CarModelInfoSearchVO param);
 	public int insertCarModelInfo (CarModelInfoVO param);
 	public int updateCarModelInfo (CarModelInfoVO param);
 	public int deleteCarModelInfo (CarModelInfoVO param);

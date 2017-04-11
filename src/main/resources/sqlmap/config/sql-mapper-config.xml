@@ -16,6 +16,7 @@
 		<typeAlias alias="SellCarInfoVO" type="com.lfc.mgr.mgr0004.vo.SellCarInfoVO"/>
 		
 		<typeAlias alias="CarModelInfoVO" type="com.lfc.mgr.mgr0006.vo.CarModelInfoVO"/>
+		<typeAlias alias="CarModelInfoSearchVO" type="com.lfc.mgr.mgr0006.vo.CarModelInfoSearchVO"/>
 		
 		<typeAlias alias="hashMap" type="java.util.HashMap"/>
 		<typeAlias alias="camelCaseMap" type="com.common.utils.CamelCaseMap"/>

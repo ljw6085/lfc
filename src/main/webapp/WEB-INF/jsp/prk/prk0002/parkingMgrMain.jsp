@@ -316,37 +316,6 @@ $j.documents.push(function(){
 		</div>
 		<div id='parkingPlaceList' class='listWrap'>
 			<ul data-role="listview" data-inset="false" class='dataList'>
-				<!-- 
-				<li class='ui-li-has-thumb'><a href="#">
-					<div class="ui-li-thumb"></div>
-					<h2>5F</h2>
-					<p class="ui-li-aside lastedModify">최종수정일 | 2017. 03. 02</p>
-					<p>
-						<span class='prkTitle'>수용</span>	<span class='prkValue'>354</span><span class='splitStr'>|</span><span class='enter'></span> 
-						<span class='prkTitle'>소유</span>	<span class='prkValue'>125</span><span class='splitStr'>|</span><span class='enter'></span>
-						<span class='prkTitle'>사용중</span><span class='prkValue usedValue'>102</span>
-					</p>
-				</a></li>
-				<li class='ui-li-has-thumb'><a href="#">
-					<div class="ui-li-thumb"></div>
-					<h2>1F</h2>
-					<p class="ui-li-aside lastedModify">최종수정일 | 2017. 03. 02</p>
-					<p>
-						<span class='prkTitle'>수용</span>	<span class='prkValue'>354</span><span class='splitStr'>|</span><span class='enter'></span> 
-						<span class='prkTitle'>소유</span>	<span class='prkValue'>125</span><span class='splitStr'>|</span><span class='enter'></span>
-						<span class='prkTitle'>사용중</span><span class='prkValue usedValue'>102</span>
-					</p>
-				</a></li>
-				<li><a href="#">
-					<img src="/lfc/images/test.png" class="ui-li-thumb">
-					<h2>B2F</h2>
-					<p class="ui-li-aside lastedModify">최종수정일 | 2017. 03. 02</p>
-					<p>
-						<span class='prkTitle'>수용</span>	<span class='prkValue'>354</span><span class='splitStr'>|</span><span class='enter'></span> 
-						<span class='prkTitle'>소유</span>	<span class='prkValue'>125</span><span class='splitStr'>|</span><span class='enter'></span>
-						<span class='prkTitle'>사용중</span><span class='prkValue usedValue'>102</span>
-					</p>
-				</a></li> -->
 			</ul>
 		</div>
 	</div>
